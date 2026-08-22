@@ -10,22 +10,22 @@ const detailScreens = [
   {
     screen: "career-planning",
     cardTarget: 'data-screen-target="career-planning"',
-    copy: ["职业规划", "测评", "规划", "简历", "课程支持", "服务方页面占位", "U Link 自有内容"],
+    copy: ["职业规划", "测评", "规划", "简历", "课程支持", "服务方页面占位", "U Link 编辑部", "3 分钟阅读"],
   },
   {
     screen: "practice",
     cardTarget: 'data-screen-target="practice"',
-    copy: ["实习实践", "实训营", "岗位介绍", "实践机会", "U Link 自有内容", "内容详情"],
+    copy: ["实习实践", "实训营", "岗位介绍", "实践机会", "U Link 编辑部", "本周五", "已预约", "剩余"],
   },
   {
     screen: "finance-foundation",
     cardTarget: 'data-screen-target="finance-foundation"',
-    copy: ["金融底色", "金融沙龙", "财商课", "机构资源", "U Link 自有内容", "内容详情"],
+    copy: ["金融底色", "金融沙龙", "财商课", "机构资源", "U Link 编辑部", "8月22日", "3 分钟阅读", "已预约"],
   },
   {
     screen: "culture-exchange",
     cardTarget: 'data-screen-target="culture-exchange"',
-    copy: ["文化交流", "非遗文化", "中外交流", "研学路线", "U Link 自有内容", "内容详情"],
+    copy: ["文化交流", "非遗文化", "中外交流", "研学路线", "U Link 编辑部", "8月22日", "已预约", "剩余"],
   },
 ];
 const standaloneScreens = [
@@ -71,6 +71,22 @@ const forbiddenCopy = [
   "我的认证状态",
   "学生认证管理",
 ];
+const forbiddenDetailCopy = [
+  "内容详情",
+  "内容结构",
+  "展示重点",
+  "阅读目标",
+  "状态呈现",
+  "核心信息",
+  "成果沉淀",
+  "机会信息",
+  "适合阶段",
+  "路线信息",
+  "学习收获",
+  "把岗位拆成日常任务与能力要求",
+  "把可参与机会整理成清晰入口",
+  "把行业问题带到线下交流场",
+];
 
 const missing = requiredCopy.filter((text) => !homeHtml.includes(text));
 const forbidden = forbiddenCopy.filter((text) => homeHtml.includes(text));
@@ -84,6 +100,12 @@ const missingDetailCopy = detailScreens.flatMap((detail) => {
   }
 
   return detail.copy.filter((text) => !sectionHtml.includes(text)).map((text) => `${detail.screen}: ${text}`);
+});
+const detailForbidden = detailScreens.flatMap((detail) => {
+  const match = html.match(new RegExp(`<section class="screen" data-screen="${detail.screen}"[\\s\\S]*?<section class="screen" data-screen=`));
+  const sectionHtml = match?.[0] ?? "";
+
+  return forbiddenDetailCopy.filter((text) => sectionHtml.includes(text)).map((text) => `${detail.screen}: ${text}`);
 });
 const missingStandaloneCopy = standaloneScreens.flatMap((detail) => {
   const match = html.match(new RegExp(`<section class="screen" data-screen="${detail.screen}"[\\s\\S]*?<section class="screen" data-screen=`));
@@ -102,6 +124,7 @@ if (
   forbidden.length > 0 ||
   missingDetailTargets.length > 0 ||
   missingDetailCopy.length > 0 ||
+  detailForbidden.length > 0 ||
   missingStandaloneCopy.length > 0
 ) {
   if (!homeHtml) {
@@ -122,6 +145,10 @@ if (
 
   if (missingDetailCopy.length > 0) {
     console.error(`Missing module detail content: ${missingDetailCopy.join(", ")}`);
+  }
+
+  if (detailForbidden.length > 0) {
+    console.error(`Forbidden abstract module detail copy found: ${detailForbidden.join(", ")}`);
   }
 
   if (missingStandaloneCopy.length > 0) {

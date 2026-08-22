@@ -223,6 +223,18 @@
         padding: 20px 18px 132px;
       }
 
+      .screen:has(.bottom-bar) .screen-scroll {
+        flex: 0 0 auto;
+        height: calc(100% - 96px);
+        padding-bottom: 24px;
+      }
+
+      .screen:has(.tabbar) .screen-scroll {
+        flex: 0 0 auto;
+        height: calc(100% - 78px);
+        padding-bottom: 24px;
+      }
+
       .intro-screen {
         display: flex;
         flex-direction: column;
@@ -766,14 +778,14 @@
       }
 
       .module-detail-header {
-        padding: 18px 16px;
+        padding: 15px 16px;
         border-radius: 22px;
         background: #fff;
       }
 
       .module-detail-header h2 {
         margin-top: 8px;
-        font-size: 30px;
+        font-size: 28px;
       }
 
       .module-detail-header p {
@@ -894,11 +906,11 @@
       }
 
       .story-cover {
-        min-height: 86px;
+        min-height: 68px;
         display: grid;
         align-content: end;
-        gap: 6px;
-        padding: 14px;
+        gap: 5px;
+        padding: 12px 14px;
         color: #fff;
       }
 
@@ -925,12 +937,66 @@
       }
 
       .story-cover strong {
-        font-size: 20px;
+        font-size: 17px;
         line-height: 1.16;
       }
 
       .story-body {
-        padding: 14px;
+        padding: 12px 14px;
+      }
+
+      .news-meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        margin-top: 8px;
+        color: var(--tertiary);
+        font-size: 12px;
+        font-weight: 750;
+        line-height: 1.3;
+      }
+
+      .news-meta span + span::before {
+        content: "";
+        display: inline-block;
+        width: 3px;
+        height: 3px;
+        margin-right: 6px;
+        border-radius: 50%;
+        background: #c7c7cc;
+        vertical-align: 2px;
+      }
+
+      .news-summary {
+        display: -webkit-box;
+        margin-top: 8px;
+        color: var(--secondary);
+        font-size: 13px;
+        line-height: 1.42;
+        overflow: hidden;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+      }
+
+      .news-footer {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+        color: var(--secondary);
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .news-footer span {
+        height: 24px;
+        display: inline-flex;
+        align-items: center;
+        padding: 0 8px;
+        border-radius: 12px;
+        background: rgba(0, 122, 255, 0.08);
+        color: var(--blue);
       }
 
       .detail-grid {
@@ -1706,40 +1772,36 @@
             </section>
 
             <div class="section-heading">
-              <h3>U Link 自有内容</h3>
-              <span>内容专题</span>
+              <h3>推荐阅读</h3>
+              <span>U Link 编辑部</span>
             </div>
 
             <section class="story-stack" aria-label="职业规划自有内容">
               <article class="story-card">
                 <div class="story-cover blue">
                   <span>规划</span>
-                  <strong>从目标岗位倒推大学准备节奏</strong>
+                  <strong>大一先别急着投简历：先把目标岗位看明白</strong>
                 </div>
                 <div class="story-body">
-                  <h3>内容详情</h3>
-                  <p>把专业课程、实践经历、证书准备和咨询预约放在同一张路径卡里，便于学生看到下一步。</p>
-                  <div class="detail-grid">
-                    <div class="detail-cell"><span>适合人群</span><strong>刚完成认证的学生</strong></div>
-                    <div class="detail-cell"><span>下一步</span><strong>预约一次规划咨询</strong></div>
-                  </div>
+                  <h3>从银行、券商到资管，金融学生常见方向怎么选？</h3>
+                  <div class="news-meta"><span>U Link 编辑部</span><span>8月22日</span><span>3 分钟阅读</span></div>
+                  <p class="news-summary">这篇内容用一个新生也能看懂的方式，先讲清楚金融岗位大概分成哪几类，每类日常在做什么，以及大学四年可以先准备哪些经历。</p>
                   <div class="tag-row"><span>职业方向</span><span>四年节奏</span><span>咨询入口</span></div>
+                  <div class="news-footer"><span>适合大一大二</span><span>126 人读过</span></div>
                 </div>
               </article>
 
               <article class="story-card">
                 <div class="story-cover blue">
                   <span>课程支持</span>
-                  <strong>把课程变成可沉淀的能力证明</strong>
+                  <strong>本周更新：简历前置课与表达训练清单</strong>
                 </div>
                 <div class="story-body">
-                  <h3>内容详情</h3>
-                  <p>围绕金融基础、表达训练和项目复盘展示课程支持，不替代课程系统，只给学生看可参与内容。</p>
-                  <div class="detail-grid">
-                    <div class="detail-cell"><span>内容形态</span><strong>课程介绍与报名说明</strong></div>
-                    <div class="detail-cell"><span>产出提示</span><strong>作品、复盘或证明材料</strong></div>
-                  </div>
+                  <h3>如果以后要投实习，现在可以先补哪几项能力？</h3>
+                  <div class="news-meta"><span>U Link 编辑部</span><span>8月21日</span><span>3 分钟阅读</span></div>
+                  <p class="news-summary">我们整理了简历材料、项目复盘、面试表达和基础金融常识四类准备内容，学生可以按自己的阶段选择报名或收藏。</p>
                   <div class="tag-row"><span>课程支持</span><span>能力提升</span><span>记录成长</span></div>
+                  <div class="news-footer"><span>42 人已收藏</span><span>可预约咨询</span></div>
                 </div>
               </article>
             </section>
@@ -1760,56 +1822,50 @@
             </section>
 
             <div class="section-heading">
-              <h3>U Link 自有内容</h3>
-              <span>实践专题</span>
+              <h3>最新机会</h3>
+              <span>U Link 编辑部</span>
             </div>
 
             <section class="story-stack" aria-label="实习实践自有内容">
               <article class="story-card">
                 <div class="story-cover green">
                   <span>实训营</span>
-                  <strong>用短周期项目理解岗位工作流</strong>
+                  <strong>下周三｜金融岗位模拟实训营开放报名</strong>
                 </div>
                 <div class="story-body">
-                  <h3>内容详情</h3>
-                  <p>展示实训营主题、时间安排、训练目标和成果要求，让学生先知道参与后会留下什么。</p>
-                  <div class="detail-grid">
-                    <div class="detail-cell"><span>核心信息</span><strong>主题、时间、地点、名额</strong></div>
-                    <div class="detail-cell"><span>成果沉淀</span><strong>项目复盘与实践记录</strong></div>
-                  </div>
+                  <h3>2 小时体验一次“客户资料整理 + 风险提示”任务</h3>
+                  <div class="news-meta"><span>U Link 编辑部</span><span>8月22日</span><span>活动报名</span></div>
+                  <p class="news-summary">面向还没有实习经验的同学，现场会给一份模拟客户资料，带大家完成信息整理、问题提炼和汇报表达。</p>
                   <div class="tag-row"><span>实训营</span><span>真实任务</span><span>成果记录</span></div>
+                  <div class="news-footer"><span>36 人已预约</span><span>剩余 14 个名额</span></div>
                 </div>
               </article>
 
               <article class="story-card">
                 <div class="story-cover green">
                   <span>岗位介绍</span>
-                  <strong>把岗位拆成日常任务与能力要求</strong>
+                  <strong>本周五｜银行管培生一天在做什么</strong>
                 </div>
                 <div class="story-body">
-                  <h3>内容详情</h3>
-                  <p>按照岗位职责、常用工具、学习准备和面试关注点来组织内容，帮助学生建立具体想象。</p>
-                  <div class="detail-grid">
-                    <div class="detail-cell"><span>展示重点</span><strong>职责、工具、能力要求</strong></div>
-                    <div class="detail-cell"><span>阅读目标</span><strong>判断是否适合继续了解</strong></div>
-                  </div>
+                  <h3>从晨会、客户跟进到材料复盘，拆开看真实工作</h3>
+                  <div class="news-meta"><span>U Link 编辑部</span><span>8月22日</span><span>3 分钟阅读</span></div>
+                  <p class="news-summary">这篇岗位介绍不讲空泛概念，只用一天时间线说明银行管培生会接触哪些任务，适合什么性格和能力基础。</p>
                   <div class="tag-row"><span>岗位介绍</span><span>能力要求</span><span>面试准备</span></div>
+                  <div class="news-footer"><span>适合先了解</span><span>89 人读过</span></div>
                 </div>
               </article>
 
               <article class="story-card">
                 <div class="story-cover green">
                   <span>实践机会</span>
-                  <strong>把可参与机会整理成清晰入口</strong>
+                  <strong>校内项目助理招募：活动签到与资料整理</strong>
                 </div>
                 <div class="story-body">
-                  <h3>内容详情</h3>
-                  <p>展示机会来源、报名条件、参与方式和截止时间，状态清楚，避免学生反复询问同一信息。</p>
-                  <div class="detail-grid">
-                    <div class="detail-cell"><span>机会信息</span><strong>条件、时间、参与方式</strong></div>
-                    <div class="detail-cell"><span>状态呈现</span><strong>报名中、待通知或已结束</strong></div>
-                  </div>
+                  <h3>适合第一次参与 U Link 活动服务的同学</h3>
+                  <div class="news-meta"><span>U Link 编辑部</span><span>8月20日</span><span>报名中</span></div>
+                  <p class="news-summary">本次招募 8 名项目助理，协助线下沙龙签到、物料整理和现场记录。结束后可获得一次实践记录。</p>
                   <div class="tag-row"><span>实践机会</span><span>报名入口</span><span>状态清晰</span></div>
+                  <div class="news-footer"><span>18 人已预约</span><span>剩余 8 个名额</span></div>
                 </div>
               </article>
             </section>
@@ -1830,56 +1886,50 @@
             </section>
 
             <div class="section-heading">
-              <h3>U Link 自有内容</h3>
-              <span>金融专题</span>
+              <h3>金融动态</h3>
+              <span>U Link 编辑部</span>
             </div>
 
             <section class="story-stack" aria-label="金融底色自有内容">
               <article class="story-card">
                 <div class="story-cover orange">
                   <span>金融沙龙</span>
-                  <strong>把行业问题带到线下交流场</strong>
+                  <strong>周六下午｜青年金融沙龙：从校园到银行网点</strong>
                 </div>
                 <div class="story-body">
-                  <h3>内容详情</h3>
-                  <p>展示沙龙主题、嘉宾方向、适合学生和报名方式，突出小规模交流与真实行业问题。</p>
-                  <div class="detail-grid">
-                    <div class="detail-cell"><span>内容结构</span><strong>主题、嘉宾、提问方向</strong></div>
-                    <div class="detail-cell"><span>参与方式</span><strong>预约报名与现场签到</strong></div>
-                  </div>
+                  <h3>邀请在职学长聊一线岗位、客户沟通和新人适应</h3>
+                  <div class="news-meta"><span>U Link 编辑部</span><span>8月22日</span><span>线下活动</span></div>
+                  <p class="news-summary">沙龙会围绕银行网点、客户经理和运营岗位展开，适合想先听真实经历、再决定是否深入了解的同学。</p>
                   <div class="tag-row"><span>金融沙龙</span><span>行业交流</span><span>线下活动</span></div>
+                  <div class="news-footer"><span>28 人已预约</span><span>剩余 12 个名额</span></div>
                 </div>
               </article>
 
               <article class="story-card">
                 <div class="story-cover orange">
                   <span>财商课</span>
-                  <strong>从预算与风险意识开始</strong>
+                  <strong>新生财商课：生活费怎么做第一张预算表</strong>
                 </div>
                 <div class="story-body">
-                  <h3>内容详情</h3>
-                  <p>用短内容组织预算、储蓄、理财常识和风险识别，让金融底色先从生活场景落地。</p>
-                  <div class="detail-grid">
-                    <div class="detail-cell"><span>课程主题</span><strong>预算、理财常识、风险意识</strong></div>
-                    <div class="detail-cell"><span>学习方式</span><strong>图文、活动与课后小任务</strong></div>
-                  </div>
+                  <h3>先学会记录支出，再谈储蓄、理财和风险意识</h3>
+                  <div class="news-meta"><span>U Link 编辑部</span><span>8月22日</span><span>3 分钟阅读</span></div>
+                  <p class="news-summary">这是一篇给大一新生看的财商入门内容，用一张月度预算表讲清楚必要支出、弹性支出和风险提醒。</p>
                   <div class="tag-row"><span>财商课</span><span>风险意识</span><span>生活金融</span></div>
+                  <div class="news-footer"><span>适合新生</span><span>3 分钟阅读</span></div>
                 </div>
               </article>
 
               <article class="story-card">
                 <div class="story-cover orange">
                   <span>机构资源</span>
-                  <strong>把资源入口整理成学生看得懂的清单</strong>
+                  <strong>机构观察｜证券营业部适合哪些学生先了解</strong>
                 </div>
                 <div class="story-body">
-                  <h3>内容详情</h3>
-                  <p>展示机构方向、可提供内容、适合阶段和联系入口，先做清晰展示，不做复杂交易闭环。</p>
-                  <div class="detail-grid">
-                    <div class="detail-cell"><span>资源信息</span><strong>机构方向与开放内容</strong></div>
-                    <div class="detail-cell"><span>适合阶段</span><strong>了解期、准备期或实践期</strong></div>
-                  </div>
+                  <h3>从投资顾问助理、客户服务到合规基础，先看入口</h3>
+                  <div class="news-meta"><span>U Link 编辑部</span><span>8月21日</span><span>4 分钟阅读</span></div>
+                  <p class="news-summary">我们把证券营业部常见岗位和适合的准备方向整理成一篇短文，帮助学生判断自己要不要继续预约咨询。</p>
                   <div class="tag-row"><span>机构资源</span><span>方向筛选</span><span>咨询入口</span></div>
+                  <div class="news-footer"><span>63 人读过</span><span>可预约咨询</span></div>
                 </div>
               </article>
             </section>
@@ -1900,56 +1950,50 @@
             </section>
 
             <div class="section-heading">
-              <h3>U Link 自有内容</h3>
-              <span>文化专题</span>
+              <h3>文化活动</h3>
+              <span>U Link 编辑部</span>
             </div>
 
             <section class="story-stack" aria-label="文化交流自有内容">
               <article class="story-card">
                 <div class="story-cover red">
                   <span>非遗文化</span>
-                  <strong>用本土文化作为交流起点</strong>
+                  <strong>周日体验｜广府非遗香云纱小课堂开放预约</strong>
                 </div>
                 <div class="story-body">
-                  <h3>内容详情</h3>
-                  <p>展示非遗主题、体验方式、文化背景和活动安排，让内容既能阅读，也能连接线下体验。</p>
-                  <div class="detail-grid">
-                    <div class="detail-cell"><span>内容结构</span><strong>主题介绍、背景、体验安排</strong></div>
-                    <div class="detail-cell"><span>参与方式</span><strong>活动预约或路线报名</strong></div>
-                  </div>
+                  <h3>从一块布料开始理解本土工艺和城市记忆</h3>
+                  <div class="news-meta"><span>U Link 编辑部</span><span>8月22日</span><span>活动报名</span></div>
+                  <p class="news-summary">活动会用短讲解加手作体验的方式介绍香云纱工艺，适合想参加文化体验或准备中外交流话题的同学。</p>
                   <div class="tag-row"><span>非遗文化</span><span>线下体验</span><span>文化表达</span></div>
+                  <div class="news-footer"><span>22 人已预约</span><span>剩余 10 个名额</span></div>
                 </div>
               </article>
 
               <article class="story-card">
                 <div class="story-cover red">
                   <span>中外交流</span>
-                  <strong>把交流主题做成可参与的小单元</strong>
+                  <strong>英语圆桌｜如何向外国朋友介绍你的城市</strong>
                 </div>
                 <div class="story-body">
-                  <h3>内容详情</h3>
-                  <p>展示交流主题、语言要求、活动形式和准备材料，让学生知道自己适合参加哪一类活动。</p>
-                  <div class="detail-grid">
-                    <div class="detail-cell"><span>交流信息</span><strong>主题、形式、准备材料</strong></div>
-                    <div class="detail-cell"><span>适合人群</span><strong>对跨文化表达感兴趣的学生</strong></div>
-                  </div>
+                  <h3>不用很高级的词，也能把本土文化讲清楚</h3>
+                  <div class="news-meta"><span>U Link 编辑部</span><span>8月22日</span><span>线下活动</span></div>
+                  <p class="news-summary">这次圆桌会给出 5 个常用表达模板，学生可以带一个自己熟悉的地点或习俗来现场练习。</p>
                   <div class="tag-row"><span>中外交流</span><span>表达练习</span><span>活动报名</span></div>
+                  <div class="news-footer"><span>15 人已预约</span><span>剩余 9 个名额</span></div>
                 </div>
               </article>
 
               <article class="story-card">
                 <div class="story-cover red">
                   <span>研学路线</span>
-                  <strong>把路线拆成主题、行程与收获</strong>
+                  <strong>半日研学路线：从西关街区看岭南商业文化</strong>
                 </div>
                 <div class="story-body">
-                  <h3>内容详情</h3>
-                  <p>展示路线主题、站点安排、学习目标和安全说明，先让学生理解路线价值与参与条件。</p>
-                  <div class="detail-grid">
-                    <div class="detail-cell"><span>路线信息</span><strong>主题、站点、时间安排</strong></div>
-                    <div class="detail-cell"><span>学习收获</span><strong>文化记录与研学复盘</strong></div>
-                  </div>
+                  <h3>路线含永庆坊、骑楼街和老字号观察任务</h3>
+                  <div class="news-meta"><span>U Link 编辑部</span><span>8月21日</span><span>路线预告</span></div>
+                  <p class="news-summary">这条路线把城市文化和商业观察放在一起，学生完成打卡后可以提交一份短记录，作为文化交流材料。</p>
                   <div class="tag-row"><span>研学路线</span><span>文化记录</span><span>行程说明</span></div>
+                  <div class="news-footer"><span>可加入提醒</span><span>剩余 16 个名额</span></div>
                 </div>
               </article>
             </section>
