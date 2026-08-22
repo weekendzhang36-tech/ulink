@@ -766,6 +766,56 @@
         line-height: 1.35;
       }
 
+      .module-detail-header {
+        padding: 18px 16px;
+        border-radius: 22px;
+        background: #fff;
+      }
+
+      .module-detail-header h2 {
+        margin-top: 8px;
+        font-size: 30px;
+      }
+
+      .module-detail-header p {
+        margin: 8px 0 0;
+        color: var(--secondary);
+        font-size: 14px;
+        line-height: 1.45;
+      }
+
+      .module-detail-list {
+        overflow: hidden;
+        margin-top: 16px;
+        border-radius: 18px;
+        background: #fff;
+      }
+
+      .module-detail-item {
+        min-height: 58px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 0 16px;
+      }
+
+      .module-detail-item + .module-detail-item {
+        border-top: 1px solid var(--separator);
+      }
+
+      .module-detail-item strong {
+        font-size: 16px;
+        line-height: 1.25;
+      }
+
+      .module-detail-note {
+        margin: 12px 4px 0;
+        color: var(--tertiary);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
       .status-pill {
         display: inline-flex;
         align-items: center;
@@ -1340,22 +1390,22 @@
             </div>
 
             <section class="content-grid" aria-label="U Link 成长服务模块">
-              <button class="content-card" type="button" data-action="open-content">
+              <button class="content-card" type="button" data-screen-target="career-planning">
                 <span class="content-dot blue">规</span>
                 <strong>职业规划</strong>
                 <small>测评、规划、简历与课程支持</small>
               </button>
-              <button class="content-card" type="button" data-action="open-content">
+              <button class="content-card" type="button" data-screen-target="practice">
                 <span class="content-dot green">践</span>
                 <strong>实习实践</strong>
                 <small>实训营、岗位介绍与实践机会</small>
               </button>
-              <button class="content-card" type="button" data-action="open-content">
+              <button class="content-card" type="button" data-screen-target="finance-foundation">
                 <span class="content-dot orange">融</span>
                 <strong>金融底色</strong>
                 <small>金融沙龙、财商课与机构资源</small>
               </button>
-              <button class="content-card" type="button" data-action="open-content">
+              <button class="content-card" type="button" data-screen-target="culture-exchange">
                 <span class="content-dot red">文</span>
                 <strong>文化交流</strong>
                 <small>非遗文化、中外交流与研学路线</small>
@@ -1401,6 +1451,99 @@
             <button type="button">内容</button>
             <button type="button" data-screen-target="mine">我的</button>
           </nav>
+        </section>
+
+        <section class="screen" data-screen="career-planning" aria-labelledby="career-planning-title">
+          <div class="screen-scroll">
+            <section class="module-detail-header">
+              <span class="hero-meta">成长模块</span>
+              <h2 id="career-planning-title">职业规划</h2>
+              <p>围绕测评、规划、简历与课程支持，帮助学生先看清方向。</p>
+            </section>
+
+            <section class="module-detail-list" aria-label="职业规划内容">
+              <div class="module-detail-item"><strong>测评</strong><span class="chevron">›</span></div>
+              <div class="module-detail-item"><strong>规划</strong><span class="chevron">›</span></div>
+              <div class="module-detail-item"><strong>简历</strong><span class="chevron">›</span></div>
+              <div class="module-detail-item"><strong>课程支持</strong><span class="chevron">›</span></div>
+            </section>
+
+            <p class="module-detail-note">具体服务按实际开放情况展示。</p>
+          </div>
+
+          <div class="bottom-bar two-actions">
+            <button class="secondary-button" type="button" data-screen-target="home">返回首页</button>
+            <button class="primary-button" type="button" data-action="open-service">预约咨询</button>
+          </div>
+        </section>
+
+        <section class="screen" data-screen="practice" aria-labelledby="practice-title">
+          <div class="screen-scroll">
+            <section class="module-detail-header">
+              <span class="hero-meta">成长模块</span>
+              <h2 id="practice-title">实习实践</h2>
+              <p>围绕实训营、岗位介绍与实践机会，帮助学生了解真实场景。</p>
+            </section>
+
+            <section class="module-detail-list" aria-label="实习实践内容">
+              <div class="module-detail-item"><strong>实训营</strong><span class="chevron">›</span></div>
+              <div class="module-detail-item"><strong>岗位介绍</strong><span class="chevron">›</span></div>
+              <div class="module-detail-item"><strong>实践机会</strong><span class="chevron">›</span></div>
+            </section>
+
+            <p class="module-detail-note">具体活动和机会按实际开放情况展示。</p>
+          </div>
+
+          <div class="bottom-bar two-actions">
+            <button class="secondary-button" type="button" data-screen-target="home">返回首页</button>
+            <button class="primary-button" type="button" data-action="open-service">预约咨询</button>
+          </div>
+        </section>
+
+        <section class="screen" data-screen="finance-foundation" aria-labelledby="finance-foundation-title">
+          <div class="screen-scroll">
+            <section class="module-detail-header">
+              <span class="hero-meta">成长模块</span>
+              <h2 id="finance-foundation-title">金融底色</h2>
+              <p>围绕金融沙龙、财商课与机构资源，呈现 U Link 的金融方向基础。</p>
+            </section>
+
+            <section class="module-detail-list" aria-label="金融底色内容">
+              <div class="module-detail-item"><strong>金融沙龙</strong><span class="chevron">›</span></div>
+              <div class="module-detail-item"><strong>财商课</strong><span class="chevron">›</span></div>
+              <div class="module-detail-item"><strong>机构资源</strong><span class="chevron">›</span></div>
+            </section>
+
+            <p class="module-detail-note">具体内容按实际开放情况展示。</p>
+          </div>
+
+          <div class="bottom-bar two-actions">
+            <button class="secondary-button" type="button" data-screen-target="home">返回首页</button>
+            <button class="primary-button" type="button" data-action="open-service">预约咨询</button>
+          </div>
+        </section>
+
+        <section class="screen" data-screen="culture-exchange" aria-labelledby="culture-exchange-title">
+          <div class="screen-scroll">
+            <section class="module-detail-header">
+              <span class="hero-meta">成长模块</span>
+              <h2 id="culture-exchange-title">文化交流</h2>
+              <p>围绕非遗文化、中外交流与研学路线，预留本土与世界连接入口。</p>
+            </section>
+
+            <section class="module-detail-list" aria-label="文化交流内容">
+              <div class="module-detail-item"><strong>非遗文化</strong><span class="chevron">›</span></div>
+              <div class="module-detail-item"><strong>中外交流</strong><span class="chevron">›</span></div>
+              <div class="module-detail-item"><strong>研学路线</strong><span class="chevron">›</span></div>
+            </section>
+
+            <p class="module-detail-note">具体路线和活动按实际开放情况展示。</p>
+          </div>
+
+          <div class="bottom-bar two-actions">
+            <button class="secondary-button" type="button" data-screen-target="home">返回首页</button>
+            <button class="primary-button" type="button" data-action="open-service">预约咨询</button>
+          </div>
         </section>
 
         <section class="screen" data-screen="mine" aria-labelledby="mine-title">
@@ -1525,6 +1668,10 @@
         profile: "学生认证",
         submitted: "资料已提交",
         home: "U Link",
+        "career-planning": "职业规划",
+        practice: "实习实践",
+        "finance-foundation": "金融底色",
+        "culture-exchange": "文化交流",
         mine: "我的",
         review: "学生认证管理",
       };
