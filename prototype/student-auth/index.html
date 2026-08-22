@@ -903,6 +903,21 @@
 
       .story-card {
         overflow: hidden;
+        width: 100%;
+        color: var(--label);
+        text-align: left;
+        transition:
+          transform 140ms ease,
+          box-shadow 140ms ease;
+      }
+
+      .story-card:active {
+        transform: scale(0.992);
+      }
+
+      .story-card:focus-visible {
+        outline: 3px solid rgba(0, 122, 255, 0.3);
+        outline-offset: 3px;
       }
 
       .story-cover {
@@ -997,6 +1012,49 @@
         border-radius: 12px;
         background: rgba(0, 122, 255, 0.08);
         color: var(--blue);
+      }
+
+      .article-hero,
+      .article-body-card,
+      .article-info-card {
+        padding: 16px;
+        border-radius: 20px;
+        background: #fff;
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
+      }
+
+      .article-hero h2 {
+        margin: 10px 0 0;
+        font-size: 25px;
+        line-height: 1.16;
+      }
+
+      .article-lead {
+        margin: 12px 0 0;
+        color: var(--secondary);
+        font-size: 15px;
+        line-height: 1.55;
+      }
+
+      .article-body-card,
+      .article-info-card {
+        margin-top: 12px;
+      }
+
+      .article-body-card h3 {
+        margin: 0 0 8px;
+        font-size: 18px;
+      }
+
+      .article-body-card h3:not(:first-child) {
+        margin-top: 18px;
+      }
+
+      .article-body-card p {
+        margin: 0;
+        color: var(--secondary);
+        font-size: 14px;
+        line-height: 1.6;
       }
 
       .detail-grid {
@@ -1790,7 +1848,7 @@
             </div>
 
             <section class="story-stack" aria-label="职业规划自有内容">
-              <article class="story-card">
+              <button class="story-card" type="button" data-action="open-article" data-article-id="career-direction">
                 <div class="story-cover blue">
                   <span>规划</span>
                   <strong>大一先别急着投简历：先把目标岗位看明白</strong>
@@ -1802,9 +1860,9 @@
                   <div class="tag-row"><span>职业方向</span><span>四年节奏</span><span>咨询入口</span></div>
                   <div class="news-footer"><span>适合大一大二</span><span>126 人读过</span></div>
                 </div>
-              </article>
+              </button>
 
-              <article class="story-card">
+              <button class="story-card" type="button" data-action="open-article" data-article-id="career-course">
                 <div class="story-cover blue">
                   <span>课程支持</span>
                   <strong>本周更新：简历前置课与表达训练清单</strong>
@@ -1816,7 +1874,7 @@
                   <div class="tag-row"><span>课程支持</span><span>能力提升</span><span>记录成长</span></div>
                   <div class="news-footer"><span>42 人已收藏</span><span>可预约咨询</span></div>
                 </div>
-              </article>
+              </button>
             </section>
           </div>
 
@@ -1839,7 +1897,7 @@
             </div>
 
             <section class="story-stack" aria-label="实习实践自有内容">
-              <article class="story-card">
+              <button class="story-card" type="button" data-action="open-article" data-article-id="practice-camp">
                 <div class="story-cover green">
                   <span>实训营</span>
                   <strong>下周三｜金融岗位模拟实训营开放报名</strong>
@@ -1851,9 +1909,9 @@
                   <div class="tag-row"><span>实训营</span><span>真实任务</span><span>成果记录</span></div>
                   <div class="news-footer"><span>36 人已预约</span><span>剩余 14 个名额</span></div>
                 </div>
-              </article>
+              </button>
 
-              <article class="story-card">
+              <button class="story-card" type="button" data-action="open-article" data-article-id="practice-role">
                 <div class="story-cover green">
                   <span>岗位介绍</span>
                   <strong>本周五｜银行管培生一天在做什么</strong>
@@ -1865,9 +1923,9 @@
                   <div class="tag-row"><span>岗位介绍</span><span>能力要求</span><span>面试准备</span></div>
                   <div class="news-footer"><span>适合先了解</span><span>89 人读过</span></div>
                 </div>
-              </article>
+              </button>
 
-              <article class="story-card">
+              <button class="story-card" type="button" data-action="open-article" data-article-id="practice-assistant">
                 <div class="story-cover green">
                   <span>实践机会</span>
                   <strong>校内项目助理招募：活动签到与资料整理</strong>
@@ -1879,7 +1937,7 @@
                   <div class="tag-row"><span>实践机会</span><span>报名入口</span><span>状态清晰</span></div>
                   <div class="news-footer"><span>18 人已预约</span><span>剩余 8 个名额</span></div>
                 </div>
-              </article>
+              </button>
             </section>
           </div>
 
@@ -1902,7 +1960,7 @@
             </div>
 
             <section class="story-stack" aria-label="金融底色自有内容">
-              <article class="story-card">
+              <button class="story-card" type="button" data-action="open-article" data-article-id="finance-salon">
                 <div class="story-cover orange">
                   <span>金融沙龙</span>
                   <strong>周六下午｜青年金融沙龙：从校园到银行网点</strong>
@@ -1914,9 +1972,9 @@
                   <div class="tag-row"><span>金融沙龙</span><span>行业交流</span><span>线下活动</span></div>
                   <div class="news-footer"><span>28 人已预约</span><span>剩余 12 个名额</span></div>
                 </div>
-              </article>
+              </button>
 
-              <article class="story-card">
+              <button class="story-card" type="button" data-action="open-article" data-article-id="finance-budget">
                 <div class="story-cover orange">
                   <span>财商课</span>
                   <strong>新生财商课：生活费怎么做第一张预算表</strong>
@@ -1928,9 +1986,9 @@
                   <div class="tag-row"><span>财商课</span><span>风险意识</span><span>生活金融</span></div>
                   <div class="news-footer"><span>适合新生</span><span>3 分钟阅读</span></div>
                 </div>
-              </article>
+              </button>
 
-              <article class="story-card">
+              <button class="story-card" type="button" data-action="open-article" data-article-id="finance-institution">
                 <div class="story-cover orange">
                   <span>机构资源</span>
                   <strong>机构观察｜证券营业部适合哪些学生先了解</strong>
@@ -1942,7 +2000,7 @@
                   <div class="tag-row"><span>机构资源</span><span>方向筛选</span><span>咨询入口</span></div>
                   <div class="news-footer"><span>63 人读过</span><span>可预约咨询</span></div>
                 </div>
-              </article>
+              </button>
             </section>
           </div>
 
@@ -1965,7 +2023,7 @@
             </div>
 
             <section class="story-stack" aria-label="文化交流自有内容">
-              <article class="story-card">
+              <button class="story-card" type="button" data-action="open-article" data-article-id="culture-heritage">
                 <div class="story-cover red">
                   <span>非遗文化</span>
                   <strong>周日体验｜广府非遗香云纱小课堂开放预约</strong>
@@ -1977,9 +2035,9 @@
                   <div class="tag-row"><span>非遗文化</span><span>线下体验</span><span>文化表达</span></div>
                   <div class="news-footer"><span>22 人已预约</span><span>剩余 10 个名额</span></div>
                 </div>
-              </article>
+              </button>
 
-              <article class="story-card">
+              <button class="story-card" type="button" data-action="open-article" data-article-id="culture-roundtable">
                 <div class="story-cover red">
                   <span>中外交流</span>
                   <strong>英语圆桌｜如何向外国朋友介绍你的城市</strong>
@@ -1991,9 +2049,9 @@
                   <div class="tag-row"><span>中外交流</span><span>表达练习</span><span>活动报名</span></div>
                   <div class="news-footer"><span>15 人已预约</span><span>剩余 9 个名额</span></div>
                 </div>
-              </article>
+              </button>
 
-              <article class="story-card">
+              <button class="story-card" type="button" data-action="open-article" data-article-id="culture-route">
                 <div class="story-cover red">
                   <span>研学路线</span>
                   <strong>半日研学路线：从西关街区看岭南商业文化</strong>
@@ -2005,12 +2063,44 @@
                   <div class="tag-row"><span>研学路线</span><span>文化记录</span><span>行程说明</span></div>
                   <div class="news-footer"><span>可加入提醒</span><span>剩余 16 个名额</span></div>
                 </div>
-              </article>
+              </button>
             </section>
           </div>
 
           <div class="bottom-bar two-actions">
             <button class="secondary-button" type="button" data-screen-target="home">返回首页</button>
+            <button class="primary-button" type="button" data-action="open-service">预约咨询</button>
+          </div>
+        </section>
+
+        <section class="screen" data-screen="article-detail" aria-labelledby="article-detail-title">
+          <div class="screen-scroll">
+            <section class="article-hero">
+              <span class="hero-meta" data-article-kicker>成长内容</span>
+              <h2 id="article-detail-title" data-article-title>内容标题</h2>
+              <div class="news-meta" data-article-meta></div>
+              <p class="article-lead" data-article-summary></p>
+              <div class="tag-row" data-article-tags></div>
+            </section>
+
+            <section class="article-body-card" data-article-body aria-label="正文"></section>
+
+            <section class="article-info-card" aria-label="参与信息">
+              <div class="detail-grid">
+                <div class="detail-cell">
+                  <span>当前状态</span>
+                  <strong data-article-status></strong>
+                </div>
+                <div class="detail-cell">
+                  <span>下一步</span>
+                  <strong data-article-next-step></strong>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <div class="bottom-bar two-actions">
+            <button class="secondary-button" type="button" data-action="article-back">返回列表</button>
             <button class="primary-button" type="button" data-action="open-service">预约咨询</button>
           </div>
         </section>
@@ -2215,11 +2305,181 @@
         "culture-exchange": "文化交流",
         mine: "我的",
         review: "学生认证管理",
+        "article-detail": "详情",
+      };
+
+      const articles = {
+        "career-direction": {
+          returnScreen: "career-planning",
+          kicker: "职业规划",
+          title: "从银行、券商到资管，金融学生常见方向怎么选？",
+          meta: ["8月22日", "3 分钟阅读"],
+          summary: "用一篇短内容先把金融岗位的大方向讲清楚，帮助学生判断自己想继续了解哪条路径。",
+          tags: ["职业方向", "四年节奏", "咨询入口"],
+          status: "适合大一大二先阅读",
+          nextStep: "读完可预约一次方向梳理",
+          sections: [
+            ["先看三类入口", "银行方向更接近日常客户服务、网点运营和基础风控；券商方向更强调市场理解、产品表达和客户沟通；资管方向更看重研究习惯、数据意识和长期学习能力。"],
+            ["大学四年怎么准备", "大一可以先补金融常识和表达能力，大二开始参加沙龙、课程或校内项目，大三再根据目标岗位准备实习材料，大四集中做简历和面试复盘。"],
+            ["读完后的动作", "如果还分不清自己适合哪类岗位，可以把当前专业、经历和性格偏好带到咨询里，由指导老师帮你把方向缩小到 1 到 2 条。"],
+          ],
+        },
+        "career-course": {
+          returnScreen: "career-planning",
+          kicker: "课程支持",
+          title: "如果以后要投实习，现在可以先补哪几项能力？",
+          meta: ["8月21日", "3 分钟阅读"],
+          summary: "把简历材料、项目复盘、面试表达和基础金融常识拆成可执行的准备清单。",
+          tags: ["课程支持", "能力提升", "记录成长"],
+          status: "适合想提前准备的同学",
+          nextStep: "可收藏清单或预约咨询",
+          sections: [
+            ["第一项是材料意识", "不要等到投递前才整理经历。平时参加课程、活动、项目时，就可以记录自己做了什么、产出了什么、遇到什么问题。"],
+            ["第二项是表达训练", "金融岗位常见面试不会只看证书，也会看你能不能把一个问题讲清楚。可以先练习 1 分钟自我介绍、经历复盘和观点表达。"],
+            ["第三项是基础常识", "预算、利率、风险、客户画像、产品适配等概念不需要一开始学得很深，但要能用生活例子说清楚。"],
+          ],
+        },
+        "practice-camp": {
+          returnScreen: "practice",
+          kicker: "实训营",
+          title: "2 小时体验一次“客户资料整理 + 风险提示”任务",
+          meta: ["8月22日", "活动报名"],
+          summary: "面向还没有实习经验的同学，现场完成模拟客户资料整理、问题提炼和汇报表达。",
+          tags: ["实训营", "真实任务", "成果记录"],
+          status: "36 人已预约，剩余 14 个名额",
+          nextStep: "预约后等待活动提醒",
+          sections: [
+            ["现场会做什么", "学生会拿到一份模拟客户资料，包括基本信息、资金安排和风险偏好。任务不是销售产品，而是先学会整理信息、发现问题、提出提醒。"],
+            ["为什么适合新手", "这个练习不要求已有实习经验。它更像一次岗位体验，让学生知道金融机构里的基础工作并不神秘，很多能力可以从细节开始练。"],
+            ["结束后有什么", "完成任务的同学可以获得一次实践记录，后续用于简历素材整理或咨询复盘。"],
+          ],
+        },
+        "practice-role": {
+          returnScreen: "practice",
+          kicker: "岗位介绍",
+          title: "从晨会、客户跟进到材料复盘，拆开看真实工作",
+          meta: ["8月22日", "3 分钟阅读"],
+          summary: "用一天时间线说明银行管培生会接触哪些任务，适合什么性格和能力基础。",
+          tags: ["岗位介绍", "能力要求", "面试准备"],
+          status: "适合先了解岗位日常",
+          nextStep: "读完可继续看实训营",
+          sections: [
+            ["早上通常先同步信息", "很多岗位一天从晨会开始，关注业务目标、客户情况和当天重点事项。学生可以从这里理解组织协作和信息同步的重要性。"],
+            ["白天会处理具体任务", "客户跟进、资料补充、系统录入、活动支持和问题记录都可能出现。新人不一定一开始做复杂判断，但要稳、细、会反馈。"],
+            ["复盘决定成长速度", "一天结束后，把遇到的问题和表达不清的地方记录下来，比单纯完成任务更重要。"],
+          ],
+        },
+        "practice-assistant": {
+          returnScreen: "practice",
+          kicker: "实践机会",
+          title: "适合第一次参与 U Link 活动服务的同学",
+          meta: ["8月20日", "报名中"],
+          summary: "招募项目助理协助线下沙龙签到、物料整理和现场记录，结束后可获得实践记录。",
+          tags: ["实践机会", "报名入口", "状态清晰"],
+          status: "18 人已预约，剩余 8 个名额",
+          nextStep: "预约后确认时间安排",
+          sections: [
+            ["岗位要做什么", "项目助理主要负责活动前物料检查、现场签到、照片记录和结束后的资料整理。工作不复杂，但很考验准时、细心和沟通。"],
+            ["能获得什么", "学生可以了解一场线下活动从准备到复盘的全过程，也可以把服务经历沉淀成简历里的组织协作素材。"],
+            ["适合哪些同学", "适合还没有实习经历、但愿意先从校园项目开始积累真实协作经验的同学。"],
+          ],
+        },
+        "finance-salon": {
+          returnScreen: "finance-foundation",
+          kicker: "金融沙龙",
+          title: "邀请在职学长聊一线岗位、客户沟通和新人适应",
+          meta: ["8月22日", "线下活动"],
+          summary: "沙龙围绕银行网点、客户经理和运营岗位展开，适合想先听真实经历的同学。",
+          tags: ["金融沙龙", "行业交流", "线下活动"],
+          status: "28 人已预约，剩余 12 个名额",
+          nextStep: "预约后获取活动地点",
+          sections: [
+            ["这场沙龙聊什么", "嘉宾会从真实工作场景出发，讲客户沟通、网点运营、新人适应和岗位选择，不做空泛职业鸡汤。"],
+            ["为什么值得参加", "很多学生对金融岗位的印象停留在名称上，听过一线经历后，会更容易判断自己是否想继续了解。"],
+            ["现场可以怎么准备", "建议提前带一个问题，例如岗位压力、日常任务、需要提前补什么能力，现场交流会更有效。"],
+          ],
+        },
+        "finance-budget": {
+          returnScreen: "finance-foundation",
+          kicker: "财商课",
+          title: "先学会记录支出，再谈储蓄、理财和风险意识",
+          meta: ["8月22日", "3 分钟阅读"],
+          summary: "用一张月度预算表讲清楚必要支出、弹性支出和风险提醒。",
+          tags: ["财商课", "风险意识", "生活金融"],
+          status: "适合新生阅读",
+          nextStep: "可预约财商课提醒",
+          sections: [
+            ["第一步不是理财", "刚开始管理生活费时，最重要的是知道钱花到哪里。先分清餐饮、交通、学习、社交和临时支出，再谈储蓄目标。"],
+            ["预算表怎么用", "每个月先写出固定支出，再给弹性支出设上限。不是为了限制生活，而是避免月底才发现自己没有余量。"],
+            ["风险意识从生活开始", "不要轻易参与不清楚来源的投资、借贷或高收益承诺。能看懂风险，是金融底色的一部分。"],
+          ],
+        },
+        "finance-institution": {
+          returnScreen: "finance-foundation",
+          kicker: "机构资源",
+          title: "从投资顾问助理、客户服务到合规基础，先看入口",
+          meta: ["8月21日", "4 分钟阅读"],
+          summary: "整理证券营业部常见岗位和适合的准备方向，帮助学生判断要不要继续咨询。",
+          tags: ["机构资源", "方向筛选", "咨询入口"],
+          status: "63 人读过，可预约咨询",
+          nextStep: "带着目标岗位继续咨询",
+          sections: [
+            ["营业部有哪些入口", "常见入口包括客户服务、投资顾问助理、运营支持和合规基础岗位。不同岗位对表达、细心程度和市场理解的要求不一样。"],
+            ["学生可以先准备什么", "先了解证券基础知识、客户沟通场景和基础合规要求，再通过沙龙或咨询判断自己是否适合继续深入。"],
+            ["不要只看岗位名称", "同一个机构里，不同岗位的日常差异很大。看清任务和能力要求，比只看头衔更重要。"],
+          ],
+        },
+        "culture-heritage": {
+          returnScreen: "culture-exchange",
+          kicker: "非遗文化",
+          title: "从一块布料开始理解本土工艺和城市记忆",
+          meta: ["8月22日", "活动报名"],
+          summary: "用短讲解加手作体验介绍香云纱工艺，适合参加文化体验或准备交流话题的同学。",
+          tags: ["非遗文化", "线下体验", "文化表达"],
+          status: "22 人已预约，剩余 10 个名额",
+          nextStep: "预约后确认体验场次",
+          sections: [
+            ["活动会体验什么", "学生会先了解香云纱的制作背景，再通过材料观察和简单手作理解工艺特点。重点不是做复杂作品，而是知道如何讲清楚一种本土文化。"],
+            ["为什么放在成长模块里", "文化交流不只是旅游打卡，也包括把自己熟悉的城市、工艺和生活方式表达出来。"],
+            ["适合哪些同学", "适合想参加线下体验、准备中外交流话题，或希望给个人经历增加文化表达素材的同学。"],
+          ],
+        },
+        "culture-roundtable": {
+          returnScreen: "culture-exchange",
+          kicker: "中外交流",
+          title: "不用很高级的词，也能把本土文化讲清楚",
+          meta: ["8月22日", "线下活动"],
+          summary: "提供 5 个常用表达模板，学生带一个熟悉地点或习俗来现场练习。",
+          tags: ["中外交流", "表达练习", "活动报名"],
+          status: "15 人已预约，剩余 9 个名额",
+          nextStep: "预约后准备一个介绍主题",
+          sections: [
+            ["圆桌怎么进行", "每位同学选择一个熟悉的地点、节日或生活习惯，用简单英文完成 1 分钟介绍，再和同伴互相提问。"],
+            ["为什么不追求高级表达", "交流的第一步是把意思讲清楚。比起堆复杂词，结构清楚、例子具体更重要。"],
+            ["现场会给什么支持", "活动会提供开头、转折、举例和邀请提问的表达模板，帮助学生快速组织内容。"],
+          ],
+        },
+        "culture-route": {
+          returnScreen: "culture-exchange",
+          kicker: "研学路线",
+          title: "路线含永庆坊、骑楼街和老字号观察任务",
+          meta: ["8月21日", "路线预告"],
+          summary: "半日路线把城市文化和商业观察放在一起，完成后可提交一份短记录。",
+          tags: ["研学路线", "文化记录", "行程说明"],
+          status: "可加入提醒，剩余 16 个名额",
+          nextStep: "加入提醒后等待成团通知",
+          sections: [
+            ["路线看什么", "路线会经过永庆坊、骑楼街和几家老字号，观察建筑、商业形态和本地生活方式之间的关系。"],
+            ["任务怎么完成", "学生需要记录一个店铺、一个空间和一个人物观察，最后整理成 200 字左右的短记录。"],
+            ["为什么和金融有关", "城市商业文化里也有消费、品牌、客群和运营逻辑。研学不是单纯游览，而是训练观察和表达。"],
+          ],
+        },
       };
 
       const historyStack = ["login"];
       const toast = document.querySelector(".toast");
       let wechatPhoneAuthorized = false;
+      let articleReturnScreen = "home";
 
       function showToast(message) {
         toast.textContent = message;
@@ -2271,6 +2531,37 @@
         }
       }
 
+      function openArticle(articleId) {
+        const article = articles[articleId];
+        if (!article) {
+          showToast("内容暂未开放");
+          return;
+        }
+
+        articleReturnScreen = article.returnScreen;
+        document.querySelector("[data-article-kicker]").textContent = article.kicker;
+        document.querySelector("[data-article-title]").textContent = article.title;
+        document.querySelector("[data-article-meta]").innerHTML = article.meta.map((item) => `<span>${item}</span>`).join("");
+        document.querySelector("[data-article-summary]").textContent = article.summary;
+        document.querySelector("[data-article-tags]").innerHTML = article.tags.map((tag) => `<span>${tag}</span>`).join("");
+        document.querySelector("[data-article-status]").textContent = article.status;
+        document.querySelector("[data-article-next-step]").textContent = article.nextStep;
+
+        const body = document.querySelector("[data-article-body]");
+        body.innerHTML = "";
+        article.sections.forEach(([heading, paragraph]) => {
+          const headingNode = document.createElement("h3");
+          headingNode.textContent = heading;
+          const paragraphNode = document.createElement("p");
+          paragraphNode.textContent = paragraph;
+          body.append(headingNode, paragraphNode);
+        });
+
+        setScreen("article-detail");
+        document.querySelector("[data-nav-title]").textContent = article.kicker;
+        document.querySelector("[data-screen='article-detail'] .screen-scroll").scrollTop = 0;
+      }
+
       function goBack() {
         if (historyStack.length <= 1) {
           setScreen("login", false);
@@ -2298,6 +2589,19 @@
         if (!actionButton) return;
 
         const action = actionButton.dataset.action;
+
+        if (action === "open-article") {
+          openArticle(actionButton.dataset.articleId);
+          return;
+        }
+
+        if (action === "article-back") {
+          if (historyStack[historyStack.length - 1] === "article-detail") {
+            historyStack.pop();
+          }
+          setScreen(articleReturnScreen, false);
+          return;
+        }
 
         if (action === "login") {
           setScreen("profile");

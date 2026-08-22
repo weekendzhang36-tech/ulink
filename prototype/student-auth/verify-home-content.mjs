@@ -40,6 +40,19 @@ const standaloneScreens = [
     copy: ["简历服务占位图", "简历编辑与预览由服务方提供", "服务方页面占位"],
   },
 ];
+const articleIds = [
+  "career-direction",
+  "career-course",
+  "practice-camp",
+  "practice-role",
+  "practice-assistant",
+  "finance-salon",
+  "finance-budget",
+  "finance-institution",
+  "culture-heritage",
+  "culture-roundtable",
+  "culture-route",
+];
 
 const requiredCopy = [
   "职业规划",
@@ -94,12 +107,16 @@ const forbiddenDetailCopy = [
 const requiredMineCopy = ["个人信息", "协议与隐私"];
 const requiredMineMarkup = ['class="ios-list settings-list"', ".settings-list button", "grid-template-columns: minmax(0, 1fr) auto"];
 const forbiddenMineCopy = ["学生认证管理", 'class="count-badge">12'];
+const requiredArticleMarkup = ['data-screen="article-detail"', 'data-action="open-article"', 'data-action="article-back"', "const articles"];
 
 const missing = requiredCopy.filter((text) => !homeHtml.includes(text));
 const forbidden = forbiddenCopy.filter((text) => homeHtml.includes(text));
 const missingMineCopy = requiredMineCopy.filter((text) => !mineHtml.includes(text)).map((text) => `mine: ${text}`);
 const missingMineMarkup = requiredMineMarkup.filter((text) => !html.includes(text)).map((text) => `mine markup/style: ${text}`);
 const forbiddenMine = forbiddenMineCopy.filter((text) => mineHtml.includes(text)).map((text) => `mine: ${text}`);
+const missingArticleIds = articleIds.filter((id) => !html.includes(`data-article-id="${id}"`)).map((id) => `article card: ${id}`);
+const missingArticleData = articleIds.filter((id) => !html.includes(`"${id}":`)).map((id) => `article data: ${id}`);
+const missingArticleMarkup = requiredArticleMarkup.filter((text) => !html.includes(text)).map((text) => `article markup: ${text}`);
 const missingDetailTargets = detailScreens.filter((detail) => !homeHtml.includes(detail.cardTarget));
 const missingDetailCopy = detailScreens.flatMap((detail) => {
   const match = html.match(new RegExp(`<section class="screen" data-screen="${detail.screen}"[\\s\\S]*?<section class="screen" data-screen=`));
@@ -135,6 +152,9 @@ if (
   missingMineCopy.length > 0 ||
   missingMineMarkup.length > 0 ||
   forbiddenMine.length > 0 ||
+  missingArticleIds.length > 0 ||
+  missingArticleData.length > 0 ||
+  missingArticleMarkup.length > 0 ||
   missingDetailTargets.length > 0 ||
   missingDetailCopy.length > 0 ||
   detailForbidden.length > 0 ||
@@ -162,6 +182,18 @@ if (
 
   if (forbiddenMine.length > 0) {
     console.error(`Forbidden mine screen copy found: ${forbiddenMine.join(", ")}`);
+  }
+
+  if (missingArticleIds.length > 0) {
+    console.error(`Missing clickable article cards: ${missingArticleIds.join(", ")}`);
+  }
+
+  if (missingArticleData.length > 0) {
+    console.error(`Missing article detail data: ${missingArticleData.join(", ")}`);
+  }
+
+  if (missingArticleMarkup.length > 0) {
+    console.error(`Missing article detail markup: ${missingArticleMarkup.join(", ")}`);
   }
 
   if (missingDetailTargets.length > 0) {
