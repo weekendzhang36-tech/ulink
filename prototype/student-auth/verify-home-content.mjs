@@ -4,9 +4,10 @@ import { dirname, join } from "node:path";
 
 const currentDir = dirname(fileURLToPath(import.meta.url));
 const html = readFileSync(join(currentDir, "index.html"), "utf8");
+const homeMatch = html.match(/<section class="screen" data-screen="home"[\s\S]*?<section class="screen" data-screen="mine"/);
+const homeHtml = homeMatch?.[0] ?? "";
 
 const requiredCopy = [
-  "U Link 成长服务地图",
   "职业规划",
   "实习实践",
   "金融底色",
@@ -15,8 +16,10 @@ const requiredCopy = [
   "实训营、岗位介绍与实践机会",
   "金融沙龙、财商课与机构资源",
   "非遗文化、中外交流与研学路线",
+  "请等待认证完成",
+  "资料已提交，指导员确认后将开放更多成长服务",
+  "名学生待认证",
   "待认证",
-  "学生认证管理",
 ];
 
 const forbiddenCopy = [
@@ -30,12 +33,21 @@ const forbiddenCopy = [
   "行业认知",
   "岗位图谱",
   "财商投教",
+  "U Link 成长服务地图",
+  "从校园身份出发",
+  "先完成学生认证，再进入成长服务入口",
+  "我的认证状态",
+  "学生认证管理",
 ];
 
-const missing = requiredCopy.filter((text) => !html.includes(text));
-const forbidden = forbiddenCopy.filter((text) => html.includes(text));
+const missing = requiredCopy.filter((text) => !homeHtml.includes(text));
+const forbidden = forbiddenCopy.filter((text) => homeHtml.includes(text));
 
-if (missing.length > 0 || forbidden.length > 0) {
+if (!homeHtml || missing.length > 0 || forbidden.length > 0) {
+  if (!homeHtml) {
+    console.error("Home screen markup was not found.");
+  }
+
   if (missing.length > 0) {
     console.error(`Missing required home content: ${missing.join(", ")}`);
   }

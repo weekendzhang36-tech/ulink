@@ -1322,19 +1322,16 @@
 
         <section class="screen" data-screen="home" aria-labelledby="home-title">
           <div class="screen-scroll home-screen">
-            <div class="home-header">
-              <div>
-                <p class="eyebrow">U Link 友邻</p>
-                <h2 id="home-title">U Link 成长服务地图</h2>
-                <p class="home-subtitle">从校园身份出发，连接职业规划、实习实践、金融资源与文化交流。</p>
-              </div>
-              <span class="status-pill pending">待认证</span>
-            </div>
+            <section class="content-hero role-status-card" aria-label="学生认证状态" data-role-card="student">
+              <span class="hero-meta">待认证</span>
+              <strong id="home-title">请等待认证完成</strong>
+              <p>资料已提交，指导员确认后将开放更多成长服务。等待期间可先了解 U Link 的服务地图。</p>
+            </section>
 
-            <button class="content-hero" type="button" data-action="open-content">
-              <span class="hero-meta">当前阶段</span>
-              <strong>先完成学生认证，再进入成长服务入口</strong>
-              <p>第一阶段聚焦身份确认、职业发展服务和金融方向内容，更多模块逐步开放。</p>
+            <button class="content-hero role-status-card" type="button" data-role-card="instructor" data-screen-target="review" hidden>
+              <span class="hero-meta">指导员待办</span>
+              <strong>12 名学生待认证</strong>
+              <p>进入后可查看负责班级的学生资料，并进行批量确认或标记需确认。</p>
             </button>
 
             <div class="section-heading">
@@ -1397,21 +1394,6 @@
               </button>
             </section>
 
-            <section class="status-note" aria-label="我的认证状态">
-              <span>
-                <strong>我的认证状态</strong>
-                <small>资料已提交，可先浏览内容并等待指导员确认</small>
-              </span>
-              <span class="status-pill pending">待认证</span>
-            </section>
-
-            <button class="task-banner" type="button" data-screen-target="review">
-              <span>
-                <strong>学生认证管理</strong>
-                <small>12 名学生待认证，金融学 2026-1 班等 3 个班级</small>
-              </span>
-              <span class="chevron">›</span>
-            </button>
           </div>
 
           <nav class="tabbar" aria-label="底部导航">
@@ -1727,7 +1709,10 @@
 
         if (action === "approve-selected") {
           document.querySelector(".count-badge.large").textContent = "9";
-          document.querySelector(".task-banner small").textContent = "9 名学生待认证，金融学 2026-1 班等 3 个班级";
+          const instructorCard = document.querySelector("[data-role-card='instructor'] strong");
+          if (instructorCard) {
+            instructorCard.textContent = "9 名学生待认证";
+          }
           showToast("已确认选中学生");
         }
 
