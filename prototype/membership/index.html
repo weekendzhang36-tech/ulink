@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>U Link 会员卡小程序原型</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="stage">
+      <section class="phone" aria-label="U Link 会员卡小程序原型">
+        <header class="status-bar" aria-hidden="true">
+          <span>9:41</span>
+          <span>5G 100%</span>
+        </header>
+
+        <nav class="mini-nav" aria-label="小程序导航">
+          <button class="nav-close" type="button" aria-label="关闭">×</button>
+          <div>
+            <strong id="nav-title">套餐详情</strong>
+            <span>campus.link</span>
+          </div>
+          <button class="more-button" type="button" aria-label="更多">•••</button>
+        </nav>
+
+        <div class="app-switch" role="tablist" aria-label="视图切换">
+          <button class="app-tab app-tab-active" type="button" data-app-view="customer">用户页</button>
+          <button class="app-tab" type="button" data-app-view="admin">管理页</button>
+        </div>
+
+        <section class="app-view app-view-active" id="customer-view" aria-label="用户会员卡详情">
+          <div class="mobile-scroll customer-scroll">
+            <button class="back-title" type="button">‹ <span id="preview-shop">学院咖啡实训基地</span></button>
+            <img class="hero-image" src="./assets/cafe-hero.jpg" alt="学院咖啡实训基地空间照片" />
+
+            <section class="detail-card">
+              <div class="price-line">
+                <strong>¥ <span id="preview-price">100</span></strong>
+                <span>原价 ¥<span id="preview-origin">199</span></span>
+              </div>
+
+              <h1 id="preview-title">实训卡 workshop pass</h1>
+              <ol class="benefit-list" id="preview-benefits"></ol>
+
+              <div class="member-card">
+                <strong class="member-name" id="preview-card-name">金会员卡</strong>
+                <p class="member-value"><strong id="preview-value">10</strong><span id="preview-unit">次</span></p>
+                <span class="member-valid" id="preview-valid">有效期 180 天</span>
+                <span class="member-empty" aria-hidden="true"></span>
+              </div>
+
+              <img class="poster-image" src="./assets/menu-poster.jpg" alt="学院咖啡推荐菜单" />
+
+              <section class="usage-card" aria-label="使用规则">
+                <h2>使用规则</h2>
+                <div>
+                  <span>适用项目</span>
+                  <strong id="preview-service-items">任意饮品、轻食套餐、校园活动物料</strong>
+                </div>
+                <div>
+                  <span>核销方式</span>
+                  <strong id="preview-verify-method">管理员扫码核销</strong>
+                </div>
+                <div>
+                  <span>核销地点</span>
+                  <strong id="preview-verify-location">金鹏学院肇庆校区银信楼对面</strong>
+                </div>
+              </section>
+
+              <p class="support" id="preview-support">我是有底线的 · 提供技术支持</p>
+            </section>
+          </div>
+
+          <footer class="buy-bar">
+            <button class="share-button" type="button">分享</button>
+            <button class="pay-button" type="button">¥ <span id="preview-pay-price">100</span> <span id="preview-buy-text">立即购买</span></button>
+          </footer>
+        </section>
+
+        <section class="app-view" id="admin-view" aria-label="小程序管理页">
+          <div class="mobile-scroll admin-scroll">
+            <section class="admin-hero">
+              <p class="eyebrow">Admin</p>
+              <h1>会员卡管理</h1>
+              <p>管理员在小程序内完成配置、上架和核销设置。</p>
+            </section>
+
+            <nav class="admin-tabs" aria-label="管理模块">
+              <button class="admin-tab admin-tab-active" type="button" data-admin-panel="admins">管理员</button>
+              <button class="admin-tab" type="button" data-admin-panel="card">卡设置</button>
+              <button class="admin-tab" type="button" data-admin-panel="sale">售卖</button>
+              <button class="admin-tab" type="button" data-admin-panel="content">内容</button>
+              <button class="admin-tab" type="button" data-admin-panel="rules">核销</button>
+            </nav>
+
+            <section class="admin-panel admin-panel-active" id="admins-panel">
+              <div class="section-head">
+                <h2>管理员手机号</h2>
+                <span>3 位</span>
+              </div>
+              <div class="ios-group">
+                <label class="form-row" for="admin-phone">
+                  <span>新增手机号</span>
+                  <input id="admin-phone" type="tel" value="13800138000" inputmode="numeric" />
+                </label>
+                <label class="form-row" for="admin-role">
+                  <span>权限</span>
+                  <select id="admin-role">
+                    <option>店长，可配置与核销</option>
+                    <option>员工，仅核销</option>
+                    <option>运营，仅配置</option>
+                  </select>
+                </label>
+                <div class="form-row form-note-row">
+                  <span>入口规则</span>
+                  <p>微信登录后手机号命中管理员列表，即展示管理入口。</p>
+                </div>
+              </div>
+
+              <div class="admin-list">
+                <article>
+                  <div>
+                    <strong>138 0013 8000</strong>
+                    <span>店长，可配置与核销</span>
+                  </div>
+                  <button type="button">移除</button>
+                </article>
+                <article>
+                  <div>
+                    <strong>186 0000 2468</strong>
+                    <span>员工，仅核销</span>
+                  </div>
+                  <button type="button">移除</button>
+                </article>
+                <article>
+                  <div>
+                    <strong>159 0000 7788</strong>
+                    <span>运营，仅配置</span>
+                  </div>
+                  <button type="button">移除</button>
+                </article>
+              </div>
+              <button class="primary-action" type="button" id="add-admin-button">添加管理员</button>
+            </section>
+
+            <section class="admin-panel" id="card-panel">
+              <div class="section-head">
+                <h2>会员卡设置</h2>
+                <span id="card-type-status">次数卡</span>
+              </div>
+
+              <div class="type-switch" role="radiogroup" aria-label="会员卡类型">
+                <button class="type-card type-active" type="button" data-card-type="count">
+                  <span>次数卡</span>
+                  <strong>核销扣次数</strong>
+                </button>
+                <button class="type-card" type="button" data-card-type="balance">
+                  <span>充值卡</span>
+                  <strong>消费扣余额</strong>
+                </button>
+              </div>
+
+              <div class="ios-group">
+                <label class="form-row" for="shop-name">
+                  <span>门店名称</span>
+                  <input id="shop-name" type="text" value="学院咖啡实训基地" />
+                </label>
+                <label class="form-row" for="card-title">
+                  <span>卡名称</span>
+                  <input id="card-title" type="text" value="实训卡 workshop pass" />
+                </label>
+                <label class="form-row" for="card-face-name">
+                  <span>卡面名称</span>
+                  <input id="card-face-name" type="text" value="金会员卡" />
+                </label>
+                <label class="form-row" for="sale-price">
+                  <span>售价</span>
+                  <input id="sale-price" type="number" value="100" min="0" />
+                </label>
+                <label class="form-row" for="origin-price">
+                  <span>原价</span>
+                  <input id="origin-price" type="number" value="199" min="0" />
+                </label>
+                <label class="form-row count-setting" for="card-count">
+                  <span>可用次数</span>
+                  <input id="card-count" type="number" value="10" min="1" />
+                </label>
+                <label class="form-row count-setting" for="deduct-count">
+                  <span>每次扣减</span>
+                  <input id="deduct-count" type="number" value="1" min="1" />
+                </label>
+                <label class="form-row balance-setting hidden" for="card-balance">
+                  <span>充值金额</span>
+                  <input id="card-balance" type="number" value="120" min="1" />
+                </label>
+                <label class="form-row balance-setting hidden" for="deduct-mode">
+                  <span>扣款方式</span>
+                  <select id="deduct-mode">
+                    <option>核销时输入消费金额</option>
+                    <option>每次固定扣款</option>
+                  </select>
+                </label>
+                <label class="form-row" for="valid-days">
+                  <span>有效期</span>
+                  <input id="valid-days" type="number" value="180" min="1" />
+                </label>
+                <label class="form-row textarea-row" for="service-items">
+                  <span>适用项目</span>
+                  <textarea id="service-items" rows="3">任意饮品
+轻食套餐
+校园活动物料</textarea>
+                </label>
+              </div>
+            </section>
+
+            <section class="admin-panel" id="sale-panel">
+              <div class="section-head">
+                <h2>售卖设置</h2>
+                <span>上架中</span>
+              </div>
+              <div class="ios-group">
+                <label class="form-row" for="sale-status">
+                  <span>状态</span>
+                  <select id="sale-status">
+                    <option>上架中</option>
+                    <option>草稿</option>
+                    <option>已下架</option>
+                  </select>
+                </label>
+                <label class="form-row" for="sale-start">
+                  <span>开售</span>
+                  <input id="sale-start" type="datetime-local" value="2026-08-04T09:00" />
+                </label>
+                <label class="form-row" for="sale-end">
+                  <span>结束</span>
+                  <input id="sale-end" type="datetime-local" value="2026-09-30T23:59" />
+                </label>
+                <label class="form-row" for="stock">
+                  <span>库存</span>
+                  <input id="stock" type="number" value="200" min="0" />
+                </label>
+                <label class="form-row" for="limit-per-user">
+                  <span>限购</span>
+                  <input id="limit-per-user" type="number" value="1" min="1" />
+                </label>
+                <label class="form-row" for="buy-button-text">
+                  <span>按钮文案</span>
+                  <input id="buy-button-text" type="text" value="立即购买" />
+                </label>
+              </div>
+
+              <div class="switch-list">
+                <label class="switch-row">
+                  <input id="allow-gift" type="checkbox" checked />
+                  <span>允许转赠</span>
+                  <small>用户购买后可转赠给微信好友</small>
+                </label>
+                <label class="switch-row">
+                  <input id="allow-refund" type="checkbox" />
+                  <span>允许退款</span>
+                  <small>未核销时可发起退款申请</small>
+                </label>
+              </div>
+            </section>
+
+            <section class="admin-panel" id="content-panel">
+              <div class="section-head">
+                <h2>页面内容</h2>
+                <span>实时预览</span>
+              </div>
+              <div class="asset-card">
+                <img src="./assets/cafe-hero.jpg" alt="顶部图预览" />
+                <div>
+                  <strong>顶部图片</strong>
+                  <span>门店环境图，后续接小程序图片上传</span>
+                </div>
+              </div>
+              <div class="ios-group">
+                <label class="form-row textarea-row" for="benefits">
+                  <span>权益清单</span>
+                  <textarea id="benefits" rows="7">校园生活指南手册
+10杯饮品(任意饮品)
+送联通150G流量卡(内含100元话费)
+职业性格测评(MBTI、霍兰德AI加强版)
+建行金蜜蜂卡1元领饮品(满10减9)
+幸运抽奖(百分百中奖)</textarea>
+                </label>
+                <label class="form-row" for="share-title">
+                  <span>分享标题</span>
+                  <input id="share-title" type="text" value="学院咖啡实训卡限时开放" />
+                </label>
+                <label class="form-row" for="share-desc">
+                  <span>分享描述</span>
+                  <input id="share-desc" type="text" value="100 元解锁饮品、校园权益和抽奖福利" />
+                </label>
+                <label class="form-row" for="support-copy">
+                  <span>技术支持</span>
+                  <input id="support-copy" type="text" value="我是有底线的 · 提供技术支持" />
+                </label>
+              </div>
+              <div class="asset-card">
+                <img src="./assets/menu-poster.jpg" alt="详情长图预览" />
+                <div>
+                  <strong>详情长图</strong>
+                  <span>菜单、二维码、线下地址等图文说明</span>
+                </div>
+              </div>
+            </section>
+
+            <section class="admin-panel" id="rules-panel">
+              <div class="section-head">
+                <h2>核销规则</h2>
+                <span>门店使用</span>
+              </div>
+              <div class="ios-group">
+                <label class="form-row" for="verify-method">
+                  <span>核销方式</span>
+                  <select id="verify-method">
+                    <option>管理员扫码核销</option>
+                    <option>输入手机号核销</option>
+                    <option>扫码或手机号均可</option>
+                  </select>
+                </label>
+                <label class="form-row" for="verify-location">
+                  <span>核销地点</span>
+                  <input id="verify-location" type="text" value="金鹏学院肇庆校区银信楼对面" />
+                </label>
+                <label class="form-row" for="revoke-window">
+                  <span>撤销时限</span>
+                  <select id="revoke-window">
+                    <option>核销后 5 分钟内可撤销</option>
+                    <option>当天可撤销</option>
+                    <option>不可撤销</option>
+                  </select>
+                </label>
+                <label class="form-row" for="expire-action">
+                  <span>到期处理</span>
+                  <select id="expire-action">
+                    <option>到期后不可使用，余额/次数保留记录</option>
+                    <option>到期前 7 天提醒用户</option>
+                    <option>到期后自动延期 30 天</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="quick-actions">
+                <button type="button">扫码核销</button>
+                <button type="button">核销流水</button>
+              </div>
+            </section>
+          </div>
+
+          <footer class="admin-save-bar">
+            <button class="secondary-action" type="button" id="reset-button">重置</button>
+            <button class="primary-action" type="button" id="publish-button">保存配置</button>
+          </footer>
+        </section>
+      </section>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>

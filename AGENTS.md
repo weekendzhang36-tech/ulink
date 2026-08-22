@@ -1,0 +1,89 @@
+# AGENTS.md
+
+## Project Overview
+
+This is a new WeChat Mini Program project named `U Link`.
+
+The product is intended to use WeChat Mini Program as its primary carrier. The long-term direction is a youth growth ecosystem connecting campus, career, local culture, and international experiences. The MVP must stay focused on student login, paid membership, and finance-career content/services before expanding into the broader ecosystem.
+
+## Working Language
+
+- Use Chinese for product notes, user-facing copy, and collaboration summaries unless the user asks otherwise.
+- Code identifiers may use English where that is more idiomatic for the selected framework.
+
+## Current Project State
+
+- The repository is currently in the project bootstrap stage.
+- The MVP architecture direction is Tencent Cloud self-hosting with PayloadCMS as the first backend/admin system.
+- No package manager, database instance, deployment workflow, or CI workflow has been initialized yet.
+- Do not assume an existing code structure until it is created in this repository.
+- MVP product scope has been clarified in `docs/product.md`.
+- MVP architecture direction has been clarified in `docs/architecture.md`.
+
+## MVP Scope
+
+The first MVP should focus on a small, monetizable WeChat Mini Program loop:
+
+- Student login and mandatory profile completion through WeChat.
+- Lightweight student verification by class instructors.
+- Membership purchase and membership status management.
+- WeChat Pay integration for membership and paid offerings.
+- Content publishing for several finance-career categories.
+- Basic admin/operation capabilities for membership, content, orders, and payment status.
+
+Student identity and school data must be designed as a multi-school model. The first rollout may include only Guangdong University of Finance in the school list, but UI, data models, and copy must not imply that U Link is a mini program made specifically for that school.
+
+The following capabilities should be integrated through third-party services in the MVP instead of being built in-house:
+
+- Resume creation or resume optimization.
+- Career assessment / psychometric assessment.
+- Other specialist career-service workflows that already have suitable external providers.
+
+The following ecosystem modules are future expansion areas and should not dominate MVP implementation:
+
+- Intangible cultural heritage content and routes.
+- Study tour /研学 and cross-border cultural exchange.
+- Broader internship ecosystem beyond the initial finance-career track.
+- Entrepreneurship exits and large partner marketplace features.
+
+## Expected Platform
+
+- Primary client: WeChat Mini Program.
+- Preferred MVP client: native WeChat Mini Program (`miniprogram` with WXML/WXSS/JS/TS), unless later implementation constraints require a framework.
+- Preferred MVP backend/admin: one self-hosted PayloadCMS project on Tencent Cloud.
+- Preferred MVP database: PostgreSQL.
+- Preferred MVP file storage: Tencent Cloud COS.
+- Do not use WeChat Cloud Development as the primary business data store unless the user explicitly changes this decision.
+
+## Product Design Direction
+
+- Keep the product UI aligned with an Apple iOS-inspired visual style unless the user explicitly changes direction.
+- Prefer light system backgrounds, grouped white form sections, clear hierarchy, restrained rounded corners, subtle separators, and blue primary actions.
+- Favor practical Mini Program screens over marketing-style landing pages.
+- Avoid visual clutter, oversized decorative elements, heavy gradients, and one-off styling that does not match the iOS-like system direction.
+- Registration, onboarding, profile, settings, and form-heavy flows should feel especially close to iOS grouped forms.
+
+## Development Guidelines
+
+- Prefer small, reversible changes while the project shape is still emerging.
+- Keep project documentation updated when foundational decisions are made.
+- Avoid introducing large abstractions or cross-platform frameworks before the product requirements are clear.
+- Keep user privacy and campus/community data sensitivity in mind from the start.
+- Do not commit secrets, private keys, app IDs, tokens, database credentials, or WeChat platform credentials.
+
+## Documentation To Add Later
+
+When decisions are available, add or update:
+
+- `README.md`: product positioning, setup, development commands, and release notes.
+- `docs/wechat-mini-program.md`: WeChat Mini Program app ID handling, local development, preview, upload, and review process.
+- `docs/privacy-and-compliance.md`: user data, consent, retention, and compliance considerations.
+
+## Open Questions
+
+- Which finance-career categories should be shipped first?
+- Which third-party providers should be used for resume services and career assessment?
+- What exact membership packages, benefits, and prices should be used for launch?
+- What import format should be used for college, major, class, and instructor phone data?
+- Which Tencent Cloud deployment shape should be used first: CVM, Lighthouse, or container-based deployment?
+- What production domain names should be used for API and admin access?
