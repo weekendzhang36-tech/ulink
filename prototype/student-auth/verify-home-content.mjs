@@ -6,6 +6,8 @@ const currentDir = dirname(fileURLToPath(import.meta.url));
 const html = readFileSync(join(currentDir, "index.html"), "utf8");
 const homeMatch = html.match(/<section class="screen" data-screen="home"[\s\S]*?<section class="screen" data-screen="mine"/);
 const homeHtml = homeMatch?.[0] ?? "";
+const mineMatch = html.match(/<section class="screen" data-screen="mine"[\s\S]*?<section class="screen" data-screen="review"/);
+const mineHtml = mineMatch?.[0] ?? "";
 const detailScreens = [
   {
     screen: "career-planning",
@@ -87,9 +89,15 @@ const forbiddenDetailCopy = [
   "把可参与机会整理成清晰入口",
   "把行业问题带到线下交流场",
 ];
+const requiredMineCopy = ["个人信息", "协议与隐私"];
+const requiredMineMarkup = ['class="ios-list settings-list"', ".settings-list button", "grid-template-columns: minmax(0, 1fr) auto"];
+const forbiddenMineCopy = ["学生认证管理", 'class="count-badge">12'];
 
 const missing = requiredCopy.filter((text) => !homeHtml.includes(text));
 const forbidden = forbiddenCopy.filter((text) => homeHtml.includes(text));
+const missingMineCopy = requiredMineCopy.filter((text) => !mineHtml.includes(text)).map((text) => `mine: ${text}`);
+const missingMineMarkup = requiredMineMarkup.filter((text) => !html.includes(text)).map((text) => `mine markup/style: ${text}`);
+const forbiddenMine = forbiddenMineCopy.filter((text) => mineHtml.includes(text)).map((text) => `mine: ${text}`);
 const missingDetailTargets = detailScreens.filter((detail) => !homeHtml.includes(detail.cardTarget));
 const missingDetailCopy = detailScreens.flatMap((detail) => {
   const match = html.match(new RegExp(`<section class="screen" data-screen="${detail.screen}"[\\s\\S]*?<section class="screen" data-screen=`));
@@ -122,6 +130,9 @@ if (
   !homeHtml ||
   missing.length > 0 ||
   forbidden.length > 0 ||
+  missingMineCopy.length > 0 ||
+  missingMineMarkup.length > 0 ||
+  forbiddenMine.length > 0 ||
   missingDetailTargets.length > 0 ||
   missingDetailCopy.length > 0 ||
   detailForbidden.length > 0 ||
@@ -137,6 +148,18 @@ if (
 
   if (forbidden.length > 0) {
     console.error(`Forbidden membership purchase copy found: ${forbidden.join(", ")}`);
+  }
+
+  if (missingMineCopy.length > 0) {
+    console.error(`Missing mine screen copy: ${missingMineCopy.join(", ")}`);
+  }
+
+  if (missingMineMarkup.length > 0) {
+    console.error(`Missing mine screen layout guard: ${missingMineMarkup.join(", ")}`);
+  }
+
+  if (forbiddenMine.length > 0) {
+    console.error(`Forbidden mine screen copy found: ${forbiddenMine.join(", ")}`);
   }
 
   if (missingDetailTargets.length > 0) {
