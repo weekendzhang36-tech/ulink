@@ -532,8 +532,7 @@
         gap: 10px;
         padding: 12px 18px 30px;
         border-top: 1px solid rgba(60, 60, 67, 0.08);
-        background: rgba(242, 242, 247, 0.86);
-        backdrop-filter: blur(18px);
+        background: #f2f2f7;
       }
 
       .two-actions {
@@ -816,6 +815,226 @@
         line-height: 1.45;
       }
 
+      .service-stack,
+      .story-stack {
+        display: grid;
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      .service-card,
+      .story-card,
+      .placeholder-card {
+        border-radius: 20px;
+        background: #fff;
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
+      }
+
+      .service-card {
+        display: grid;
+        grid-template-columns: 78px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 14px;
+        width: 100%;
+        min-height: 112px;
+        padding: 14px;
+        color: var(--label);
+        text-align: left;
+      }
+
+      .service-visual {
+        height: 78px;
+        display: grid;
+        place-items: center;
+        border-radius: 16px;
+        background: #eef6ff;
+        color: var(--blue);
+        font-size: 28px;
+        font-weight: 900;
+      }
+
+      .service-card strong,
+      .story-card h3,
+      .placeholder-card h3 {
+        margin: 0;
+        font-size: 17px;
+        line-height: 1.25;
+      }
+
+      .service-card p,
+      .story-card p,
+      .placeholder-card p {
+        margin: 5px 0 0;
+        color: var(--secondary);
+        font-size: 13px;
+        line-height: 1.42;
+      }
+
+      .tag-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 10px;
+      }
+
+      .tag-row span {
+        height: 24px;
+        display: inline-flex;
+        align-items: center;
+        padding: 0 8px;
+        border-radius: 12px;
+        background: rgba(118, 118, 128, 0.12);
+        color: var(--secondary);
+        font-size: 12px;
+        font-weight: 750;
+      }
+
+      .story-card {
+        overflow: hidden;
+      }
+
+      .story-cover {
+        min-height: 86px;
+        display: grid;
+        align-content: end;
+        gap: 6px;
+        padding: 14px;
+        color: #fff;
+      }
+
+      .story-cover.blue {
+        background: linear-gradient(135deg, #0a84ff, #45caff);
+      }
+
+      .story-cover.green {
+        background: linear-gradient(135deg, #30b45b, #7ee08d);
+      }
+
+      .story-cover.orange {
+        background: linear-gradient(135deg, #ff9f0a, #ffd166);
+      }
+
+      .story-cover.red {
+        background: linear-gradient(135deg, #ff453a, #ff9f8c);
+      }
+
+      .story-cover span {
+        font-size: 12px;
+        font-weight: 850;
+        opacity: 0.92;
+      }
+
+      .story-cover strong {
+        font-size: 20px;
+        line-height: 1.16;
+      }
+
+      .story-body {
+        padding: 14px;
+      }
+
+      .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .detail-cell {
+        min-height: 66px;
+        padding: 10px;
+        border-radius: 14px;
+        background: rgba(242, 242, 247, 0.9);
+      }
+
+      .detail-cell span {
+        display: block;
+        color: var(--tertiary);
+        font-size: 11px;
+        font-weight: 800;
+      }
+
+      .detail-cell strong {
+        display: block;
+        margin-top: 5px;
+        font-size: 13px;
+        line-height: 1.28;
+      }
+
+      .placeholder-card {
+        padding: 16px;
+      }
+
+      .placeholder-visual {
+        min-height: 230px;
+        margin-bottom: 14px;
+        padding: 14px;
+        border-radius: 18px;
+        background: #f7f7fb;
+      }
+
+      .mock-report,
+      .mock-resume {
+        height: 100%;
+        min-height: 202px;
+        display: grid;
+        gap: 10px;
+        align-content: center;
+        padding: 14px;
+        border-radius: 14px;
+        background: #fff;
+        box-shadow: inset 0 0 0 1px rgba(60, 60, 67, 0.08);
+      }
+
+      .mock-line {
+        height: 10px;
+        border-radius: 5px;
+        background: rgba(118, 118, 128, 0.18);
+      }
+
+      .mock-line.short {
+        width: 42%;
+      }
+
+      .mock-line.medium {
+        width: 68%;
+      }
+
+      .mock-score-row {
+        display: grid;
+        grid-template-columns: 66px 1fr;
+        align-items: center;
+        gap: 10px;
+        margin-top: 6px;
+      }
+
+      .mock-score {
+        width: 66px;
+        height: 66px;
+        display: grid;
+        place-items: center;
+        border-radius: 33px;
+        background: rgba(0, 122, 255, 0.12);
+        color: var(--blue);
+        font-size: 22px;
+        font-weight: 900;
+      }
+
+      .mock-resume-head {
+        display: grid;
+        grid-template-columns: 46px 1fr;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 6px;
+      }
+
+      .mock-avatar {
+        width: 46px;
+        height: 46px;
+        border-radius: 16px;
+        background: rgba(0, 122, 255, 0.14);
+      }
+
       .status-pill {
         display: inline-flex;
         align-items: center;
@@ -931,8 +1150,7 @@
         grid-template-columns: repeat(3, 1fr);
         padding: 8px 18px 26px;
         border-top: 1px solid rgba(60, 60, 67, 0.14);
-        background: rgba(250, 250, 252, 0.9);
-        backdrop-filter: blur(18px);
+        background: #fafafc;
       }
 
       .tabbar button {
@@ -1461,14 +1679,70 @@
               <p>围绕测评、规划、简历与课程支持，帮助学生先看清方向。</p>
             </section>
 
-            <section class="module-detail-list" aria-label="职业规划内容">
-              <div class="module-detail-item"><strong>测评</strong><span class="chevron">›</span></div>
-              <div class="module-detail-item"><strong>规划</strong><span class="chevron">›</span></div>
-              <div class="module-detail-item"><strong>简历</strong><span class="chevron">›</span></div>
-              <div class="module-detail-item"><strong>课程支持</strong><span class="chevron">›</span></div>
+            <div class="section-heading">
+              <h3>服务方页面占位</h3>
+              <span>按需接入</span>
+            </div>
+
+            <section class="service-stack" aria-label="职业规划服务方页面占位">
+              <button class="service-card" type="button" data-screen-target="assessment-placeholder">
+                <span class="service-visual">测</span>
+                <span>
+                  <strong>测评</strong>
+                  <p>用占位图表示服务方页面，测评结果由服务方提供。</p>
+                  <span class="tag-row"><span>方向参考</span><span>结果报告</span></span>
+                </span>
+                <span class="chevron">›</span>
+              </button>
+              <button class="service-card" type="button" data-screen-target="resume-placeholder">
+                <span class="service-visual">历</span>
+                <span>
+                  <strong>简历</strong>
+                  <p>用占位图表示服务方页面，简历编辑与预览由服务方提供。</p>
+                  <span class="tag-row"><span>简历生成</span><span>优化建议</span></span>
+                </span>
+                <span class="chevron">›</span>
+              </button>
             </section>
 
-            <p class="module-detail-note">具体服务按实际开放情况展示。</p>
+            <div class="section-heading">
+              <h3>U Link 自有内容</h3>
+              <span>内容专题</span>
+            </div>
+
+            <section class="story-stack" aria-label="职业规划自有内容">
+              <article class="story-card">
+                <div class="story-cover blue">
+                  <span>规划</span>
+                  <strong>从目标岗位倒推大学准备节奏</strong>
+                </div>
+                <div class="story-body">
+                  <h3>内容详情</h3>
+                  <p>把专业课程、实践经历、证书准备和咨询预约放在同一张路径卡里，便于学生看到下一步。</p>
+                  <div class="detail-grid">
+                    <div class="detail-cell"><span>适合人群</span><strong>刚完成认证的学生</strong></div>
+                    <div class="detail-cell"><span>下一步</span><strong>预约一次规划咨询</strong></div>
+                  </div>
+                  <div class="tag-row"><span>职业方向</span><span>四年节奏</span><span>咨询入口</span></div>
+                </div>
+              </article>
+
+              <article class="story-card">
+                <div class="story-cover blue">
+                  <span>课程支持</span>
+                  <strong>把课程变成可沉淀的能力证明</strong>
+                </div>
+                <div class="story-body">
+                  <h3>内容详情</h3>
+                  <p>围绕金融基础、表达训练和项目复盘展示课程支持，不替代课程系统，只给学生看可参与内容。</p>
+                  <div class="detail-grid">
+                    <div class="detail-cell"><span>内容形态</span><strong>课程介绍与报名说明</strong></div>
+                    <div class="detail-cell"><span>产出提示</span><strong>作品、复盘或证明材料</strong></div>
+                  </div>
+                  <div class="tag-row"><span>课程支持</span><span>能力提升</span><span>记录成长</span></div>
+                </div>
+              </article>
+            </section>
           </div>
 
           <div class="bottom-bar two-actions">
@@ -1485,13 +1759,60 @@
               <p>围绕实训营、岗位介绍与实践机会，帮助学生了解真实场景。</p>
             </section>
 
-            <section class="module-detail-list" aria-label="实习实践内容">
-              <div class="module-detail-item"><strong>实训营</strong><span class="chevron">›</span></div>
-              <div class="module-detail-item"><strong>岗位介绍</strong><span class="chevron">›</span></div>
-              <div class="module-detail-item"><strong>实践机会</strong><span class="chevron">›</span></div>
-            </section>
+            <div class="section-heading">
+              <h3>U Link 自有内容</h3>
+              <span>实践专题</span>
+            </div>
 
-            <p class="module-detail-note">具体活动和机会按实际开放情况展示。</p>
+            <section class="story-stack" aria-label="实习实践自有内容">
+              <article class="story-card">
+                <div class="story-cover green">
+                  <span>实训营</span>
+                  <strong>用短周期项目理解岗位工作流</strong>
+                </div>
+                <div class="story-body">
+                  <h3>内容详情</h3>
+                  <p>展示实训营主题、时间安排、训练目标和成果要求，让学生先知道参与后会留下什么。</p>
+                  <div class="detail-grid">
+                    <div class="detail-cell"><span>核心信息</span><strong>主题、时间、地点、名额</strong></div>
+                    <div class="detail-cell"><span>成果沉淀</span><strong>项目复盘与实践记录</strong></div>
+                  </div>
+                  <div class="tag-row"><span>实训营</span><span>真实任务</span><span>成果记录</span></div>
+                </div>
+              </article>
+
+              <article class="story-card">
+                <div class="story-cover green">
+                  <span>岗位介绍</span>
+                  <strong>把岗位拆成日常任务与能力要求</strong>
+                </div>
+                <div class="story-body">
+                  <h3>内容详情</h3>
+                  <p>按照岗位职责、常用工具、学习准备和面试关注点来组织内容，帮助学生建立具体想象。</p>
+                  <div class="detail-grid">
+                    <div class="detail-cell"><span>展示重点</span><strong>职责、工具、能力要求</strong></div>
+                    <div class="detail-cell"><span>阅读目标</span><strong>判断是否适合继续了解</strong></div>
+                  </div>
+                  <div class="tag-row"><span>岗位介绍</span><span>能力要求</span><span>面试准备</span></div>
+                </div>
+              </article>
+
+              <article class="story-card">
+                <div class="story-cover green">
+                  <span>实践机会</span>
+                  <strong>把可参与机会整理成清晰入口</strong>
+                </div>
+                <div class="story-body">
+                  <h3>内容详情</h3>
+                  <p>展示机会来源、报名条件、参与方式和截止时间，状态清楚，避免学生反复询问同一信息。</p>
+                  <div class="detail-grid">
+                    <div class="detail-cell"><span>机会信息</span><strong>条件、时间、参与方式</strong></div>
+                    <div class="detail-cell"><span>状态呈现</span><strong>报名中、待通知或已结束</strong></div>
+                  </div>
+                  <div class="tag-row"><span>实践机会</span><span>报名入口</span><span>状态清晰</span></div>
+                </div>
+              </article>
+            </section>
           </div>
 
           <div class="bottom-bar two-actions">
@@ -1508,13 +1829,60 @@
               <p>围绕金融沙龙、财商课与机构资源，呈现 U Link 的金融方向基础。</p>
             </section>
 
-            <section class="module-detail-list" aria-label="金融底色内容">
-              <div class="module-detail-item"><strong>金融沙龙</strong><span class="chevron">›</span></div>
-              <div class="module-detail-item"><strong>财商课</strong><span class="chevron">›</span></div>
-              <div class="module-detail-item"><strong>机构资源</strong><span class="chevron">›</span></div>
-            </section>
+            <div class="section-heading">
+              <h3>U Link 自有内容</h3>
+              <span>金融专题</span>
+            </div>
 
-            <p class="module-detail-note">具体内容按实际开放情况展示。</p>
+            <section class="story-stack" aria-label="金融底色自有内容">
+              <article class="story-card">
+                <div class="story-cover orange">
+                  <span>金融沙龙</span>
+                  <strong>把行业问题带到线下交流场</strong>
+                </div>
+                <div class="story-body">
+                  <h3>内容详情</h3>
+                  <p>展示沙龙主题、嘉宾方向、适合学生和报名方式，突出小规模交流与真实行业问题。</p>
+                  <div class="detail-grid">
+                    <div class="detail-cell"><span>内容结构</span><strong>主题、嘉宾、提问方向</strong></div>
+                    <div class="detail-cell"><span>参与方式</span><strong>预约报名与现场签到</strong></div>
+                  </div>
+                  <div class="tag-row"><span>金融沙龙</span><span>行业交流</span><span>线下活动</span></div>
+                </div>
+              </article>
+
+              <article class="story-card">
+                <div class="story-cover orange">
+                  <span>财商课</span>
+                  <strong>从预算与风险意识开始</strong>
+                </div>
+                <div class="story-body">
+                  <h3>内容详情</h3>
+                  <p>用短内容组织预算、储蓄、理财常识和风险识别，让金融底色先从生活场景落地。</p>
+                  <div class="detail-grid">
+                    <div class="detail-cell"><span>课程主题</span><strong>预算、理财常识、风险意识</strong></div>
+                    <div class="detail-cell"><span>学习方式</span><strong>图文、活动与课后小任务</strong></div>
+                  </div>
+                  <div class="tag-row"><span>财商课</span><span>风险意识</span><span>生活金融</span></div>
+                </div>
+              </article>
+
+              <article class="story-card">
+                <div class="story-cover orange">
+                  <span>机构资源</span>
+                  <strong>把资源入口整理成学生看得懂的清单</strong>
+                </div>
+                <div class="story-body">
+                  <h3>内容详情</h3>
+                  <p>展示机构方向、可提供内容、适合阶段和联系入口，先做清晰展示，不做复杂交易闭环。</p>
+                  <div class="detail-grid">
+                    <div class="detail-cell"><span>资源信息</span><strong>机构方向与开放内容</strong></div>
+                    <div class="detail-cell"><span>适合阶段</span><strong>了解期、准备期或实践期</strong></div>
+                  </div>
+                  <div class="tag-row"><span>机构资源</span><span>方向筛选</span><span>咨询入口</span></div>
+                </div>
+              </article>
+            </section>
           </div>
 
           <div class="bottom-bar two-actions">
@@ -1531,18 +1899,139 @@
               <p>围绕非遗文化、中外交流与研学路线，预留本土与世界连接入口。</p>
             </section>
 
-            <section class="module-detail-list" aria-label="文化交流内容">
-              <div class="module-detail-item"><strong>非遗文化</strong><span class="chevron">›</span></div>
-              <div class="module-detail-item"><strong>中外交流</strong><span class="chevron">›</span></div>
-              <div class="module-detail-item"><strong>研学路线</strong><span class="chevron">›</span></div>
-            </section>
+            <div class="section-heading">
+              <h3>U Link 自有内容</h3>
+              <span>文化专题</span>
+            </div>
 
-            <p class="module-detail-note">具体路线和活动按实际开放情况展示。</p>
+            <section class="story-stack" aria-label="文化交流自有内容">
+              <article class="story-card">
+                <div class="story-cover red">
+                  <span>非遗文化</span>
+                  <strong>用本土文化作为交流起点</strong>
+                </div>
+                <div class="story-body">
+                  <h3>内容详情</h3>
+                  <p>展示非遗主题、体验方式、文化背景和活动安排，让内容既能阅读，也能连接线下体验。</p>
+                  <div class="detail-grid">
+                    <div class="detail-cell"><span>内容结构</span><strong>主题介绍、背景、体验安排</strong></div>
+                    <div class="detail-cell"><span>参与方式</span><strong>活动预约或路线报名</strong></div>
+                  </div>
+                  <div class="tag-row"><span>非遗文化</span><span>线下体验</span><span>文化表达</span></div>
+                </div>
+              </article>
+
+              <article class="story-card">
+                <div class="story-cover red">
+                  <span>中外交流</span>
+                  <strong>把交流主题做成可参与的小单元</strong>
+                </div>
+                <div class="story-body">
+                  <h3>内容详情</h3>
+                  <p>展示交流主题、语言要求、活动形式和准备材料，让学生知道自己适合参加哪一类活动。</p>
+                  <div class="detail-grid">
+                    <div class="detail-cell"><span>交流信息</span><strong>主题、形式、准备材料</strong></div>
+                    <div class="detail-cell"><span>适合人群</span><strong>对跨文化表达感兴趣的学生</strong></div>
+                  </div>
+                  <div class="tag-row"><span>中外交流</span><span>表达练习</span><span>活动报名</span></div>
+                </div>
+              </article>
+
+              <article class="story-card">
+                <div class="story-cover red">
+                  <span>研学路线</span>
+                  <strong>把路线拆成主题、行程与收获</strong>
+                </div>
+                <div class="story-body">
+                  <h3>内容详情</h3>
+                  <p>展示路线主题、站点安排、学习目标和安全说明，先让学生理解路线价值与参与条件。</p>
+                  <div class="detail-grid">
+                    <div class="detail-cell"><span>路线信息</span><strong>主题、站点、时间安排</strong></div>
+                    <div class="detail-cell"><span>学习收获</span><strong>文化记录与研学复盘</strong></div>
+                  </div>
+                  <div class="tag-row"><span>研学路线</span><span>文化记录</span><span>行程说明</span></div>
+                </div>
+              </article>
+            </section>
           </div>
 
           <div class="bottom-bar two-actions">
             <button class="secondary-button" type="button" data-screen-target="home">返回首页</button>
             <button class="primary-button" type="button" data-action="open-service">预约咨询</button>
+          </div>
+        </section>
+
+        <section class="screen" data-screen="assessment-placeholder" aria-labelledby="assessment-placeholder-title">
+          <div class="screen-scroll">
+            <section class="module-detail-header">
+              <span class="hero-meta">服务方页面占位</span>
+              <h2 id="assessment-placeholder-title">测评服务占位图</h2>
+              <p>测评入口和测评结果由服务方提供，U Link 这里只展示未来接入后的页面位置。</p>
+            </section>
+
+            <section class="placeholder-card" aria-label="测评结果占位图">
+              <div class="placeholder-visual">
+                <div class="mock-report">
+                  <div class="mock-line short"></div>
+                  <div class="mock-score-row">
+                    <div class="mock-score">A</div>
+                    <div>
+                      <div class="mock-line medium"></div>
+                      <div class="mock-line"></div>
+                      <div class="mock-line short"></div>
+                    </div>
+                  </div>
+                  <div class="mock-line"></div>
+                  <div class="mock-line medium"></div>
+                  <div class="mock-line"></div>
+                </div>
+              </div>
+              <h3>测评结果由服务方提供</h3>
+              <p>这里不设计 U Link 自研测评类型，只保留报告封面、结果摘要和返回职业规划的交互位置。</p>
+              <div class="tag-row"><span>占位图</span><span>结果报告</span><span>服务方</span></div>
+            </section>
+          </div>
+
+          <div class="bottom-bar two-actions">
+            <button class="secondary-button" type="button" data-screen-target="career-planning">返回职业规划</button>
+            <button class="primary-button" type="button" data-action="open-service">了解服务</button>
+          </div>
+        </section>
+
+        <section class="screen" data-screen="resume-placeholder" aria-labelledby="resume-placeholder-title">
+          <div class="screen-scroll">
+            <section class="module-detail-header">
+              <span class="hero-meta">服务方页面占位</span>
+              <h2 id="resume-placeholder-title">简历服务占位图</h2>
+              <p>简历创建、优化和预览由服务方提供，U Link 这里只展示未来接入后的页面位置。</p>
+            </section>
+
+            <section class="placeholder-card" aria-label="简历页面占位图">
+              <div class="placeholder-visual">
+                <div class="mock-resume">
+                  <div class="mock-resume-head">
+                    <div class="mock-avatar"></div>
+                    <div>
+                      <div class="mock-line medium"></div>
+                      <div class="mock-line short"></div>
+                    </div>
+                  </div>
+                  <div class="mock-line"></div>
+                  <div class="mock-line medium"></div>
+                  <div class="mock-line"></div>
+                  <div class="mock-line short"></div>
+                  <div class="mock-line"></div>
+                </div>
+              </div>
+              <h3>简历编辑与预览由服务方提供</h3>
+              <p>这里不做 U Link 内部简历系统，只保留简历封面、编辑入口和返回职业规划的交互位置。</p>
+              <div class="tag-row"><span>占位图</span><span>简历预览</span><span>服务方</span></div>
+            </section>
+          </div>
+
+          <div class="bottom-bar two-actions">
+            <button class="secondary-button" type="button" data-screen-target="career-planning">返回职业规划</button>
+            <button class="primary-button" type="button" data-action="open-service">了解服务</button>
           </div>
         </section>
 
@@ -1669,6 +2158,8 @@
         submitted: "资料已提交",
         home: "U Link",
         "career-planning": "职业规划",
+        "assessment-placeholder": "测评",
+        "resume-placeholder": "简历",
         practice: "实习实践",
         "finance-foundation": "金融底色",
         "culture-exchange": "文化交流",

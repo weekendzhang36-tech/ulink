@@ -10,22 +10,32 @@ const detailScreens = [
   {
     screen: "career-planning",
     cardTarget: 'data-screen-target="career-planning"',
-    copy: ["职业规划", "测评", "规划", "简历", "课程支持"],
+    copy: ["职业规划", "测评", "规划", "简历", "课程支持", "服务方页面占位", "U Link 自有内容"],
   },
   {
     screen: "practice",
     cardTarget: 'data-screen-target="practice"',
-    copy: ["实习实践", "实训营", "岗位介绍", "实践机会"],
+    copy: ["实习实践", "实训营", "岗位介绍", "实践机会", "U Link 自有内容", "内容详情"],
   },
   {
     screen: "finance-foundation",
     cardTarget: 'data-screen-target="finance-foundation"',
-    copy: ["金融底色", "金融沙龙", "财商课", "机构资源"],
+    copy: ["金融底色", "金融沙龙", "财商课", "机构资源", "U Link 自有内容", "内容详情"],
   },
   {
     screen: "culture-exchange",
     cardTarget: 'data-screen-target="culture-exchange"',
-    copy: ["文化交流", "非遗文化", "中外交流", "研学路线"],
+    copy: ["文化交流", "非遗文化", "中外交流", "研学路线", "U Link 自有内容", "内容详情"],
+  },
+];
+const standaloneScreens = [
+  {
+    screen: "assessment-placeholder",
+    copy: ["测评服务占位图", "测评结果由服务方提供", "服务方页面占位"],
+  },
+  {
+    screen: "resume-placeholder",
+    copy: ["简历服务占位图", "简历编辑与预览由服务方提供", "服务方页面占位"],
   },
 ];
 
@@ -75,8 +85,25 @@ const missingDetailCopy = detailScreens.flatMap((detail) => {
 
   return detail.copy.filter((text) => !sectionHtml.includes(text)).map((text) => `${detail.screen}: ${text}`);
 });
+const missingStandaloneCopy = standaloneScreens.flatMap((detail) => {
+  const match = html.match(new RegExp(`<section class="screen" data-screen="${detail.screen}"[\\s\\S]*?<section class="screen" data-screen=`));
+  const sectionHtml = match?.[0] ?? "";
 
-if (!homeHtml || missing.length > 0 || forbidden.length > 0 || missingDetailTargets.length > 0 || missingDetailCopy.length > 0) {
+  if (!sectionHtml) {
+    return [`${detail.screen}: screen missing`];
+  }
+
+  return detail.copy.filter((text) => !sectionHtml.includes(text)).map((text) => `${detail.screen}: ${text}`);
+});
+
+if (
+  !homeHtml ||
+  missing.length > 0 ||
+  forbidden.length > 0 ||
+  missingDetailTargets.length > 0 ||
+  missingDetailCopy.length > 0 ||
+  missingStandaloneCopy.length > 0
+) {
   if (!homeHtml) {
     console.error("Home screen markup was not found.");
   }
@@ -95,6 +122,10 @@ if (!homeHtml || missing.length > 0 || forbidden.length > 0 || missingDetailTarg
 
   if (missingDetailCopy.length > 0) {
     console.error(`Missing module detail content: ${missingDetailCopy.join(", ")}`);
+  }
+
+  if (missingStandaloneCopy.length > 0) {
+    console.error(`Missing standalone screen content: ${missingStandaloneCopy.join(", ")}`);
   }
 
   process.exit(1);
