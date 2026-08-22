@@ -663,6 +663,68 @@
         line-height: 1.45;
       }
 
+      .growth-plan-card {
+        width: 100%;
+        color: var(--label);
+        text-align: left;
+        background: linear-gradient(135deg, #ffffff 0%, #fff4df 100%);
+      }
+
+      .growth-plan-card .hero-meta {
+        background: rgba(255, 149, 0, 0.14);
+        color: #b35a00;
+      }
+
+      .growth-plan-card h2 {
+        margin: 10px 0 0;
+        font-size: 28px;
+        line-height: 1.15;
+      }
+
+      .plan-price {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 5px;
+        margin-top: 10px;
+        color: var(--orange);
+        font-size: 25px;
+        font-weight: 900;
+      }
+
+      .plan-price small {
+        color: var(--secondary);
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .benefit-list {
+        display: grid;
+        gap: 10px;
+        margin: 12px 0 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .benefit-list li {
+        display: grid;
+        grid-template-columns: 22px minmax(0, 1fr);
+        gap: 9px;
+        color: var(--secondary);
+        font-size: 14px;
+        line-height: 1.45;
+      }
+
+      .benefit-list li::before {
+        content: "";
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background:
+          linear-gradient(#fff, #fff) 6px 10px / 10px 2px no-repeat,
+          linear-gradient(#fff, #fff) 10px 6px / 2px 10px no-repeat,
+          var(--orange);
+      }
+
       .hero-meta {
         display: inline-flex;
         align-items: center;
@@ -1740,6 +1802,13 @@
               <p>进入后可查看负责班级的学生资料，并进行批量确认或标记需确认。</p>
             </button>
 
+            <button class="content-hero growth-plan-card" type="button" data-screen-target="growth-plan">
+              <span class="hero-meta">成长计划</span>
+              <strong>友邻成长计划</strong>
+              <span class="plan-price">¥5 <small>/ 半年</small></span>
+              <p>有效期内接收实习邀请、活动提醒和成长内容推送。</p>
+            </button>
+
             <div class="section-heading">
               <h3>成长模块</h3>
               <span>服务地图</span>
@@ -1807,6 +1876,38 @@
             <button type="button">内容</button>
             <button type="button" data-screen-target="mine">我的</button>
           </nav>
+        </section>
+
+        <section class="screen" data-screen="growth-plan" aria-labelledby="growth-plan-title">
+          <div class="screen-scroll">
+            <section class="content-hero growth-plan-card">
+              <span class="hero-meta">半年权益</span>
+              <h2 id="growth-plan-title">友邻成长计划</h2>
+              <span class="plan-price">¥5 <small>/ 半年</small></span>
+              <p>这是原型示意：加入后在有效期内接收与成长服务相关的提醒和机会推送。</p>
+            </section>
+
+            <section class="article-body-card" aria-label="成长计划说明">
+              <h3>有效期内会收到什么</h3>
+              <ul class="benefit-list">
+                <li>实习邀请和实践机会提醒，包括实训营、项目助理、岗位介绍等可参与内容。</li>
+                <li>活动推送，包括金融沙龙、财商课、文化交流和线下体验活动。</li>
+                <li>成长内容推送，包括职业规划、简历准备、岗位认知和能力提升清单。</li>
+                <li>预约咨询提醒，帮助学生在需要时进入规划咨询或活动报名。</li>
+              </ul>
+
+              <h3>适合谁</h3>
+              <p>适合已经完成学生认证、希望持续收到 U Link 成长服务提醒，但暂时还不确定要参加哪一类活动的同学。</p>
+
+              <h3>原型说明</h3>
+              <p>当前页面只用于展示产品形态，按钮会模拟加入成功。真实版本再接入订单、微信支付和权益有效期管理。</p>
+            </section>
+          </div>
+
+          <div class="bottom-bar two-actions">
+            <button class="secondary-button" type="button" data-screen-target="home">返回首页</button>
+            <button class="primary-button" type="button" data-action="join-growth-plan">模拟加入计划</button>
+          </div>
         </section>
 
         <section class="screen" data-screen="career-planning" aria-labelledby="career-planning-title">
@@ -2298,6 +2399,7 @@
         submitted: "资料已提交",
         home: "U Link",
         "career-planning": "职业规划",
+        "growth-plan": "成长计划",
         "assessment-placeholder": "测评",
         "resume-placeholder": "简历",
         practice: "实习实践",
@@ -2697,6 +2799,10 @@
 
         if (action === "open-service") {
           showToast("已模拟进入常用服务入口");
+        }
+
+        if (action === "join-growth-plan") {
+          showToast("已模拟加入友邻成长计划");
         }
 
         if (action === "approve-selected") {

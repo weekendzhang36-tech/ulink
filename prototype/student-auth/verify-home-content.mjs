@@ -67,6 +67,10 @@ const requiredCopy = [
   "资料已提交，指导员确认后将开放更多成长服务",
   "名学生待认证",
   "待认证",
+  "友邻成长计划",
+  "¥5",
+  "/ 半年",
+  "实习邀请",
 ];
 
 const forbiddenCopy = [
@@ -108,6 +112,13 @@ const requiredMineCopy = ["个人信息", "协议与隐私"];
 const requiredMineMarkup = ['class="ios-list settings-list"', ".settings-list button", "grid-template-columns: minmax(0, 1fr) auto"];
 const forbiddenMineCopy = ["学生认证管理", 'class="count-badge">12'];
 const requiredArticleMarkup = ['data-screen="article-detail"', 'data-action="open-article"', 'data-action="article-back"', "const articles"];
+const requiredPlanMarkup = [
+  'data-screen-target="growth-plan"',
+  'data-screen="growth-plan"',
+  'data-action="join-growth-plan"',
+  "有效期内",
+  "成长内容推送",
+];
 
 const missing = requiredCopy.filter((text) => !homeHtml.includes(text));
 const forbidden = forbiddenCopy.filter((text) => homeHtml.includes(text));
@@ -117,6 +128,7 @@ const forbiddenMine = forbiddenMineCopy.filter((text) => mineHtml.includes(text)
 const missingArticleIds = articleIds.filter((id) => !html.includes(`data-article-id="${id}"`)).map((id) => `article card: ${id}`);
 const missingArticleData = articleIds.filter((id) => !html.includes(`"${id}":`)).map((id) => `article data: ${id}`);
 const missingArticleMarkup = requiredArticleMarkup.filter((text) => !html.includes(text)).map((text) => `article markup: ${text}`);
+const missingPlanMarkup = requiredPlanMarkup.filter((text) => !html.includes(text)).map((text) => `growth plan: ${text}`);
 const missingDetailTargets = detailScreens.filter((detail) => !homeHtml.includes(detail.cardTarget));
 const missingDetailCopy = detailScreens.flatMap((detail) => {
   const match = html.match(new RegExp(`<section class="screen" data-screen="${detail.screen}"[\\s\\S]*?<section class="screen" data-screen=`));
@@ -155,6 +167,7 @@ if (
   missingArticleIds.length > 0 ||
   missingArticleData.length > 0 ||
   missingArticleMarkup.length > 0 ||
+  missingPlanMarkup.length > 0 ||
   missingDetailTargets.length > 0 ||
   missingDetailCopy.length > 0 ||
   detailForbidden.length > 0 ||
@@ -194,6 +207,10 @@ if (
 
   if (missingArticleMarkup.length > 0) {
     console.error(`Missing article detail markup: ${missingArticleMarkup.join(", ")}`);
+  }
+
+  if (missingPlanMarkup.length > 0) {
+    console.error(`Missing growth plan content: ${missingPlanMarkup.join(", ")}`);
   }
 
   if (missingDetailTargets.length > 0) {
