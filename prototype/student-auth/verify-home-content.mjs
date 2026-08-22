@@ -12,22 +12,22 @@ const detailScreens = [
   {
     screen: "career-planning",
     cardTarget: 'data-screen-target="career-planning"',
-    copy: ["职业规划", "测评", "规划", "简历", "课程支持", "服务方页面占位", "U Link 编辑部", "3 分钟阅读"],
+    copy: ["职业规划", "测评", "规划", "简历", "课程支持", "服务方页面占位", "3 分钟阅读"],
   },
   {
     screen: "practice",
     cardTarget: 'data-screen-target="practice"',
-    copy: ["实习实践", "实训营", "岗位介绍", "实践机会", "U Link 编辑部", "本周五", "已预约", "剩余"],
+    copy: ["实习实践", "实训营", "岗位介绍", "实践机会", "本周五", "已预约", "剩余"],
   },
   {
     screen: "finance-foundation",
     cardTarget: 'data-screen-target="finance-foundation"',
-    copy: ["金融底色", "金融沙龙", "财商课", "机构资源", "U Link 编辑部", "8月22日", "3 分钟阅读", "已预约"],
+    copy: ["金融底色", "金融沙龙", "财商课", "机构资源", "8月22日", "3 分钟阅读", "已预约"],
   },
   {
     screen: "culture-exchange",
     cardTarget: 'data-screen-target="culture-exchange"',
-    copy: ["文化交流", "非遗文化", "中外交流", "研学路线", "U Link 编辑部", "8月22日", "已预约", "剩余"],
+    copy: ["文化交流", "非遗文化", "中外交流", "研学路线", "8月22日", "已预约", "剩余"],
   },
 ];
 const standaloneScreens = [
@@ -88,6 +88,8 @@ const forbiddenDetailCopy = [
   "把岗位拆成日常任务与能力要求",
   "把可参与机会整理成清晰入口",
   "把行业问题带到线下交流场",
+  "U Link 编辑部",
+  "编辑部",
 ];
 const requiredMineCopy = ["个人信息", "协议与隐私"];
 const requiredMineMarkup = ['class="ios-list settings-list"', ".settings-list button", "grid-template-columns: minmax(0, 1fr) auto"];
