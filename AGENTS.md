@@ -13,12 +13,14 @@ The product is intended to use WeChat Mini Program as its primary carrier. The l
 
 ## Current Project State
 
-- The repository is currently in the project bootstrap stage.
+- The repository has entered the early development preparation stage.
+- A pnpm workspace has been initialized with `apps/cms` and `apps/miniprogram`.
+- `apps/cms` is the initial PayloadCMS + Next.js backend/admin project.
+- `apps/miniprogram` is the initial native WeChat Mini Program frontend project.
 - The MVP architecture direction is Tencent Cloud self-hosting with PayloadCMS as the first backend/admin system.
-- No package manager, database instance, deployment workflow, or CI workflow has been initialized yet.
-- Do not assume an existing code structure until it is created in this repository.
 - MVP product scope has been clarified in `docs/product.md`.
 - MVP architecture direction has been clarified in `docs/architecture.md`.
+- Project-wide development principles have been added in `DEVELOPMENT_PRINCIPLES.md`.
 
 ## MVP Scope
 
@@ -65,11 +67,15 @@ The following ecosystem modules are future expansion areas and should not domina
 
 ## Development Guidelines
 
+- Follow `DEVELOPMENT_PRINCIPLES.md` for truthfulness, data integrity, product modeling, persistence, testing, debugging, frontend UX, API contracts, branch discipline, and verification.
 - Prefer small, reversible changes while the project shape is still emerging.
 - Keep project documentation updated when foundational decisions are made.
 - Avoid introducing large abstractions or cross-platform frameworks before the product requirements are clear.
 - Keep user privacy and campus/community data sensitivity in mind from the start.
 - Do not commit secrets, private keys, app IDs, tokens, database credentials, or WeChat platform credentials.
+- Prototype/mock content is allowed only for clearly marked prototype, demo, fixture, and local development paths. Do not use mock data or frontend fallback data to hide a broken production backend/API flow.
+- Production persistence must survive redeploys. PostgreSQL, PayloadCMS uploads, COS files, orders, memberships, verification history, and secrets must not depend on application container local disk.
+- During the current single-developer MVP stage, work directly in `main` unless the user asks for a branch. Use a branch or isolated workspace for high-risk migrations, large refactors, or future multi-person collaboration.
 
 ## Documentation To Add Later
 
