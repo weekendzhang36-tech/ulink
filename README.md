@@ -66,6 +66,8 @@ pnpm install
 docker compose up -d postgres
 ```
 
+本地 `docker-compose.yml` 使用 named volume `ulink_postgres_data` 保存开发数据，普通重启容器不会清空数据。生产环境不能依赖应用容器本地磁盘，数据库需要使用独立持久化 PostgreSQL，上传文件需要接入 COS，避免重新部署时丢失业务数据。
+
 复制后台环境变量示例：
 
 ```bash
