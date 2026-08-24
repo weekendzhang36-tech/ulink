@@ -4,5 +4,13 @@
 node_modules/
 dist/
 build/
+.next/
+.turbo/
+coverage/
+.payload/
+payload-types.ts
+*.tsbuildinfo
+project.private.config.json
 .env
 .env.*
+!.env.example

@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: ulink-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ulink
+      POSTGRES_USER: ulink
+      POSTGRES_PASSWORD: ulink_dev_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - ulink_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  ulink_postgres_data:

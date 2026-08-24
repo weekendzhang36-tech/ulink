@@ -1,0 +1,20 @@
+<view class="page">
+  <view class="card profile">
+    <view class="avatar">{{avatarText}}</view>
+    <view>
+      <view class="profile-name">{{state.name}}</view>
+      <view class="muted">{{state.className}}</view>
+    </view>
+  </view>
+
+  <view class="card list">
+    <view class="list-row" bindtap="openVerification">
+      <text>认证状态</text>
+      <text class="muted">{{state.verificationStatus}}</text>
+    </view>
+    <view class="list-row">
+      <text>协议与隐私</text>
+      <text class="muted">›</text>
+    </view>
+  </view>
+</view>

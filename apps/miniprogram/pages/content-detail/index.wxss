@@ -1,0 +1,9 @@
+.hero {
+  margin-top: 0;
+}
+
+.body-text {
+  color: #333333;
+  font-size: 30rpx;
+  line-height: 1.65;
+}

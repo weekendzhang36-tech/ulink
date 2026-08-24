@@ -1,10 +1,10 @@
 # U Link 当前进度交接
 
-更新时间：2026-08-22
+更新时间：2026-08-24
 
 ## 项目状态
 
-`U Link` 当前处于产品需求确认和第一版原型阶段，尚未初始化正式微信小程序代码框架。
+`U Link` 已从产品需求确认和第一版原型阶段进入前期开发准备阶段，已初始化后台和小程序两个基础工程。
 
 已完成基础项目文档：
 
@@ -13,6 +13,19 @@
 - `docs/product.md`：MVP 产品范围、学生认证、指导员审核、会员与内容方向。
 - `docs/product-modules.md`：产品模块图口径，后续首页和内容入口以此为准。
 - `docs/architecture.md`：腾讯云自部署 + PayloadCMS + PostgreSQL + COS 的第一版架构方向。
+
+已完成基础工程：
+
+- `package.json` / `pnpm-workspace.yaml`：pnpm workspace 根目录配置。
+- `apps/cms`：PayloadCMS + Next.js 后台/API 工程，已配置 PostgreSQL adapter。
+- `apps/miniprogram`：原生微信小程序工程骨架，当前使用 mock 数据。
+- `docker-compose.yml`：本地 PostgreSQL 开发服务。
+- `apps/cms/.env.example`：后台环境变量示例，不含真实密钥。
+
+当前已通过：
+
+- `pnpm install`
+- `pnpm typecheck`
 
 ## 已确认产品方向
 

@@ -1,0 +1,9 @@
+{
+  "name": "@ulink/miniprogram",
+  "private": true,
+  "scripts": {
+    "dev": "echo \"Open apps/miniprogram in WeChat Developer Tools\"",
+    "typecheck": "echo \"Native WeChat Mini Program has no TypeScript check yet\"",
+    "lint": "echo \"Native WeChat Mini Program lint is not configured yet\""
+  }
+}

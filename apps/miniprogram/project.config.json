@@ -1,0 +1,11 @@
+{
+  "appid": "touristappid",
+  "compileType": "miniprogram",
+  "libVersion": "latest",
+  "projectname": "U Link",
+  "setting": {
+    "es6": true,
+    "minified": true,
+    "postcss": true
+  }
+}

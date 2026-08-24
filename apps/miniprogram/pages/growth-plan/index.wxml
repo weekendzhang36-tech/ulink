@@ -1,0 +1,15 @@
+<view class="page">
+  <view class="card hero">
+    <text class="eyebrow">半年权益</text>
+    <view class="title">{{plan.title}}</view>
+    <view class="price">{{plan.priceText}}</view>
+    <view class="subtitle">{{plan.description}}</view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">有效期内会收到什么</view>
+    <view class="benefit" wx:for="{{plan.benefits}}" wx:key="*this">{{item}}</view>
+  </view>
+
+  <button class="primary-button join-button" bindtap="joinPlan">模拟加入计划</button>
+</view>

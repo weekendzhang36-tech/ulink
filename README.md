@@ -1,6 +1,6 @@
 # U Link
 
-`U Link` 是一个新的微信小程序项目，目前处于项目初始化阶段。
+`U Link` 是一个新的微信小程序项目，目前处于前期开发准备阶段。
 
 ## 项目定位
 
@@ -40,7 +40,63 @@
 - 已补充产品说明：`docs/product.md`
 - 已补充架构说明：`docs/architecture.md`
 - 初步技术方向：原生微信小程序 + 腾讯云自部署 PayloadCMS + PostgreSQL + COS
-- 尚未初始化代码框架
+- 已初始化基础工程：
+  - `apps/cms`：PayloadCMS + Next.js 后台/API 工程。
+  - `apps/miniprogram`：原生微信小程序前端工程骨架。
+  - `prototype/`：客户演示和早期交互原型。
+
+## 开发准备
+
+需要本机安装：
+
+- Node.js `20.9.0+`，当前项目使用 `.node-version` 标记为 `22.21.1`。
+- pnpm `10.24.0+`。
+- Docker 或本地 PostgreSQL。
+- 微信开发者工具。
+
+首次安装：
+
+```bash
+pnpm install
+```
+
+启动本地 PostgreSQL：
+
+```bash
+docker compose up -d postgres
+```
+
+复制后台环境变量示例：
+
+```bash
+cp apps/cms/.env.example apps/cms/.env
+```
+
+启动 PayloadCMS：
+
+```bash
+pnpm dev:cms
+```
+
+后台地址：
+
+```text
+http://localhost:3000/admin
+```
+
+小程序工程用微信开发者工具打开：
+
+```text
+apps/miniprogram
+```
+
+## 常用命令
+
+```bash
+pnpm dev:cms          # 启动 PayloadCMS 后台
+pnpm typecheck       # 后台 TypeScript 检查
+pnpm lint            # 后台 lint
+```
 
 ## 下一步
 

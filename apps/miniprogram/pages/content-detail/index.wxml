@@ -1,0 +1,12 @@
+<view class="page">
+  <view class="card hero">
+    <text class="eyebrow">成长内容</text>
+    <view class="title">{{article.title}}</view>
+    <view class="muted">{{article.meta}}</view>
+    <view class="subtitle">{{article.summary}}</view>
+  </view>
+
+  <view class="card">
+    <view class="body-text">{{article.body}}</view>
+  </view>
+</view>
