@@ -33,6 +33,14 @@ function dateText(value: string) {
   return value.slice(0, 10)
 }
 
+function isMembershipActive(membership: MembershipRecord | undefined, now: Date) {
+  const expiresAt = membership ? Date.parse(membership.expiresAt) : NaN
+
+  return (
+    membership?.status === 'active' && Number.isFinite(expiresAt) && expiresAt > now.getTime()
+  )
+}
+
 function formatAmountText(amountCents: number) {
   return `¥${(amountCents / 100).toFixed(2)}`
 }
@@ -139,9 +147,7 @@ export function formatMembershipState({
     }
   }
 
-  const expiresAt = Date.parse(membership.expiresAt)
-  const isActive =
-    membership.status === 'active' && Number.isFinite(expiresAt) && expiresAt > now.getTime()
+  const isActive = isMembershipActive(membership, now)
   const expiresDate = dateText(membership.expiresAt)
 
   return {
@@ -176,6 +182,11 @@ export async function createMembershipOrder({
     secret,
     sessionToken: input.sessionToken,
   })
+
+  const membership = await repository.findMembershipByStudentId(student.id)
+  if (isMembershipActive(membership, now)) {
+    throw new MiniProgramError('当前成长计划已生效', 409)
+  }
 
   const growthPlan = await repository.findActiveGrowthPlanById(input.growthPlanId)
   if (!growthPlan || !growthPlan.isActive) {

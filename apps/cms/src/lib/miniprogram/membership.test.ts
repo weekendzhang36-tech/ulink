@@ -95,6 +95,44 @@ test('rejects membership purchase before student verification is approved', asyn
   assert.equal(repository.orders.has('UL20260826100200PEND01'), false)
 })
 
+test('rejects membership purchase while the student already has an active membership', async () => {
+  const repository = createMemoryRepository()
+  await approveStudent(repository)
+  await repository.createMembership({
+    expiresAt: '2027-02-25T10:03:00.000Z',
+    growthPlanId: 'growth_plan_001',
+    sourceOrderNo: 'order_paid_once',
+    startedAt: '2026-08-26T10:03:00.000Z',
+    status: 'active',
+    studentId: 'student_001',
+  })
+  let paymentGatewayCalled = false
+
+  await assert.rejects(
+    () =>
+      createMembershipOrder({
+        input: {
+          growthPlanId: 'growth_plan_001',
+          sessionToken: tokenFor('student_001'),
+        },
+        now: new Date('2026-08-26T10:20:00.000Z'),
+        paymentGateway: {
+          createPaymentParams: async () => {
+            paymentGatewayCalled = true
+            throw new Error('payment gateway should not be called')
+          },
+        },
+        randomSuffix: () => 'DUP001',
+        repository,
+        secret,
+      }),
+    /当前成长计划已生效/,
+  )
+
+  assert.equal(paymentGatewayCalled, false)
+  assert.equal(repository.orders.has('UL20260826102000DUP001'), false)
+})
+
 test('marks membership order failed when prepay request fails', async () => {
   const repository = createMemoryRepository()
   await approveStudent(repository)
