@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 
+import { createPhoneVerificationToken } from './phone.ts'
 import { createSessionToken } from './session.ts'
 import { submitStudentProfile } from './profile.ts'
 import { createMemoryRepository } from './testing/memoryRepository.ts'
@@ -29,6 +30,12 @@ test('creates a pending student only after a complete profile is submitted', asy
       gender: 'female',
       majorId: 'major_001',
       phone: '13800000001',
+      phoneVerificationToken: createPhoneVerificationToken({
+        expiresInSeconds: 60 * 10,
+        now: new Date('2026-08-26T10:00:00.000Z'),
+        phone: '13800000001',
+        secret,
+      }),
       realName: '林一诺',
       schoolId: 'school_001',
       sessionToken: tokenFor('openid_001'),
@@ -57,6 +64,12 @@ test('does not persist a student when required profile fields are missing', asyn
           gender: 'female',
           majorId: 'major_001',
           phone: '13800000001',
+          phoneVerificationToken: createPhoneVerificationToken({
+            expiresInSeconds: 60 * 10,
+            now: new Date('2026-08-26T10:00:00.000Z'),
+            phone: '13800000001',
+            secret,
+          }),
           realName: '',
           schoolId: 'school_001',
           sessionToken: tokenFor('openid_001'),
@@ -99,6 +112,12 @@ test('rejects a phone number already bound to another WeChat identity', async ()
           gender: 'female',
           majorId: 'major_001',
           phone: '13800000001',
+          phoneVerificationToken: createPhoneVerificationToken({
+            expiresInSeconds: 60 * 10,
+            now: new Date('2026-08-26T10:00:00.000Z'),
+            phone: '13800000001',
+            secret,
+          }),
           realName: '林一诺',
           schoolId: 'school_001',
           sessionToken: tokenFor('openid_001'),
@@ -111,4 +130,38 @@ test('rejects a phone number already bound to another WeChat identity', async ()
   )
 
   assert.equal(repository.students.size, 1)
+})
+
+test('rejects profile submission when the phone verification token does not match the phone', async () => {
+  const repository = createMemoryRepository({ seedStudents: false })
+
+  await assert.rejects(
+    () =>
+      submitStudentProfile({
+        input: {
+          agreedToPolicies: true,
+          birthday: '2007-09-01',
+          classId: 'class_001',
+          collegeId: 'college_001',
+          gender: 'female',
+          majorId: 'major_001',
+          phone: '13800000001',
+          phoneVerificationToken: createPhoneVerificationToken({
+            expiresInSeconds: 60 * 10,
+            now: new Date('2026-08-26T10:00:00.000Z'),
+            phone: '13800000002',
+            secret,
+          }),
+          realName: '林一诺',
+          schoolId: 'school_001',
+          sessionToken: tokenFor('openid_001'),
+        },
+        now: new Date('2026-08-26T10:01:00.000Z'),
+        repository,
+        secret,
+      }),
+    /手机号验证不匹配/,
+  )
+
+  assert.equal(repository.students.size, 0)
 })

@@ -15,6 +15,15 @@ import { Students } from './src/collections/Students'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+function requireEnv(name: string) {
+  const value = process.env[name]
+  if (!value) {
+    throw new Error(`${name} is required`)
+  }
+
+  return value
+}
+
 export default buildConfig({
   admin: {
     user: Admins.slug,
@@ -40,11 +49,11 @@ export default buildConfig({
   cors: [process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3000'],
   db: postgresAdapter({
     pool: {
-      connectionString: process.env.DATABASE_URL || '',
+      connectionString: requireEnv('DATABASE_URL'),
     },
   }),
   editor: lexicalEditor(),
-  secret: process.env.PAYLOAD_SECRET || '',
+  secret: requireEnv('PAYLOAD_SECRET'),
   sharp,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),

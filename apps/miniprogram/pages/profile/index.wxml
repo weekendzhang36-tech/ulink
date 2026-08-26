@@ -12,7 +12,12 @@
     </view>
     <view class="form-row">
       <text>手机号</text>
-      <input data-key="phone" value="{{phone}}" placeholder="请输入手机号" type="number" bindinput="changeText" />
+      <view class="phone-action">
+        <text class="phone-value {{phoneVerified ? 'is-verified' : ''}}">{{phone || '未授权'}}</text>
+        <button class="phone-button" size="mini" open-type="getPhoneNumber" bindgetphonenumber="getWechatPhone">
+          {{phoneVerified ? '重新授权' : '微信授权'}}
+        </button>
+      </view>
     </view>
     <view class="form-row">
       <text>性别</text>

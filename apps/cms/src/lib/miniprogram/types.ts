@@ -47,6 +47,7 @@ export interface StudentProfileInput {
   gender: Gender
   majorId: string
   phone: string
+  phoneVerificationToken: string
   realName: string
   schoolId: string
   sessionToken: string
@@ -115,6 +116,14 @@ export interface WechatLoginGateway {
   exchangeCode(code: string): Promise<{
     openId: string
     unionId?: string
+  }>
+}
+
+export interface WechatPhoneGateway {
+  getPhoneNumber(code: string): Promise<{
+    countryCode?: string
+    phoneNumber?: string
+    purePhoneNumber: string
   }>
 }
 

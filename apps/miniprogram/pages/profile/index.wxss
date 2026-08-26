@@ -28,6 +28,45 @@
   text-align: right;
 }
 
+.phone-action {
+  align-items: center;
+  display: flex;
+  gap: 16rpx;
+  justify-content: flex-end;
+  max-width: 460rpx;
+}
+
+.phone-value {
+  color: #8e8e93;
+  font-size: 28rpx;
+  max-width: 250rpx;
+  overflow: hidden;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.phone-value.is-verified {
+  color: #1d1d1f;
+  font-weight: 600;
+}
+
+.phone-button {
+  background: #e8f1ff;
+  border-radius: 999rpx;
+  color: #007aff;
+  font-size: 24rpx;
+  font-weight: 700;
+  line-height: 56rpx;
+  margin: 0;
+  min-width: 144rpx;
+  padding: 0 22rpx;
+}
+
+.phone-button::after {
+  border: 0;
+}
+
 .agreement {
   align-items: center;
   color: #6e6e73;

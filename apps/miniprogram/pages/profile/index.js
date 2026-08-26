@@ -1,4 +1,4 @@
-const { getCampusOptions, submitProfile } = require('../../utils/api')
+const { getCampusOptions, submitProfile, verifyWechatPhone } = require('../../utils/api')
 
 const genderOptions = [
   { label: '男', value: 'male' },
@@ -36,6 +36,8 @@ Page({
     },
     loading: false,
     phone: '',
+    phoneVerificationToken: '',
+    phoneVerified: false,
     realName: '',
     selectedLabels: {
       class: '请选择班级',
@@ -87,15 +89,54 @@ Page({
     this.setData({ [key]: event.detail.value })
   },
 
+  getWechatPhone(event) {
+    const phoneCode = event.detail && event.detail.code
+    if (!phoneCode) {
+      wx.showToast({ icon: 'none', title: '请先授权手机号' })
+      return
+    }
+
+    this.setData({ loading: true })
+    verifyWechatPhone(phoneCode)
+      .then((result) => {
+        this.setData({
+          phone: result.phone,
+          phoneVerificationToken: result.phoneVerificationToken,
+          phoneVerified: true,
+        })
+        wx.showToast({ title: '手机号已授权' })
+      })
+      .catch((error) => {
+        wx.showToast({ icon: 'none', title: error.message || '手机号授权失败' })
+      })
+      .finally(() => {
+        this.setData({ loading: false })
+      })
+  },
+
   submit() {
-    const { agreedToPolicies, birthday, campus, genderIndex, genderOptions, indexes, phone, realName } =
-      this.data
+    const {
+      agreedToPolicies,
+      birthday,
+      campus,
+      genderIndex,
+      genderOptions,
+      indexes,
+      phone,
+      phoneVerificationToken,
+      phoneVerified,
+      realName,
+    } = this.data
     const school = campus.schools[indexes.school]
     const college = campus.colleges[indexes.college]
     const major = campus.majors[indexes.major]
     const classInfo = campus.classes[indexes.class]
     if (!school || !college || !major || !classInfo) {
       wx.showToast({ icon: 'none', title: '请先在后台配置学校数据' })
+      return
+    }
+    if (!phoneVerified || !phoneVerificationToken) {
+      wx.showToast({ icon: 'none', title: '请先授权手机号' })
       return
     }
 
@@ -108,6 +149,7 @@ Page({
       gender: genderOptions[genderIndex].value,
       majorId: major.id,
       phone,
+      phoneVerificationToken,
       realName,
       schoolId: school.id,
     })

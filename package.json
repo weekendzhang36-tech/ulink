@@ -6,7 +6,9 @@
     "dev:cms": "pnpm --filter @ulink/cms dev",
     "dev:miniprogram": "pnpm --filter @ulink/miniprogram dev",
     "typecheck": "pnpm --filter @ulink/cms typecheck",
-    "lint": "pnpm --filter @ulink/cms lint"
+    "lint": "pnpm --filter @ulink/cms lint",
+    "test:cms": "pnpm --filter @ulink/cms test",
+    "verify": "pnpm test:cms && pnpm typecheck && pnpm lint"
   },
   "engines": {
     "node": ">=20.9.0"

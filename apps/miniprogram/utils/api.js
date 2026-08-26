@@ -158,20 +158,46 @@ function loginWithWechatCode(code) {
   })
 }
 
+function verifyWechatPhone(phoneCode) {
+  return withDemoFallback(
+    request({
+      data: {
+        phoneCode,
+        sessionToken: getSessionToken(),
+      },
+      method: 'POST',
+      path: '/phone/wechat',
+    }),
+    () => ({
+      phone: '13800000001',
+      phoneVerificationToken: 'demo-phone-verification-token',
+    }),
+  )
+}
+
 function submitProfile(profile) {
   const sessionToken = getSessionToken()
 
-  return request({
-    data: {
-      ...profile,
+  return withDemoFallback(
+    request({
+      data: {
+        ...profile,
+        sessionToken,
+      },
+      method: 'POST',
+      path: '/profile/submit',
+    }),
+    () => ({
+      profileCompleted: true,
       sessionToken,
-    },
-    method: 'POST',
-    path: '/profile/submit',
-  }).then((data) => {
-    if (data.sessionToken) {
-      setSessionToken(data.sessionToken)
-    }
+      student: {
+        ...profile,
+        id: 'demo-student',
+        verificationStatus: 'pending',
+      },
+    }),
+  ).then((data) => {
+    if (data.sessionToken) setSessionToken(data.sessionToken)
 
     return data
   })
@@ -209,4 +235,5 @@ module.exports = {
   mockConfirmPayment,
   reviewInstructorStudents,
   submitProfile,
+  verifyWechatPhone,
 }

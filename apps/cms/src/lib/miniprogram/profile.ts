@@ -1,4 +1,5 @@
 import { MiniProgramError, requireValue } from './errors.ts'
+import { verifyPhoneVerificationToken } from './phone.ts'
 import { createSessionToken, verifySessionToken } from './session.ts'
 import type { MiniProgramRepository, StudentProfileInput } from './types.ts'
 
@@ -41,6 +42,12 @@ export async function submitStudentProfile({
   const classId = requireValue(input.classId, '班级')
   const birthday = requireValue(input.birthday, '生日')
   const session = verifySessionToken({ now, secret, token: input.sessionToken })
+  verifyPhoneVerificationToken({
+    expectedPhone: phone,
+    now,
+    secret,
+    token: input.phoneVerificationToken,
+  })
 
   const phoneOwner = await repository.findStudentByPhone(phone)
   if (phoneOwner && phoneOwner.wechatOpenId !== session.openId) {
