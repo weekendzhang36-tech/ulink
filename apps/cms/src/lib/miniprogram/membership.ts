@@ -1,4 +1,5 @@
 import { MiniProgramError } from './errors.ts'
+import { ensureLocalMockAllowed } from './localMock.ts'
 import { verifySessionToken } from './session.ts'
 import type {
   MembershipRecord,
@@ -371,4 +372,41 @@ export async function confirmMembershipPayment({
       })
 
   return { membership, order: paidOrder, paymentEvent }
+}
+
+export async function confirmMockMembershipPayment({
+  env,
+  input,
+  now,
+  repository,
+}: {
+  env: NodeJS.ProcessEnv
+  input: {
+    orderNo: string
+  }
+  now: Date
+  repository: MiniProgramRepository
+}) {
+  if (env.MINIPROGRAM_MOCK_PAYMENT !== 'true') {
+    throw new MiniProgramError('本地模拟支付未启用', 403)
+  }
+  ensureLocalMockAllowed(env, '本地 mock 支付')
+
+  const paidAt = now.toISOString()
+
+  return confirmMembershipPayment({
+    input: {
+      eventKey: `mock:${input.orderNo}`,
+      orderNo: input.orderNo,
+      paidAt,
+      rawPayload: {
+        orderNo: input.orderNo,
+        paidAt,
+        source: 'mock-payment-callback',
+      },
+      transactionId: `mock_tx_${input.orderNo}`,
+    },
+    now,
+    repository,
+  })
 }

@@ -5,6 +5,7 @@ import {
   cancelMembershipOrder,
   createMembershipOrder,
   confirmMembershipPayment,
+  confirmMockMembershipPayment,
   formatMembershipState,
   getMembershipOrderStatus,
   listMembershipOrdersForStudent,
@@ -337,4 +338,26 @@ test('rejects cancellation after a membership order has been paid', async () => 
   )
 
   assert.equal(repository.orders.get('order_paid_once')?.status, 'paid')
+})
+
+test('rejects local mock payment callback in production before activating membership', async () => {
+  const repository = createMemoryRepository()
+
+  await assert.rejects(
+    () =>
+      confirmMockMembershipPayment({
+        env: {
+          MINIPROGRAM_MOCK_PAYMENT: 'true',
+          NODE_ENV: 'production',
+        },
+        input: { orderNo: 'order_paid_once' },
+        now: new Date('2026-08-26T10:03:00.000Z'),
+        repository,
+      }),
+    /本地 mock 支付不能在生产环境启用/,
+  )
+
+  assert.equal(repository.orders.get('order_paid_once')?.status, 'pending')
+  assert.equal(repository.paymentEvents.size, 0)
+  assert.equal(repository.memberships.size, 0)
 })

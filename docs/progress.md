@@ -230,6 +230,9 @@
 - 2026-08-26：收紧生产环境本地 mock 开关。
   - 后台新增统一生产环境 mock guard，`NODE_ENV=production` 时拒绝启用本地 mock 登录、微信手机号、短信和支付开关。
   - 相关测试覆盖生产误配场景，避免生产环境返回假 OpenID、假手机号、假短信发送或假支付参数。
+- 2026-08-26：收紧本地模拟支付回调入口。
+  - `POST /api/miniprogram/payments/mock-callback` 已改为调用可测试服务层，先校验本地 mock 支付开关和生产环境限制。
+  - 生产环境即使误配 `MINIPROGRAM_MOCK_PAYMENT=true`，模拟回调也不会写入支付事件、订单支付状态或会员记录。
 
 ## 学生注册认证需求
 

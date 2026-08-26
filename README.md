@@ -205,7 +205,7 @@ WECHAT_PAY_PLATFORM_PUBLIC_KEY=
 
 - `POST /api/miniprogram/payments/wechat-callback`
 
-回调处理会先使用微信支付平台公钥验签，再用 APIv3 密钥解密 `resource`，并校验 AppID、商户号、订单号和金额后激活会员。本地开发仍可使用 `POST /api/miniprogram/payments/mock-callback`，但必须显式开启 `MINIPROGRAM_MOCK_PAYMENT=true`。
+回调处理会先使用微信支付平台公钥验签，再用 APIv3 密钥解密 `resource`，并校验 AppID、商户号、订单号和金额后激活会员。本地开发仍可使用 `POST /api/miniprogram/payments/mock-callback`，但必须显式开启 `MINIPROGRAM_MOCK_PAYMENT=true`，且生产环境会拒绝该模拟回调入口。
 
 小程序订阅消息用于认证结果提醒。小程序端订阅时会把模板 ID 记录到后台；后台发送时还需要按微信后台已审核模板配置关键词字段映射。例如：
 
