@@ -2,16 +2,20 @@ import { MiniProgramError } from './errors.ts'
 import { verifySessionToken } from './session.ts'
 import type { MiniProgramRepository, VerificationStatus } from './types.ts'
 
+const instructorDataUseCommitmentVersion = 'v1'
+
 async function getInstructorContext({
   now,
   repository,
   secret,
   sessionToken,
+  requireDataUseCommitment = true,
 }: {
   now: Date
   repository: MiniProgramRepository
   secret: string
   sessionToken: string
+  requireDataUseCommitment?: boolean
 }) {
   const session = verifySessionToken({ now, secret, token: sessionToken })
   const operator = session.studentId
@@ -25,8 +29,12 @@ async function getInstructorContext({
   if (classIds.length === 0) {
     throw new MiniProgramError('当前账号没有学生认证管理权限', 403)
   }
+  const dataUseCommitment = await repository.findInstructorDataUseCommitmentByStudentId(operator.id)
+  if (requireDataUseCommitment && !dataUseCommitment) {
+    throw new MiniProgramError('请先确认管理端数据使用承诺', 428)
+  }
 
-  return { classIds, operator }
+  return { classIds, dataUseCommitment, operator }
 }
 
 export async function listInstructorVerificationStudents({
@@ -59,6 +67,38 @@ export async function listInstructorVerificationStudents({
     pendingCount: pendingStudents.length,
     students,
   }
+}
+
+export async function confirmInstructorDataUseCommitment({
+  input,
+  now,
+  repository,
+  secret,
+}: {
+  input: {
+    sessionToken: string
+  }
+  now: Date
+  repository: MiniProgramRepository
+  secret: string
+}) {
+  const { dataUseCommitment, operator } = await getInstructorContext({
+    now,
+    repository,
+    requireDataUseCommitment: false,
+    secret,
+    sessionToken: input.sessionToken,
+  })
+  if (dataUseCommitment) {
+    return dataUseCommitment
+  }
+
+  return repository.createInstructorDataUseCommitment({
+    commitmentVersion: instructorDataUseCommitmentVersion,
+    confirmedAt: now.toISOString(),
+    phone: operator.phone,
+    studentId: operator.id,
+  })
 }
 
 export async function reviewInstructorStudents({

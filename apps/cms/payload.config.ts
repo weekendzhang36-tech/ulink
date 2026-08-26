@@ -11,6 +11,7 @@ import { ContentCategories, ContentReservations, Contents } from './src/collecti
 import { GrowthPlans, Memberships, Orders, PaymentEvents } from './src/collections/GrowthPlans'
 import { ServiceLinks } from './src/collections/ServiceLinks'
 import {
+  InstructorDataUseCommitments,
   NotificationSubscriptions,
   SmsVerificationChallenges,
   Students,
@@ -44,6 +45,7 @@ export default buildConfig({
     Students,
     SmsVerificationChallenges,
     NotificationSubscriptions,
+    InstructorDataUseCommitments,
     ContentCategories,
     Contents,
     ContentReservations,

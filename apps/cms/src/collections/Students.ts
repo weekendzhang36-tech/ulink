@@ -107,3 +107,22 @@ export const NotificationSubscriptions: CollectionConfig = {
     { name: 'subscribedAt', type: 'date', label: '授权时间', required: true },
   ],
 }
+
+export const InstructorDataUseCommitments: CollectionConfig = {
+  slug: 'instructor-data-use-commitments',
+  admin: {
+    defaultColumns: ['student', 'phone', 'commitmentVersion', 'confirmedAt'],
+    group: '学生与认证',
+    useAsTitle: 'phone',
+  },
+  labels: {
+    singular: '指导员数据使用承诺',
+    plural: '指导员数据使用承诺',
+  },
+  fields: [
+    { name: 'student', type: 'relationship', label: '确认账号', relationTo: 'students', required: true, unique: true },
+    { name: 'phone', type: 'text', label: '确认时手机号', required: true },
+    { name: 'commitmentVersion', type: 'text', label: '承诺版本', required: true },
+    { name: 'confirmedAt', type: 'date', label: '确认时间', required: true },
+  ],
+}

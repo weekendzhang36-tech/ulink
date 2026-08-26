@@ -125,6 +125,14 @@ export interface NotificationSubscriptionRecord {
   templateId: string
 }
 
+export interface InstructorDataUseCommitmentRecord {
+  commitmentVersion: string
+  confirmedAt: string
+  id: string
+  phone: string
+  studentId: string
+}
+
 export interface PaymentParams {
   mock?: boolean
   nonceStr: string
@@ -170,6 +178,9 @@ export interface MiniProgramRepository {
   createNotificationSubscription(
     input: Omit<NotificationSubscriptionRecord, 'id'>,
   ): Promise<NotificationSubscriptionRecord>
+  createInstructorDataUseCommitment(
+    input: Omit<InstructorDataUseCommitmentRecord, 'id'>,
+  ): Promise<InstructorDataUseCommitmentRecord>
   createOrder(input: Omit<OrderRecord, 'id'>): Promise<OrderRecord>
   createPaymentEvent(input: Omit<PaymentEventRecord, 'id'>): Promise<PaymentEventRecord>
   createSmsVerificationChallenge(
@@ -195,6 +206,9 @@ export interface MiniProgramRepository {
     phone: string,
   ): Promise<SmsVerificationChallengeRecord | undefined>
   findInstructorClassIdsByPhone(phone: string): Promise<string[]>
+  findInstructorDataUseCommitmentByStudentId(
+    studentId: string,
+  ): Promise<InstructorDataUseCommitmentRecord | undefined>
   isActiveCampusSelection(input: {
     classId: string
     collegeId: string

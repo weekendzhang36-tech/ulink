@@ -187,6 +187,24 @@ function reviewInstructorStudents({ action, studentIds }) {
   })
 }
 
+function confirmInstructorDataUseCommitment() {
+  return withDemoFallback(
+    request({
+      auth: true,
+      data: {
+        sessionToken: getSessionToken(),
+      },
+      method: 'POST',
+      path: '/instructor/data-use-commitment',
+    }),
+    () => ({
+      commitmentVersion: 'v1',
+      confirmedAt: new Date().toISOString(),
+      id: 'demo-instructor-commitment',
+    }),
+  )
+}
+
 function recordNotificationSubscription({ purpose, templateId }) {
   return request({
     auth: true,
@@ -337,6 +355,7 @@ function mockConfirmPayment(orderNo) {
 
 module.exports = {
   cancelOrder,
+  confirmInstructorDataUseCommitment,
   createGrowthPlanOrder,
   getArticleById,
   getCampusOptions,

@@ -2,6 +2,7 @@ import type {
   ContentReservationRecord,
   GrowthPlanRecord,
   InstructorStudentSummary,
+  InstructorDataUseCommitmentRecord,
   MembershipRecord,
   MiniProgramRepository,
   NotificationSubscriptionRecord,
@@ -16,7 +17,11 @@ function nextId(prefix: string, size: number) {
 }
 
 export function createMemoryRepository(
-  options: { seedInstructor?: boolean; seedStudents?: boolean } = {},
+  options: {
+    seedInstructor?: boolean
+    seedInstructorDataUseCommitment?: boolean
+    seedStudents?: boolean
+  } = {},
 ) {
   const seededStudents: [string, StudentRecord][] = options.seedStudents === false ? [] : [
     [
@@ -102,6 +107,16 @@ export function createMemoryRepository(
     ],
   ])
   const memberships = new Map<string, MembershipRecord>()
+  const instructorDataUseCommitments = new Map<string, InstructorDataUseCommitmentRecord>()
+  if (options.seedInstructorDataUseCommitment) {
+    instructorDataUseCommitments.set('student_instructor', {
+      commitmentVersion: 'v1',
+      confirmedAt: '2026-08-26T08:30:00.000Z',
+      id: 'instructor_commitment_001',
+      phone: '13900000001',
+      studentId: 'student_instructor',
+    })
+  }
   const notificationSubscriptions = new Map<string, NotificationSubscriptionRecord>()
   const contentReservations = new Map<string, ContentReservationRecord>()
   const paymentEvents = new Map<string, PaymentEventRecord>()
@@ -115,6 +130,7 @@ export function createMemoryRepository(
   const repository: MiniProgramRepository & {
     contentReservations: Map<string, ContentReservationRecord>
     growthPlans: Map<string, GrowthPlanRecord>
+    instructorDataUseCommitments: Map<string, InstructorDataUseCommitmentRecord>
     memberships: Map<string, MembershipRecord>
     notificationSubscriptions: Map<string, NotificationSubscriptionRecord>
     orders: Map<string, OrderRecord>
@@ -124,6 +140,7 @@ export function createMemoryRepository(
   } = {
     contentReservations,
     growthPlans,
+    instructorDataUseCommitments,
     memberships,
     notificationSubscriptions,
     orders,
@@ -150,6 +167,15 @@ export function createMemoryRepository(
       notificationSubscriptions.set(subscription.id, subscription)
 
       return subscription
+    },
+    async createInstructorDataUseCommitment(input) {
+      const commitment = {
+        ...input,
+        id: nextId('instructor_commitment', instructorDataUseCommitments.size),
+      }
+      instructorDataUseCommitments.set(commitment.studentId, commitment)
+
+      return commitment
     },
     async createOrder(input) {
       const order = { ...input, id: nextId('order', orders.size) }
@@ -221,6 +247,9 @@ export function createMemoryRepository(
     },
     async findInstructorClassIdsByPhone(phone) {
       return instructorClasses.get(phone) || []
+    },
+    async findInstructorDataUseCommitmentByStudentId(studentId) {
+      return instructorDataUseCommitments.get(studentId)
     },
     async isActiveCampusSelection(input) {
       return campusSelections.has(

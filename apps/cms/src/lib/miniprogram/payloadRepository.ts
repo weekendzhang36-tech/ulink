@@ -3,6 +3,7 @@ import type {
   ContentReservationRecord,
   GrowthPlanRecord,
   InstructorStudentSummary,
+  InstructorDataUseCommitmentRecord,
   MembershipRecord,
   MiniProgramRepository,
   NotificationSubscriptionRecord,
@@ -149,6 +150,18 @@ function toNotificationSubscription(doc: Record<string, unknown>): NotificationS
   }
 }
 
+function toInstructorDataUseCommitment(
+  doc: Record<string, unknown>,
+): InstructorDataUseCommitmentRecord {
+  return {
+    commitmentVersion: String(doc.commitmentVersion || ''),
+    confirmedAt: String(doc.confirmedAt || doc.createdAt || ''),
+    id: String(doc.id),
+    phone: String(doc.phone || ''),
+    studentId: idOf(doc.student),
+  }
+}
+
 function toInstructorStudentSummary(doc: Record<string, unknown>): InstructorStudentSummary {
   return {
     classId: idOf(doc.class),
@@ -222,6 +235,19 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
             student: input.studentId,
             subscribedAt: input.subscribedAt,
             templateId: input.templateId,
+          },
+        }),
+      )
+    },
+    async createInstructorDataUseCommitment(input) {
+      return toInstructorDataUseCommitment(
+        await payload.create({
+          collection: 'instructor-data-use-commitments',
+          data: {
+            commitmentVersion: input.commitmentVersion,
+            confirmedAt: input.confirmedAt,
+            phone: input.phone,
+            student: input.studentId,
           },
         }),
       )
@@ -404,6 +430,16 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
       })
 
       return result.docs.map((doc) => String(doc.id))
+    },
+    async findInstructorDataUseCommitmentByStudentId(studentId) {
+      const doc = await first(
+        payload,
+        'instructor-data-use-commitments',
+        { student: { equals: studentId } },
+        0,
+      )
+
+      return doc ? toInstructorDataUseCommitment(doc) : undefined
     },
     async isActiveCampusSelection(input) {
       const school = await first(payload, 'schools', {

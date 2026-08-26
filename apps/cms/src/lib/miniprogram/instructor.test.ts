@@ -1,7 +1,11 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 
-import { reviewInstructorStudents, listInstructorVerificationStudents } from './instructor.ts'
+import {
+  confirmInstructorDataUseCommitment,
+  listInstructorVerificationStudents,
+  reviewInstructorStudents,
+} from './instructor.ts'
 import { createSessionToken } from './session.ts'
 import { createMemoryRepository } from './testing/memoryRepository.ts'
 
@@ -18,7 +22,11 @@ function instructorToken() {
 }
 
 test('lists only pending students from classes assigned to the instructor phone', async () => {
-  const repository = createMemoryRepository({ seedInstructor: true, seedStudents: true })
+  const repository = createMemoryRepository({
+    seedInstructor: true,
+    seedInstructorDataUseCommitment: true,
+    seedStudents: true,
+  })
 
   const result = await listInstructorVerificationStudents({
     input: {
@@ -37,8 +45,59 @@ test('lists only pending students from classes assigned to the instructor phone'
   assert.equal(result.pendingCount, 1)
 })
 
-test('rejects review actions for students outside instructor assigned classes', async () => {
+test('requires a data use commitment before listing instructor verification students', async () => {
   const repository = createMemoryRepository({ seedInstructor: true, seedStudents: true })
+
+  await assert.rejects(
+    () =>
+      listInstructorVerificationStudents({
+        input: {
+          sessionToken: instructorToken(),
+          status: 'pending',
+        },
+        now: new Date('2026-08-26T10:01:00.000Z'),
+        repository,
+        secret,
+      }),
+    /请先确认管理端数据使用承诺/,
+  )
+})
+
+test('records the instructor data use commitment before exposing verification students', async () => {
+  const repository = createMemoryRepository({ seedInstructor: true, seedStudents: true })
+
+  const commitment = await confirmInstructorDataUseCommitment({
+    input: {
+      sessionToken: instructorToken(),
+    },
+    now: new Date('2026-08-26T10:01:00.000Z'),
+    repository,
+    secret,
+  })
+  const result = await listInstructorVerificationStudents({
+    input: {
+      sessionToken: instructorToken(),
+      status: 'pending',
+    },
+    now: new Date('2026-08-26T10:02:00.000Z'),
+    repository,
+    secret,
+  })
+
+  assert.equal(commitment.studentId, 'student_instructor')
+  assert.equal(commitment.confirmedAt, '2026-08-26T10:01:00.000Z')
+  assert.deepEqual(
+    result.students.map((student) => student.id),
+    ['student_001'],
+  )
+})
+
+test('rejects review actions for students outside instructor assigned classes', async () => {
+  const repository = createMemoryRepository({
+    seedInstructor: true,
+    seedInstructorDataUseCommitment: true,
+    seedStudents: true,
+  })
 
   await assert.rejects(
     () =>
@@ -59,7 +118,11 @@ test('rejects review actions for students outside instructor assigned classes', 
 })
 
 test('updates assigned students to verified in a batch review action', async () => {
-  const repository = createMemoryRepository({ seedInstructor: true, seedStudents: true })
+  const repository = createMemoryRepository({
+    seedInstructor: true,
+    seedInstructorDataUseCommitment: true,
+    seedStudents: true,
+  })
 
   const result = await reviewInstructorStudents({
     input: {

@@ -1,4 +1,5 @@
 const {
+  confirmInstructorDataUseCommitment,
   getInstructorVerifications,
   getSessionToken,
   recordNotificationSubscription,
@@ -12,6 +13,8 @@ const {
 Page({
   data: {
     hasStudents: false,
+    commitmentRequired: false,
+    confirmingCommitment: false,
     loading: false,
     pendingCount: 0,
     subscribing: false,
@@ -32,16 +35,43 @@ Page({
     getInstructorVerifications('pending')
       .then((data) => {
         this.setData({
+          commitmentRequired: false,
           hasStudents: Boolean(data.students && data.students.length),
           pendingCount: data.pendingCount || 0,
           students: data.students || [],
         })
       })
       .catch((error) => {
+        if (error.statusCode === 428 || (error.message || '').includes('数据使用承诺')) {
+          this.setData({
+            commitmentRequired: true,
+            hasStudents: false,
+            pendingCount: 0,
+            students: [],
+          })
+          return
+        }
+
         wx.showToast({ icon: 'none', title: error.message || '暂无管理权限' })
       })
       .finally(() => {
         this.setData({ loading: false })
+      })
+  },
+
+  confirmDataUseCommitment() {
+    this.setData({ confirmingCommitment: true })
+    confirmInstructorDataUseCommitment()
+      .then(() => {
+        wx.showToast({ title: '已确认' })
+        this.setData({ commitmentRequired: false })
+        this.loadStudents()
+      })
+      .catch((error) => {
+        wx.showToast({ icon: 'none', title: error.message || '确认失败' })
+      })
+      .finally(() => {
+        this.setData({ confirmingCommitment: false })
       })
   },
 
@@ -61,6 +91,11 @@ Page({
   },
 
   subscribePendingVerification() {
+    if (this.data.commitmentRequired) {
+      wx.showToast({ icon: 'none', title: '请先确认承诺' })
+      return
+    }
+
     const purpose = 'instructor_pending_verification'
     const templateId = getTemplateIdForPurpose(getApp(), purpose)
     if (!templateId) {
@@ -98,6 +133,11 @@ Page({
   },
 
   reviewStudents(action, studentIds) {
+    if (this.data.commitmentRequired) {
+      wx.showToast({ icon: 'none', title: '请先确认承诺' })
+      return
+    }
+
     this.setData({ loading: true })
     reviewInstructorStudents({ action, studentIds })
       .then(() => {

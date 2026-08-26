@@ -3,34 +3,51 @@
     <text class="eyebrow">指导员入口</text>
     <view class="title">学生认证管理</view>
     <view class="subtitle">只展示当前手机号负责班级的学生资料。</view>
-    <button class="secondary-button full" loading="{{subscribing}}" bindtap="subscribePendingVerification">
+    <button
+      wx:if="{{!commitmentRequired}}"
+      class="secondary-button full"
+      loading="{{subscribing}}"
+      bindtap="subscribePendingVerification"
+    >
       接收待认证提醒
     </button>
   </view>
 
-  <view class="section-title">待认证 {{pendingCount}}</view>
-
-  <view class="empty-card" wx:if="{{!hasStudents}}">
-    <view class="subtitle">暂无待认证学生。</view>
+  <view class="card commitment-card" wx:if="{{commitmentRequired}}">
+    <view class="commitment-title">管理端数据使用承诺</view>
+    <view class="commitment-text">
+      学生姓名、手机号、学院、专业和班级信息仅用于班级管理、认证确认、活动组织等必要场景。请勿转发、截图外传或用于无关用途。
+    </view>
+    <button class="primary-button" loading="{{confirmingCommitment}}" bindtap="confirmDataUseCommitment">
+      确认并进入管理
+    </button>
   </view>
 
-  <view class="card student-card" wx:for="{{students}}" wx:key="id">
-    <view class="student-header">
-      <view>
-        <view class="student-name">{{item.realName}}</view>
-        <view class="muted">{{item.phone}}</view>
+  <block wx:if="{{!commitmentRequired}}">
+    <view class="section-title">待认证 {{pendingCount}}</view>
+
+    <view class="empty-card" wx:if="{{!hasStudents}}">
+      <view class="subtitle">暂无待认证学生。</view>
+    </view>
+
+    <view class="card student-card" wx:for="{{students}}" wx:key="id">
+      <view class="student-header">
+        <view>
+          <view class="student-name">{{item.realName}}</view>
+          <view class="muted">{{item.phone}}</view>
+        </view>
+        <text class="status-pill">待认证</text>
       </view>
-      <text class="status-pill">待认证</text>
+      <view class="info-line">学校：{{item.schoolId}}</view>
+      <view class="info-line">学院：{{item.collegeId}}</view>
+      <view class="info-line">专业：{{item.majorId}}</view>
+      <view class="info-line">班级：{{item.classId}}</view>
+      <view class="action-row">
+        <button class="secondary-button" data-action="needs_review" data-id="{{item.id}}" bindtap="reviewOne">需确认</button>
+        <button class="primary-small-button" data-action="verified" data-id="{{item.id}}" bindtap="reviewOne">确认通过</button>
+      </view>
     </view>
-    <view class="info-line">学校：{{item.schoolId}}</view>
-    <view class="info-line">学院：{{item.collegeId}}</view>
-    <view class="info-line">专业：{{item.majorId}}</view>
-    <view class="info-line">班级：{{item.classId}}</view>
-    <view class="action-row">
-      <button class="secondary-button" data-action="needs_review" data-id="{{item.id}}" bindtap="reviewOne">需确认</button>
-      <button class="primary-small-button" data-action="verified" data-id="{{item.id}}" bindtap="reviewOne">确认通过</button>
-    </view>
-  </view>
 
-  <button class="primary-button" loading="{{loading}}" bindtap="verifyAll">全部确认通过</button>
+    <button class="primary-button" loading="{{loading}}" bindtap="verifyAll">全部确认通过</button>
+  </block>
 </view>
