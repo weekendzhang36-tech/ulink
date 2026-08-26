@@ -72,7 +72,7 @@ export const SmsVerificationChallenges: CollectionConfig = {
 export const NotificationSubscriptions: CollectionConfig = {
   slug: 'notification-subscriptions',
   admin: {
-    defaultColumns: ['student', 'purpose', 'status', 'subscribedAt'],
+    defaultColumns: ['student', 'purpose', 'status', 'subscribedAt', 'deliveredAt'],
     group: '学生与认证',
     useAsTitle: 'purpose',
   },
@@ -105,6 +105,7 @@ export const NotificationSubscriptions: CollectionConfig = {
       ],
     },
     { name: 'subscribedAt', type: 'date', label: '授权时间', required: true },
+    { name: 'deliveredAt', type: 'date', label: '发送时间' },
   ],
 }
 

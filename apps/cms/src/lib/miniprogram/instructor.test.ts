@@ -204,6 +204,15 @@ test('sends a subscribed student their verification review result', async () => 
       status: 'sent',
     },
   ])
+  assert.deepEqual(repository.notificationSubscriptions.get('notification_subscription_001'), {
+    deliveredAt: '2026-08-26T10:01:00.000Z',
+    id: 'notification_subscription_001',
+    purpose: 'student_verification_result',
+    status: 'cancelled',
+    studentId: 'student_001',
+    subscribedAt: '2026-08-26T09:30:00.000Z',
+    templateId: 'template_student_result',
+  })
 })
 
 test('keeps verification review when student notification delivery fails', async () => {
@@ -238,6 +247,14 @@ test('keeps verification review when student notification delivery fails', async
 
   assert.equal(repository.students.get('student_001')?.verificationStatus, 'needs_review')
   assert.equal(repository.studentVerificationLogs.size, 1)
+  assert.deepEqual(repository.notificationSubscriptions.get('notification_subscription_001'), {
+    id: 'notification_subscription_001',
+    purpose: 'student_verification_result',
+    status: 'active',
+    studentId: 'student_001',
+    subscribedAt: '2026-08-26T09:30:00.000Z',
+    templateId: 'template_student_result',
+  })
   assert.deepEqual(result.notificationResults, [
     {
       errorMessage: 'wechat subscribe message failed',

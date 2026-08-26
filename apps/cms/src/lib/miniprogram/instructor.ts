@@ -169,6 +169,10 @@ export async function reviewInstructorStudents({
             student: updatedStudent,
             subscription,
           })
+          await repository.updateNotificationSubscription(subscription.id, {
+            deliveredAt: now.toISOString(),
+            status: 'cancelled',
+          })
           notificationResults.push({ status: 'sent', studentId: student.id })
         } catch (error) {
           notificationResults.push({

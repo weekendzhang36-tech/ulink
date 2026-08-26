@@ -118,6 +118,7 @@ export interface SmsVerificationChallengeRecord {
 }
 
 export interface NotificationSubscriptionRecord {
+  deliveredAt?: string
   id: string
   purpose: NotificationSubscriptionPurpose
   status: NotificationSubscriptionStatus

@@ -140,6 +140,7 @@ function toContentReservation(doc: Record<string, unknown>): ContentReservationR
 
 function toNotificationSubscription(doc: Record<string, unknown>): NotificationSubscriptionRecord {
   return {
+    deliveredAt: optionalString(doc.deliveredAt),
     id: String(doc.id),
     purpose:
       doc.purpose === 'instructor_pending_verification'
@@ -248,6 +249,7 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
           collection: 'notification-subscriptions',
           data: {
             purpose: input.purpose,
+            deliveredAt: input.deliveredAt,
             status: input.status,
             student: input.studentId,
             subscribedAt: input.subscribedAt,
@@ -597,6 +599,7 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
         await payload.update({
           collection: 'notification-subscriptions',
           data: {
+            deliveredAt: input.deliveredAt,
             status: input.status,
             subscribedAt: input.subscribedAt,
             templateId: input.templateId,
