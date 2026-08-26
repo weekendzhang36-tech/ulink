@@ -22,6 +22,14 @@
     </view>
   </view>
 
+  <view class="card benefits-card" wx:if="{{membershipBenefits.length}}">
+    <view class="benefits-title">{{state.membershipState.isActive ? '当前权益' : '加入后可获得'}}</view>
+    <view class="benefit-row" wx:for="{{membershipBenefits}}" wx:key="*this">
+      <text class="benefit-dot"></text>
+      <text>{{item}}</text>
+    </view>
+  </view>
+
   <view class="card list">
     <view class="list-row" bindtap="openVerification">
       <text>认证状态</text>

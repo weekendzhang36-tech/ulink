@@ -1,8 +1,10 @@
-const { endSession, getSessionToken, getStudentState } = require('../../utils/api')
+const { endSession, getGrowthPlan, getSessionToken, getStudentState } = require('../../utils/api')
+const { normalizeMembershipBenefits } = require('../../utils/membership-benefits')
 const { handleProfileGuardError } = require('../../utils/profile-guard')
 
 Page({
   data: {
+    membershipBenefits: [],
     state: null,
   },
 
@@ -12,10 +14,11 @@ Page({
       return
     }
 
-    getStudentState()
-      .then((state) => {
+    Promise.all([getStudentState(), getGrowthPlan()])
+      .then(([state, growthPlan]) => {
         this.setData({
           avatarText: state.name.slice(0, 1),
+          membershipBenefits: normalizeMembershipBenefits(growthPlan),
           state,
         })
       })
