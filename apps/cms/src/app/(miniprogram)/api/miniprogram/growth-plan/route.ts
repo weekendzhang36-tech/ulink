@@ -1,14 +1,11 @@
 import { handleMiniProgramRoute, ok, getMiniProgramPayload } from '@/lib/miniprogram/routeHelpers.ts'
+import { findActiveGrowthPlanForMiniProgram } from '@/lib/miniprogram/growthPlan.ts'
 
 export async function GET() {
   return handleMiniProgramRoute(async () => {
     const payload = await getMiniProgramPayload()
-    const result = await payload.find({
-      collection: 'growth-plans',
-      limit: 1,
-      where: { isActive: { equals: true } },
-    })
+    const growthPlan = await findActiveGrowthPlanForMiniProgram({ payload })
 
-    return ok(result.docs[0] || null)
+    return ok(growthPlan)
   })
 }

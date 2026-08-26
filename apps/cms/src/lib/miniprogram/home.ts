@@ -1,5 +1,6 @@
 import { listPublishedContents } from './content.ts'
 import { MiniProgramError } from './errors.ts'
+import { findActiveGrowthPlanForMiniProgram } from './growthPlan.ts'
 import { formatMembershipState } from './membership.ts'
 import { verifySessionToken } from './session.ts'
 import type { MiniProgramRepository } from './types.ts'
@@ -45,11 +46,7 @@ export async function getMiniProgramHomeData({
     throw new MiniProgramError('请先完善学生资料', 403)
   }
 
-  const growthPlans = await payload.find({
-    collection: 'growth-plans',
-    limit: 1,
-    where: { isActive: { equals: true } },
-  })
+  const growthPlan = await findActiveGrowthPlanForMiniProgram({ payload })
   const articles = await listPublishedContents({ featuredOnly: true, payload })
   const instructorClassIds = await repository.findInstructorClassIdsByPhone(student.phone)
   const pendingStudents =
@@ -63,7 +60,7 @@ export async function getMiniProgramHomeData({
 
   return {
     articles,
-    growthPlan: growthPlans.docs[0] || null,
+    growthPlan,
     instructorState:
       pendingStudents.length > 0
         ? {
