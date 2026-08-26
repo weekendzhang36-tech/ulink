@@ -105,6 +105,7 @@ function getStudentState() {
     const student = data.student || {}
 
     return {
+      canManageStudents: Boolean(data.instructor && data.instructor.canManageStudents),
       className: student.className || student.classId || '',
       message:
         student.message ||
@@ -118,6 +119,26 @@ function getStudentState() {
           ? '需确认'
           : student.verificationStatus || '未提交',
     }
+  })
+}
+
+function getInstructorVerifications(status = 'pending') {
+  const query = status ? `?status=${status}` : ''
+
+  return withDemoFallback(request({ auth: true, path: `/instructor/verifications${query}` }), () =>
+    mockData.instructorVerifications,
+  )
+}
+
+function reviewInstructorStudents({ action, studentIds }) {
+  return request({
+    auth: true,
+    data: {
+      action,
+      studentIds,
+    },
+    method: 'POST',
+    path: '/instructor/verifications',
   })
 }
 
@@ -181,9 +202,11 @@ module.exports = {
   getCampusOptions,
   getGrowthPlan,
   getHomeData,
+  getInstructorVerifications,
   getSessionToken,
   getStudentState,
   loginWithWechatCode,
   mockConfirmPayment,
+  reviewInstructorStudents,
   submitProfile,
 }

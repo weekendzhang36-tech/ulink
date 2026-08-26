@@ -2,6 +2,7 @@
   "pages": [
     "pages/login/index",
     "pages/profile/index",
+    "pages/instructor-verifications/index",
     "pages/home/index",
     "pages/growth-plan/index",
     "pages/content-detail/index",

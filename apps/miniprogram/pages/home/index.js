@@ -4,6 +4,7 @@ Page({
   data: {
     articles: [],
     growthPlan: null,
+    instructorState: null,
     modules: [],
     studentState: null,
   },
@@ -34,5 +35,9 @@ Page({
 
   openVerification() {
     wx.navigateTo({ url: '/pages/verification/index' })
+  },
+
+  openInstructorVerifications() {
+    wx.navigateTo({ url: '/pages/instructor-verifications/index' })
   },
 })

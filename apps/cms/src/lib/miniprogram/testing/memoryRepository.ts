@@ -1,5 +1,6 @@
 import type {
   GrowthPlanRecord,
+  InstructorStudentSummary,
   MembershipRecord,
   MiniProgramRepository,
   OrderRecord,
@@ -11,8 +12,10 @@ function nextId(prefix: string, size: number) {
   return `${prefix}_${String(size + 1).padStart(3, '0')}`
 }
 
-export function createMemoryRepository(options: { seedStudents?: boolean } = {}) {
-  const students = new Map<string, StudentRecord>(options.seedStudents === false ? [] : [
+export function createMemoryRepository(
+  options: { seedInstructor?: boolean; seedStudents?: boolean } = {},
+) {
+  const seededStudents: [string, StudentRecord][] = options.seedStudents === false ? [] : [
     [
       'student_001',
       {
@@ -30,7 +33,45 @@ export function createMemoryRepository(options: { seedStudents?: boolean } = {})
         wechatOpenId: 'openid_001',
       },
     ],
-  ])
+    [
+      'student_other_class',
+      {
+        birthday: '2007-09-01',
+        classId: 'class_999',
+        collegeId: 'college_001',
+        gender: 'female',
+        id: 'student_other_class',
+        majorId: 'major_001',
+        phone: '13800000999',
+        realName: '其他班学生',
+        schoolId: 'school_001',
+        submittedAt: '2026-08-26T09:05:00.000Z',
+        verificationStatus: 'pending',
+        wechatOpenId: 'openid_other_class',
+      },
+    ],
+  ]
+  if (options.seedInstructor) {
+    seededStudents.push([
+      'student_instructor',
+      {
+        birthday: '1990-01-01',
+        classId: 'class_staff',
+        collegeId: 'college_staff',
+        gender: 'undisclosed',
+        id: 'student_instructor',
+        majorId: 'major_staff',
+        phone: '13900000001',
+        realName: '指导员',
+        schoolId: 'school_001',
+        submittedAt: '2026-08-26T08:00:00.000Z',
+        verificationStatus: 'verified',
+        wechatOpenId: 'openid_instructor',
+      },
+    ])
+  }
+  const students = new Map<string, StudentRecord>(seededStudents)
+  const instructorClasses = new Map<string, string[]>([['13900000001', ['class_001']]])
   const growthPlans = new Map<string, GrowthPlanRecord>([
     [
       'growth_plan_001',
@@ -110,6 +151,25 @@ export function createMemoryRepository(options: { seedStudents?: boolean } = {})
     async findPaymentEventByKey(eventKey) {
       return paymentEvents.get(eventKey)
     },
+    async findInstructorClassIdsByPhone(phone) {
+      return instructorClasses.get(phone) || []
+    },
+    async findStudentsByClassIds(input) {
+      return [...students.values()]
+        .filter((student) => input.classIds.includes(student.classId))
+        .filter((student) => !input.status || student.verificationStatus === input.status)
+        .map<InstructorStudentSummary>((student) => ({
+          classId: student.classId,
+          collegeId: student.collegeId,
+          id: student.id,
+          majorId: student.majorId,
+          phone: student.phone,
+          realName: student.realName,
+          schoolId: student.schoolId,
+          submittedAt: student.submittedAt,
+          verificationStatus: student.verificationStatus,
+        }))
+    },
     async findStudentById(id) {
       return students.get(id)
     },
@@ -145,6 +205,16 @@ export function createMemoryRepository(options: { seedStudents?: boolean } = {})
         throw new Error(`Student not found: ${id}`)
       }
       const next = { ...current, ...input }
+      students.set(id, next)
+
+      return next
+    },
+    async updateStudentVerificationStatus(id, status) {
+      const current = students.get(id)
+      if (!current) {
+        throw new Error(`Student not found: ${id}`)
+      }
+      const next = { ...current, verificationStatus: status }
       students.set(id, next)
 
       return next

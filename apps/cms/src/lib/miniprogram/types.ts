@@ -27,6 +27,18 @@ export interface StudentRecord {
   wechatUnionId?: string
 }
 
+export interface InstructorStudentSummary {
+  classId: string
+  collegeId: string
+  id: string
+  majorId: string
+  phone: string
+  realName: string
+  schoolId: string
+  submittedAt: string
+  verificationStatus: VerificationStatus
+}
+
 export interface StudentProfileInput {
   agreedToPolicies: boolean
   birthday: string
@@ -115,9 +127,15 @@ export interface MiniProgramRepository {
   findMembershipByStudentId(studentId: string): Promise<MembershipRecord | undefined>
   findOrderByOrderNo(orderNo: string): Promise<OrderRecord | undefined>
   findPaymentEventByKey(eventKey: string): Promise<PaymentEventRecord | undefined>
+  findInstructorClassIdsByPhone(phone: string): Promise<string[]>
+  findStudentsByClassIds(input: {
+    classIds: string[]
+    status?: VerificationStatus
+  }): Promise<InstructorStudentSummary[]>
   findStudentById(id: string): Promise<StudentRecord | undefined>
   findStudentByOpenId(openId: string): Promise<StudentRecord | undefined>
   findStudentByPhone(phone: string): Promise<StudentRecord | undefined>
+  updateStudentVerificationStatus(id: string, status: VerificationStatus): Promise<StudentRecord>
   updateMembership(id: string, input: Partial<Omit<MembershipRecord, 'id'>>): Promise<MembershipRecord>
   updateOrder(id: string, input: Partial<Omit<OrderRecord, 'id'>>): Promise<OrderRecord>
   updateStudent(id: string, input: Partial<Omit<StudentRecord, 'id'>>): Promise<StudentRecord>

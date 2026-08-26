@@ -1,0 +1,63 @@
+.student-card {
+  padding: 28rpx 32rpx;
+}
+
+.student-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+
+.student-name {
+  color: #1d1d1f;
+  font-size: 34rpx;
+  font-weight: 700;
+}
+
+.status-pill {
+  background: #eaf3ff;
+  border-radius: 999rpx;
+  color: #007aff;
+  font-size: 24rpx;
+  font-weight: 700;
+  padding: 8rpx 18rpx;
+}
+
+.info-line {
+  color: #6e6e73;
+  font-size: 28rpx;
+  line-height: 1.7;
+}
+
+.action-row {
+  display: grid;
+  gap: 20rpx;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 24rpx;
+}
+
+.secondary-button,
+.primary-small-button {
+  border-radius: 20rpx;
+  font-size: 28rpx;
+  font-weight: 700;
+  line-height: 80rpx;
+}
+
+.secondary-button {
+  background: #f2f2f7;
+  color: #6e6e73;
+}
+
+.primary-small-button {
+  background: #007aff;
+  color: #ffffff;
+}
+
+.empty-card {
+  background: #ffffff;
+  border-radius: 32rpx;
+  margin-bottom: 24rpx;
+  padding: 36rpx 32rpx;
+}

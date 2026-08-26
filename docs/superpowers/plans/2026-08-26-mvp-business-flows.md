@@ -115,4 +115,32 @@
 - [x] Run `pnpm typecheck`.
 - [x] Run `pnpm --filter @ulink/cms build` with local env values.
 - [x] Check `git status --short` and staged diff.
-- [ ] Commit and push to `main`.
+- [x] Commit and push to `main`.
+
+### Task 6: Instructor Verification Management
+
+**Files:**
+- Create: `apps/cms/src/lib/miniprogram/instructor.ts`
+- Create: `apps/cms/src/lib/miniprogram/instructor.test.ts`
+- Modify: `apps/cms/src/lib/miniprogram/types.ts`
+- Modify: `apps/cms/src/lib/miniprogram/payloadRepository.ts`
+- Modify: `apps/cms/src/lib/miniprogram/testing/memoryRepository.ts`
+- Create: `apps/cms/src/app/(miniprogram)/api/miniprogram/instructor/verifications/route.ts`
+- Create: `apps/miniprogram/pages/instructor-verifications/*`
+- Modify: `apps/miniprogram/app.json`
+- Modify: `apps/miniprogram/pages/home/*`
+- Modify: `apps/miniprogram/pages/mine/*`
+- Modify: `apps/miniprogram/utils/api.js`
+
+**Interfaces:**
+- Consumes: session token and student phone from the existing Mini Program login/profile flow.
+- Produces: instructor-only student verification list and review action API.
+
+- [x] Write failing tests for instructor list permissions, unauthorized review rejection, and batch verification.
+- [x] Implement instructor service functions.
+- [x] Add Payload repository methods for instructor class lookup, student list lookup, and verification status updates.
+- [x] Add `/api/miniprogram/instructor/verifications` GET and POST routes.
+- [x] Add Mini Program instructor management page and conditional Mine/Home entrances.
+- [x] Run `pnpm --filter @ulink/cms test`.
+- [x] Run `pnpm --filter @ulink/cms typecheck`.
+- [x] Run `PAYLOAD_SECRET=dev-local-build-secret DATABASE_URL=postgres://ulink:ulink_dev_password@localhost:5432/ulink pnpm --filter @ulink/cms build`.

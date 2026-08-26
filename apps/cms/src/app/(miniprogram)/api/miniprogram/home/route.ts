@@ -35,10 +35,26 @@ export async function GET(request: Request) {
       : session?.openId
         ? await repository.findStudentByOpenId(session.openId)
         : undefined
+    const instructorClassIds = student
+      ? await repository.findInstructorClassIdsByPhone(student.phone)
+      : []
+    const pendingStudents =
+      instructorClassIds.length > 0
+        ? await repository.findStudentsByClassIds({
+            classIds: instructorClassIds,
+            status: 'pending',
+          })
+        : []
 
     return ok({
       articles,
       growthPlan: growthPlans.docs[0] || null,
+      instructorState:
+        pendingStudents.length > 0
+          ? {
+              pendingCount: pendingStudents.length,
+            }
+          : null,
       modules,
       studentState: student
         ? {

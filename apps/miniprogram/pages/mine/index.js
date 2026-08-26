@@ -26,4 +26,8 @@ Page({
   openVerification() {
     wx.navigateTo({ url: '/pages/verification/index' })
   },
+
+  openInstructorVerifications() {
+    wx.navigateTo({ url: '/pages/instructor-verifications/index' })
+  },
 })

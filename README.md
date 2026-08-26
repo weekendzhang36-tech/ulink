@@ -113,6 +113,8 @@ pnpm lint            # 后台 lint
 - `GET /api/miniprogram/content`
 - `GET /api/miniprogram/content/:id`
 - `GET /api/miniprogram/growth-plan`
+- `GET /api/miniprogram/instructor/verifications`
+- `POST /api/miniprogram/instructor/verifications`
 - `POST /api/miniprogram/orders`
 - `GET /api/miniprogram/orders/:orderNo`
 - `POST /api/miniprogram/payments/mock-callback`

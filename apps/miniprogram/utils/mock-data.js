@@ -33,11 +33,29 @@ const articles = [
 ]
 
 const studentState = {
+  canManageStudents: false,
   name: '林一诺',
   school: '广东金融学院',
   className: '金融学 2026-1 班',
   verificationStatus: '待认证',
   message: '资料已提交，等待指导员确认。',
+}
+
+const instructorVerifications = {
+  pendingCount: 1,
+  students: [
+    {
+      classId: 'class_001',
+      collegeId: 'college_001',
+      id: 'student_001',
+      majorId: 'major_001',
+      phone: '13800000001',
+      realName: '林一诺',
+      schoolId: 'school_001',
+      submittedAt: '2026-08-26T09:00:00.000Z',
+      verificationStatus: 'pending',
+    },
+  ],
 }
 
 const campus = {
@@ -51,6 +69,7 @@ module.exports = {
   articles,
   campus,
   growthPlan,
+  instructorVerifications,
   modules,
   studentState,
 }

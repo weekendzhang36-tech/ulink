@@ -1,6 +1,7 @@
 import { MiniProgramError } from './errors.ts'
 import type {
   GrowthPlanRecord,
+  InstructorStudentSummary,
   MembershipRecord,
   MiniProgramRepository,
   OrderRecord,
@@ -105,6 +106,23 @@ function toPaymentEvent(doc: Record<string, unknown>): PaymentEventRecord {
     processedAt: String(doc.processedAt || ''),
     status: doc.status === 'failed' ? 'failed' : 'paid',
     transactionId: optionalString(doc.transactionId),
+  }
+}
+
+function toInstructorStudentSummary(doc: Record<string, unknown>): InstructorStudentSummary {
+  return {
+    classId: idOf(doc.class),
+    collegeId: idOf(doc.college),
+    id: String(doc.id),
+    majorId: idOf(doc.major),
+    phone: String(doc.phone || ''),
+    realName: String(doc.realName || ''),
+    schoolId: idOf(doc.school),
+    submittedAt: String(doc.submittedAt || doc.updatedAt || ''),
+    verificationStatus:
+      doc.verificationStatus === 'verified' || doc.verificationStatus === 'needs_review'
+        ? doc.verificationStatus
+        : 'pending',
   }
 }
 
@@ -225,6 +243,43 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
 
       return doc ? toPaymentEvent(doc) : undefined
     },
+    async findInstructorClassIdsByPhone(phone) {
+      const result = await payload.find({
+        collection: 'classes',
+        depth: 0,
+        limit: 200,
+        where: {
+          'instructorPhones.phone': {
+            equals: phone,
+          },
+        },
+      })
+
+      return result.docs.map((doc) => String(doc.id))
+    },
+    async findStudentsByClassIds(input) {
+      if (input.classIds.length === 0) {
+        return []
+      }
+
+      const where = input.status
+        ? {
+            and: [
+              { class: { in: input.classIds } },
+              { verificationStatus: { equals: input.status } },
+            ],
+          }
+        : { class: { in: input.classIds } }
+      const result = await payload.find({
+        collection: 'students',
+        depth: 0,
+        limit: 500,
+        sort: '-submittedAt',
+        where,
+      })
+
+      return result.docs.map(toInstructorStudentSummary)
+    },
     async findStudentById(id) {
       try {
         return toStudent(await payload.findByID({ collection: 'students', id }))
@@ -288,6 +343,17 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
             school: input.schoolId,
             submittedAt: input.submittedAt,
             verificationStatus: input.verificationStatus,
+          },
+          id,
+        }),
+      )
+    },
+    async updateStudentVerificationStatus(id, status) {
+      return toStudent(
+        await payload.update({
+          collection: 'students',
+          data: {
+            verificationStatus: status,
           },
           id,
         }),

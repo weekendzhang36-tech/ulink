@@ -13,8 +13,15 @@ export async function GET(request: Request) {
       ? await repository.findStudentById(session.studentId)
       : await repository.findStudentByOpenId(session.openId)
     const membership = student ? await repository.findMembershipByStudentId(student.id) : undefined
+    const instructorClassIds = student
+      ? await repository.findInstructorClassIdsByPhone(student.phone)
+      : []
 
     return ok({
+      instructor: {
+        canManageStudents: instructorClassIds.length > 0,
+        classCount: instructorClassIds.length,
+      },
       membership,
       profileCompleted: Boolean(student),
       student,

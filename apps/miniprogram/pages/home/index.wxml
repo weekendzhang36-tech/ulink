@@ -5,6 +5,12 @@
     <view class="subtitle">{{studentState.message}}</view>
   </view>
 
+  <view class="card status-card" wx:if="{{instructorState}}" bindtap="openInstructorVerifications">
+    <text class="eyebrow">待认证学生</text>
+    <view class="title">{{instructorState.pendingCount}} 位学生待确认</view>
+    <view class="subtitle">进入后可查看资料并完成确认。</view>
+  </view>
+
   <view class="card plan-card" bindtap="openGrowthPlan">
     <text class="eyebrow orange">成长计划</text>
     <view class="title">{{growthPlan.title}}</view>
