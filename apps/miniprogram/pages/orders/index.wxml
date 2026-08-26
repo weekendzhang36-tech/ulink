@@ -37,6 +37,20 @@
         <text class="muted">支付时间</text>
         <text>{{item.paidDateText}}</text>
       </view>
+
+      <view class="order-action-row">
+        <view class="action-hint">{{item.actionState.hintText}}</view>
+        <button
+          wx:if="{{item.actionState.type === 'cancel'}}"
+          class="cancel-button"
+          loading="{{cancelingOrderNo === item.orderNo}}"
+          disabled="{{cancelingOrderNo === item.orderNo}}"
+          data-order-no="{{item.orderNo}}"
+          bindtap="cancelOrder"
+        >
+          {{item.actionState.label}}
+        </button>
+      </view>
     </view>
   </view>
 </view>
