@@ -24,6 +24,14 @@ function clearSessionToken() {
   wx.removeStorageSync('ulinkSessionToken')
 }
 
+function endSession() {
+  clearSessionToken()
+
+  return {
+    redirectUrl: '/pages/login/index',
+  }
+}
+
 function formatGrowthPlan(plan) {
   if (!plan) return null
 
@@ -403,6 +411,7 @@ module.exports = {
   clearSessionToken,
   confirmInstructorDataUseCommitment,
   createGrowthPlanOrder,
+  endSession,
   getArticleById,
   getCampusOptions,
   getContentReservations,

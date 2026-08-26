@@ -92,3 +92,14 @@
 .list-row:first-child {
   border-top: 0;
 }
+
+.danger-list {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.danger-row {
+  color: #ff3b30;
+  font-weight: 800;
+  justify-content: center;
+}

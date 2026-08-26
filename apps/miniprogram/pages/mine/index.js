@@ -1,4 +1,4 @@
-const { getSessionToken, getStudentState } = require('../../utils/api')
+const { endSession, getSessionToken, getStudentState } = require('../../utils/api')
 const { handleProfileGuardError } = require('../../utils/profile-guard')
 
 Page({
@@ -46,5 +46,21 @@ Page({
 
   openLegal() {
     wx.navigateTo({ url: '/pages/legal/index' })
+  },
+
+  signOut() {
+    wx.showModal({
+      cancelText: '取消',
+      confirmColor: '#ff3b30',
+      confirmText: '退出',
+      content: '退出后需要重新微信登录才能继续使用成长服务。',
+      title: '退出登录',
+      success: (result) => {
+        if (!result.confirm) return
+
+        const { redirectUrl } = endSession()
+        wx.redirectTo({ url: redirectUrl })
+      },
+    })
   },
 })
