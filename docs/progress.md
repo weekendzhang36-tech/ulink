@@ -78,7 +78,11 @@
   - 后台支付 gateway 已支持微信支付 V3 JSAPI/小程序下单：服务端按商户号、证书序列号和商户私钥生成请求签名，调用 `/v3/pay/transactions/jsapi` 获取 `prepay_id`，再生成小程序 `wx.requestPayment` 所需参数。
   - `apps/cms/.env.example` 已补充 `WECHAT_PAY_MCH_ID`、`WECHAT_PAY_CERT_SERIAL_NO`、`WECHAT_PAY_PRIVATE_KEY` 和 `WECHAT_PAY_NOTIFY_URL` 占位配置，不提交真实密钥。
   - 小程序成长计划页真实支付后不直接伪造“已加入”，而是回查订单和会员状态；本地 mock 支付仍只在显式 mock 开关开启后可用。
-  - 真实微信支付回调验签、回调解密和支付事件落库仍需继续实现，当前只有本地 mock callback 可完成会员激活闭环。
+- 2026-08-26：补充真实微信支付回调处理。
+  - 后台新增 `/api/miniprogram/payments/wechat-callback`，使用原始 body 和 `Wechatpay-*` 请求头进行微信支付回调验签。
+  - 回调解密使用 `WECHAT_PAY_API_V3_KEY` 对 `resource` 做 AES-256-GCM 解密，并校验 AppID、商户号、订单号和金额后再写入支付事件、更新订单、激活会员。
+  - `apps/cms/.env.example` 已补充 `WECHAT_PAY_API_V3_KEY`、`WECHAT_PAY_PLATFORM_SERIAL_NO` 和 `WECHAT_PAY_PLATFORM_PUBLIC_KEY` 占位配置，不提交真实密钥。
+  - 真实生产支付仍需要微信商户平台证书/公钥配置、回调域名配置和微信支付联调验证。
 
 ## 学生注册认证需求
 

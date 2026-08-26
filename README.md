@@ -150,9 +150,18 @@ WECHAT_PAY_MCH_ID=
 WECHAT_PAY_CERT_SERIAL_NO=
 WECHAT_PAY_PRIVATE_KEY=
 WECHAT_PAY_NOTIFY_URL=
+WECHAT_PAY_API_V3_KEY=
+WECHAT_PAY_PLATFORM_SERIAL_NO=
+WECHAT_PAY_PLATFORM_PUBLIC_KEY=
 ```
 
-`WECHAT_PAY_PRIVATE_KEY` 必须来自服务器环境变量或密钥管理，不要提交到仓库。真实支付链路里，小程序支付窗口返回成功后仍会回查后台订单状态；会员生效以服务端支付回调更新后的订单和会员记录为准。
+`WECHAT_PAY_PRIVATE_KEY`、`WECHAT_PAY_API_V3_KEY` 和 `WECHAT_PAY_PLATFORM_PUBLIC_KEY` 必须来自服务器环境变量或密钥管理，不要提交到仓库。真实支付链路里，小程序支付窗口返回成功后仍会回查后台订单状态；会员生效以服务端支付回调更新后的订单和会员记录为准。
+
+真实支付回调入口：
+
+- `POST /api/miniprogram/payments/wechat-callback`
+
+回调处理会先使用微信支付平台公钥验签，再用 APIv3 密钥解密 `resource`，并校验 AppID、商户号、订单号和金额后激活会员。本地开发仍可使用 `POST /api/miniprogram/payments/mock-callback`，但必须显式开启 `MINIPROGRAM_MOCK_PAYMENT=true`。
 
 ## 下一步
 
