@@ -6,6 +6,65 @@
   padding: 36rpx;
 }
 
+.section-block {
+  margin: 28rpx 0 16rpx;
+}
+
+.section-heading {
+  color: #1d1d1f;
+  font-size: 34rpx;
+  font-weight: 800;
+  padding: 0 8rpx;
+}
+
+.service-grid {
+  display: grid;
+  gap: 20rpx;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 18rpx;
+}
+
+.service-card {
+  background: #ffffff;
+  border-radius: 24rpx;
+  box-sizing: border-box;
+  min-height: 250rpx;
+  padding: 28rpx;
+}
+
+.service-type {
+  color: #007aff;
+  font-size: 24rpx;
+  font-weight: 800;
+  margin-bottom: 14rpx;
+}
+
+.service-title {
+  color: #1d1d1f;
+  font-size: 30rpx;
+  font-weight: 800;
+  line-height: 1.25;
+  margin-bottom: 12rpx;
+}
+
+.service-desc {
+  color: #6e6e73;
+  font-size: 24rpx;
+  line-height: 1.45;
+}
+
+.service-action {
+  background: #e8f1ff;
+  border-radius: 999rpx;
+  color: #007aff;
+  display: inline-block;
+  font-size: 24rpx;
+  font-weight: 800;
+  line-height: 44rpx;
+  margin-top: 20rpx;
+  padding: 0 18rpx;
+}
+
 .content-card {
   padding: 32rpx;
 }

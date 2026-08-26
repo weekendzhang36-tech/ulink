@@ -127,6 +127,7 @@ pnpm verify          # 后台测试 + 类型检查 + lint
 - `GET /api/miniprogram/campus`
 - `GET /api/miniprogram/content`
 - `GET /api/miniprogram/content/:id`
+- `GET /api/miniprogram/service-links`
 - `GET /api/miniprogram/growth-plan`
 - `GET /api/miniprogram/instructor/verifications`
 - `POST /api/miniprogram/instructor/verifications`

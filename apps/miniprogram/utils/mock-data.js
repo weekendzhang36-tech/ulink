@@ -42,6 +42,29 @@ const articles = [
   },
 ]
 
+const serviceLinks = [
+  {
+    actionLabel: '开始测评',
+    description: '进入合作服务页，完成职业兴趣和能力倾向测评。',
+    id: 'service-assessment',
+    module: 'career_planning',
+    serviceType: 'assessment',
+    title: '职业测评入口',
+    typeLabel: '职业测评',
+    url: 'https://example.com/assessment',
+  },
+  {
+    actionLabel: '查看简历服务',
+    description: '查看简历制作、简历优化和投递前检查服务。',
+    id: 'service-resume',
+    module: 'career_planning',
+    serviceType: 'resume',
+    title: '简历优化入口',
+    typeLabel: '简历服务',
+    url: 'https://example.com/resume',
+  },
+]
+
 const studentState = {
   canManageStudents: false,
   name: '林一诺',
@@ -81,5 +104,6 @@ module.exports = {
   growthPlan,
   instructorVerifications,
   modules,
+  serviceLinks,
   studentState,
 }

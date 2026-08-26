@@ -104,6 +104,12 @@ function getContentsByModule(moduleKey) {
   )
 }
 
+function getServiceLinksByModule(moduleKey) {
+  return withDemoFallback(request({ path: `/service-links?module=${moduleKey}` }), () =>
+    (mockData.serviceLinks || []).filter((link) => !moduleKey || link.module === moduleKey),
+  )
+}
+
 function getStudentState() {
   return withDemoFallback(request({ auth: true, path: '/profile/status' }), () => ({
     student: mockData.studentState,
@@ -280,6 +286,7 @@ module.exports = {
   getInstructorVerifications,
   getOrderStatus,
   getSessionToken,
+  getServiceLinksByModule,
   getStudentState,
   loginWithWechatCode,
   mockConfirmPayment,

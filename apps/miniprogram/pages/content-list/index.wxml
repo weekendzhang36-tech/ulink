@@ -9,12 +9,27 @@
     <view class="subtitle">正在加载内容...</view>
   </view>
 
-  <view wx:elif="{{contentEmpty}}" class="card empty-card">
+  <view wx:elif="{{contentEmpty && servicesEmpty}}" class="card empty-card">
     <view class="section-title">暂无已发布内容</view>
     <view class="subtitle">后台发布并启用分类后，会自动显示在这里。</view>
   </view>
 
   <view wx:else>
+    <view wx:if="{{!servicesEmpty}}" class="section-block">
+      <view class="section-heading">服务入口</view>
+      <view class="service-grid">
+        <view class="service-card" wx:for="{{serviceLinks}}" wx:key="id" data-id="{{item.id}}" bindtap="openService">
+          <view class="service-type">{{item.typeLabel}}</view>
+          <view class="service-title">{{item.title}}</view>
+          <view class="service-desc">{{item.description}}</view>
+          <view class="service-action">{{item.actionLabel}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{!contentEmpty}}" class="section-block">
+      <view class="section-heading">最新内容</view>
+    </view>
     <view class="card content-card" wx:for="{{contents}}" wx:key="id" data-id="{{item.id}}" bindtap="openContent">
       <view class="content-meta">{{item.categoryTitle}} · {{item.meta}}</view>
       <view class="content-title">{{item.title}}</view>
