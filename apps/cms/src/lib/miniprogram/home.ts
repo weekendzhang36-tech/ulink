@@ -1,8 +1,7 @@
 import { listPublishedContents } from './content.ts'
-import { MiniProgramError } from './errors.ts'
 import { findActiveGrowthPlanForMiniProgram } from './growthPlan.ts'
 import { formatMembershipState } from './membership.ts'
-import { verifySessionToken } from './session.ts'
+import { requireCompletedStudentProfile } from './studentAccess.ts'
 import type { MiniProgramRepository } from './types.ts'
 import {
   formatVerificationMessageForDisplay,
@@ -34,18 +33,7 @@ export async function getMiniProgramHomeData({
   secret: string
   sessionToken?: string
 }) {
-  if (!sessionToken) {
-    throw new MiniProgramError('请先登录', 401)
-  }
-
-  const session = verifySessionToken({ now, secret, token: sessionToken })
-  const student = session.studentId
-    ? await repository.findStudentById(session.studentId)
-    : await repository.findStudentByOpenId(session.openId)
-  if (!student) {
-    throw new MiniProgramError('请先完善学生资料', 403)
-  }
-
+  const student = await requireCompletedStudentProfile({ now, repository, secret, sessionToken })
   const growthPlan = await findActiveGrowthPlanForMiniProgram({ payload })
   const articles = await listPublishedContents({ featuredOnly: true, payload })
   const instructorClassIds = await repository.findInstructorClassIdsByPhone(student.phone)

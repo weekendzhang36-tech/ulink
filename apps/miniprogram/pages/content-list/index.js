@@ -1,4 +1,5 @@
 const { getContentsByModule, getServiceLinksByModule } = require('../../utils/api')
+const { handleProfileGuardError } = require('../../utils/profile-guard')
 const { getServiceLinkAction } = require('../../utils/service-link-action')
 
 Page({
@@ -28,7 +29,7 @@ Page({
         })
       })
       .catch((error) => {
-        wx.showToast({ icon: 'none', title: error.message || '内容加载失败' })
+        handleProfileGuardError(error, '内容加载失败')
       })
       .finally(() => {
         this.setData({ loading: false })

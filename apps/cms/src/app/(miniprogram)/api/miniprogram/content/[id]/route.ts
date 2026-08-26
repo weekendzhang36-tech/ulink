@@ -8,7 +8,7 @@ import {
   handleMiniProgramRoute,
   ok,
 } from '@/lib/miniprogram/routeHelpers.ts'
-import { verifySessionToken } from '@/lib/miniprogram/session.ts'
+import { requireCompletedStudentProfile } from '@/lib/miniprogram/studentAccess.ts'
 import type { MembershipRecord, MiniProgramRepository } from '@/lib/miniprogram/types.ts'
 
 function hasUsableMembership(membership: MembershipRecord | undefined, now: Date) {
@@ -29,25 +29,21 @@ async function getContentViewer({
   request: Request
 }) {
   const token = getBearerToken(request)
-  if (!token) {
-    return { hasActiveMembership: false }
-  }
-
-  const session = verifySessionToken({ now, secret: getServerSecret(), token })
-  const student = session.studentId
-    ? await repository.findStudentById(session.studentId)
-    : await repository.findStudentByOpenId(session.openId)
+  const student = await requireCompletedStudentProfile({
+    now,
+    repository,
+    secret: getServerSecret(),
+    sessionToken: token,
+  })
   const membership = student ? await repository.findMembershipByStudentId(student.id) : undefined
-  const reservation = student
-    ? await repository.findContentReservationByStudentAndContent({
-        contentId,
-        studentId: student.id,
-      })
-    : undefined
+  const reservation = await repository.findContentReservationByStudentAndContent({
+    contentId,
+    studentId: student.id,
+  })
 
   return {
     hasActiveMembership: hasUsableMembership(membership, now),
-    isVerifiedStudent: student ? student.verificationStatus === 'verified' : undefined,
+    isVerifiedStudent: student.verificationStatus === 'verified',
     reservation,
   }
 }

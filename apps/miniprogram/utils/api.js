@@ -138,14 +138,15 @@ function reserveContent(id) {
 }
 
 function getContentsByModule(moduleKey) {
-  return withDemoFallback(request({ path: `/content?module=${moduleKey}` }), () =>
+  return withDemoFallback(request({ auth: true, path: `/content?module=${encodeURIComponent(moduleKey || '')}` }), () =>
     mockData.articles.filter((article) => article.module === moduleKey),
   )
 }
 
 function getServiceLinksByModule(moduleKey) {
-  return withDemoFallback(request({ path: `/service-links?module=${moduleKey}` }), () =>
-    (mockData.serviceLinks || []).filter((link) => !moduleKey || link.module === moduleKey),
+  return withDemoFallback(
+    request({ auth: true, path: `/service-links?module=${encodeURIComponent(moduleKey || '')}` }),
+    () => (mockData.serviceLinks || []).filter((link) => !moduleKey || link.module === moduleKey),
   )
 }
 
