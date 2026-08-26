@@ -313,7 +313,11 @@ export async function confirmMembershipPayment({
   if (!order) {
     throw new MiniProgramError('订单不存在', 404)
   }
-  if (order.status !== 'pending' && order.status !== 'paid') {
+  const currentOrder = await closeExpiredPendingOrder(order, now, repository)
+  if (currentOrder.status === 'closed' && order.status === 'pending') {
+    throw new MiniProgramError('订单已超时关闭', 409)
+  }
+  if (currentOrder.status !== 'pending' && currentOrder.status !== 'paid') {
     throw new MiniProgramError('订单状态不可支付', 409)
   }
 
@@ -325,9 +329,9 @@ export async function confirmMembershipPayment({
     transactionId: input.transactionId,
   })
   const paidOrder =
-    order.status === 'paid'
-      ? order
-      : await repository.updateOrder(order.id, {
+    currentOrder.status === 'paid'
+      ? currentOrder
+      : await repository.updateOrder(currentOrder.id, {
           paidAt: input.paidAt,
           status: 'paid',
           wechatTransactionId: input.transactionId,

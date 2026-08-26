@@ -229,6 +229,29 @@ test('closes expired pending membership orders before listing them', async () =>
   assert.equal(repository.orders.get('order_paid_once')?.status, 'closed')
 })
 
+test('rejects payment confirmation for an expired pending membership order', async () => {
+  const repository = createMemoryRepository()
+
+  await assert.rejects(
+    () =>
+      confirmMembershipPayment({
+        input: {
+          eventKey: 'wx_event_late_paid',
+          orderNo: 'order_paid_once',
+          paidAt: '2026-08-26T10:31:00.000Z',
+          transactionId: 'wx_tx_late_paid',
+        },
+        now: new Date('2026-08-26T10:31:01.000Z'),
+        repository,
+      }),
+    /订单已超时关闭/,
+  )
+
+  assert.equal(repository.orders.get('order_paid_once')?.status, 'closed')
+  assert.equal(repository.paymentEvents.size, 0)
+  assert.equal(repository.memberships.size, 0)
+})
+
 test('cancels a pending membership order owned by the current student', async () => {
   const repository = createMemoryRepository()
 
