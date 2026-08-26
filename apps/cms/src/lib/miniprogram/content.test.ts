@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 
 import {
+  cancelContentReservation,
   getPublishedContentDetail,
   listContentReservationsForStudent,
   listPublishedContents,
@@ -453,4 +454,144 @@ test('lists only current student reserved content reservations with content summ
   assert.equal(result.reservations[0].content.id, 'content_practice_001')
   assert.equal(result.reservations[0].content.title, '金融岗位模拟实训营开放报名')
   assert.deepEqual(result.reservations[0].content.tags, ['实训营'])
+})
+
+test('cancels the current student reservation and releases one reserved seat', async () => {
+  const repository = createMemoryRepository()
+  await repository.createContentReservation({
+    contentId: 'content_practice_001',
+    reservedAt: '2026-08-26T10:11:00.000Z',
+    status: 'reserved',
+    studentId: 'student_001',
+  })
+  const payload = payloadFor([
+    {
+      _status: 'published',
+      capacity: 2,
+      category: {
+        isActive: true,
+        module: 'practice',
+        title: '实习实践',
+      },
+      contentType: 'event',
+      id: 'content_practice_001',
+      publishedAt: '2026-08-22T08:00:00.000Z',
+      reservedCount: 2,
+      status: 'open',
+      summary: '2 小时体验客户资料整理和风险提示任务。',
+      title: '金融岗位模拟实训营开放报名',
+    },
+  ])
+
+  const result = await cancelContentReservation({
+    input: {
+      reservationId: 'content_reservation_001',
+      sessionToken: tokenFor('student_001'),
+    },
+    now: new Date('2026-08-26T10:20:00.000Z'),
+    payload,
+    repository,
+    secret,
+  })
+
+  assert.deepEqual(result.reservation, {
+    id: 'content_reservation_001',
+    reservedAt: '2026-08-26T10:11:00.000Z',
+    status: 'cancelled',
+    statusText: '已取消',
+  })
+  assert.equal(repository.contentReservations.get('content_reservation_001')?.status, 'cancelled')
+  assert.equal((await payload.findByID({ id: 'content_practice_001' })).reservedCount, 1)
+})
+
+test('does not cancel another student content reservation', async () => {
+  const repository = createMemoryRepository()
+  await repository.createContentReservation({
+    contentId: 'content_practice_001',
+    reservedAt: '2026-08-26T10:11:00.000Z',
+    status: 'reserved',
+    studentId: 'student_other_class',
+  })
+  const payload = payloadFor([
+    {
+      _status: 'published',
+      capacity: 2,
+      category: {
+        isActive: true,
+        module: 'practice',
+        title: '实习实践',
+      },
+      contentType: 'event',
+      id: 'content_practice_001',
+      publishedAt: '2026-08-22T08:00:00.000Z',
+      reservedCount: 1,
+      status: 'open',
+      summary: '2 小时体验客户资料整理和风险提示任务。',
+      title: '金融岗位模拟实训营开放报名',
+    },
+  ])
+
+  await assert.rejects(
+    () =>
+      cancelContentReservation({
+        input: {
+          reservationId: 'content_reservation_001',
+          sessionToken: tokenFor('student_001'),
+        },
+        now: new Date('2026-08-26T10:20:00.000Z'),
+        payload,
+        repository,
+        secret,
+      }),
+    /预约不存在/,
+  )
+
+  assert.equal(repository.contentReservations.get('content_reservation_001')?.status, 'reserved')
+  assert.equal((await payload.findByID({ id: 'content_practice_001' })).reservedCount, 1)
+})
+
+test('keeps an already cancelled reservation cancelled without releasing another seat', async () => {
+  const repository = createMemoryRepository()
+  await repository.createContentReservation({
+    contentId: 'content_practice_001',
+    reservedAt: '2026-08-26T10:11:00.000Z',
+    status: 'reserved',
+    studentId: 'student_001',
+  })
+  repository.contentReservations.set('content_reservation_001', {
+    ...repository.contentReservations.get('content_reservation_001')!,
+    status: 'cancelled',
+  })
+  const payload = payloadFor([
+    {
+      _status: 'published',
+      capacity: 2,
+      category: {
+        isActive: true,
+        module: 'practice',
+        title: '实习实践',
+      },
+      contentType: 'event',
+      id: 'content_practice_001',
+      publishedAt: '2026-08-22T08:00:00.000Z',
+      reservedCount: 1,
+      status: 'open',
+      summary: '2 小时体验客户资料整理和风险提示任务。',
+      title: '金融岗位模拟实训营开放报名',
+    },
+  ])
+
+  const result = await cancelContentReservation({
+    input: {
+      reservationId: 'content_reservation_001',
+      sessionToken: tokenFor('student_001'),
+    },
+    now: new Date('2026-08-26T10:20:00.000Z'),
+    payload,
+    repository,
+    secret,
+  })
+
+  assert.equal(result.reservation.status, 'cancelled')
+  assert.equal((await payload.findByID({ id: 'content_practice_001' })).reservedCount, 1)
 })

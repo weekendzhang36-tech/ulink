@@ -222,6 +222,9 @@ export function createMemoryRepository(
 
       return growthPlan?.isActive ? growthPlan : undefined
     },
+    async findContentReservationById(id) {
+      return contentReservations.get(id)
+    },
     async findContentReservationByStudentAndContent(input) {
       return [...contentReservations.values()].find(
         (reservation) =>
@@ -305,6 +308,16 @@ export function createMemoryRepository(
     },
     async findStudentByPhone(phone) {
       return [...students.values()].find((student) => student.phone === phone)
+    },
+    async updateContentReservation(id, input) {
+      const current = contentReservations.get(id)
+      if (!current) {
+        throw new Error(`Content reservation not found: ${id}`)
+      }
+      const next = { ...current, ...input }
+      contentReservations.set(id, next)
+
+      return next
     },
     async updateMembership(id, input) {
       const current = memberships.get(id)

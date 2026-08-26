@@ -79,3 +79,30 @@
   font-size: 28rpx;
   font-weight: 800;
 }
+
+.footer-actions {
+  align-items: center;
+  display: flex;
+  gap: 18rpx;
+}
+
+.cancel-button {
+  background: rgba(255, 59, 48, 0.1);
+  border-radius: 999rpx;
+  color: #ff3b30;
+  font-size: 24rpx;
+  font-weight: 800;
+  line-height: 48rpx;
+  margin: 0;
+  min-width: 136rpx;
+  padding: 0 18rpx;
+}
+
+.cancel-button::after {
+  border: 0;
+}
+
+.cancel-button[disabled] {
+  background: rgba(60, 60, 67, 0.1);
+  color: #8e8e93;
+}

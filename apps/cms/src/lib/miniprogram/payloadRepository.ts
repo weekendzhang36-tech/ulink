@@ -376,6 +376,19 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
 
       return doc ? toGrowthPlan(doc) : undefined
     },
+    async findContentReservationById(id) {
+      try {
+        return toContentReservation(
+          await payload.findByID({
+            collection: 'content-reservations',
+            depth: 0,
+            id,
+          }),
+        )
+      } catch {
+        return undefined
+      }
+    },
     async findContentReservationByStudentAndContent(input) {
       const doc = await first(
         payload,
@@ -590,6 +603,21 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
       const doc = await first(payload, 'students', { phone: { equals: phone } })
 
       return doc ? toStudent(doc) : undefined
+    },
+    async updateContentReservation(id, input) {
+      const data: Record<string, unknown> = {}
+      if (input.contentId !== undefined) data.content = input.contentId
+      if (input.reservedAt !== undefined) data.reservedAt = input.reservedAt
+      if (input.status !== undefined) data.status = input.status
+      if (input.studentId !== undefined) data.student = input.studentId
+
+      return toContentReservation(
+        await payload.update({
+          collection: 'content-reservations',
+          data,
+          id,
+        }),
+      )
     },
     async updateMembership(id, input) {
       const sourceOrder = input.sourceOrderNo

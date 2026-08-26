@@ -367,6 +367,23 @@ function getContentReservations() {
   }))
 }
 
+function cancelContentReservation(reservationId) {
+  return withDemoFallback(
+    request({
+      auth: true,
+      method: 'POST',
+      path: `/content/reservations/${reservationId}/cancel`,
+    }),
+    () => ({
+      reservation: {
+        id: reservationId,
+        status: 'cancelled',
+        statusText: '已取消',
+      },
+    }),
+  )
+}
+
 function mockConfirmPayment(orderNo) {
   return request({
     data: { orderNo },
@@ -376,6 +393,7 @@ function mockConfirmPayment(orderNo) {
 }
 
 module.exports = {
+  cancelContentReservation,
   cancelOrder,
   confirmInstructorDataUseCommitment,
   createGrowthPlanOrder,

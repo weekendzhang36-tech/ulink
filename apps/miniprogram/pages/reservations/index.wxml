@@ -37,7 +37,18 @@
       </view>
       <view class="footer-row">
         <text class="muted">{{item.content.statusText}}</text>
-        <text class="muted">›</text>
+        <view class="footer-actions">
+          <button
+            class="cancel-button"
+            data-id="{{item.id}}"
+            disabled="{{cancelingId === item.id}}"
+            hover-class="none"
+            catchtap="cancelReservation"
+          >
+            {{cancelingId === item.id ? '取消中' : '取消预约'}}
+          </button>
+          <text class="muted">›</text>
+        </view>
       </view>
     </view>
   </view>

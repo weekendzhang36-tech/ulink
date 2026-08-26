@@ -401,3 +401,61 @@ export async function listContentReservationsForStudent({
     reservations: summaries.filter((item): item is NonNullable<typeof item> => Boolean(item)),
   }
 }
+
+export async function cancelContentReservation({
+  input,
+  now,
+  payload,
+  repository,
+  secret,
+}: {
+  input: {
+    reservationId: string
+    sessionToken: string
+  }
+  now: Date
+  payload: ReservationPayloadLike
+  repository: MiniProgramRepository
+  secret: string
+}) {
+  const student = await findStudentFromSession({
+    now,
+    repository,
+    secret,
+    sessionToken: input.sessionToken,
+  })
+  const reservation = await repository.findContentReservationById(input.reservationId)
+  if (!reservation || reservation.studentId !== student.id) {
+    throw new MiniProgramError('预约不存在', 404)
+  }
+  if (reservation.status === 'cancelled') {
+    return {
+      reservation: formatReservation(reservation),
+    }
+  }
+
+  let doc: Record<string, unknown>
+  try {
+    doc = await payload.findByID({ collection: 'contents', depth: 0, id: reservation.contentId })
+  } catch {
+    throw new MiniProgramError('预约内容不存在', 404)
+  }
+
+  const cancelledReservation = await repository.updateContentReservation(reservation.id, {
+    status: 'cancelled',
+  })
+  try {
+    await payload.update({
+      collection: 'contents',
+      data: { reservedCount: Math.max(0, Number(doc.reservedCount || 0) - 1) },
+      id: reservation.contentId,
+    })
+  } catch (error) {
+    await repository.updateContentReservation(reservation.id, { status: 'reserved' })
+    throw error
+  }
+
+  return {
+    reservation: formatReservation(cancelledReservation),
+  }
+}

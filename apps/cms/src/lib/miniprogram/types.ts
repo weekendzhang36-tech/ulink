@@ -221,6 +221,7 @@ export interface MiniProgramRepository {
   deleteContentReservation(id: string): Promise<void>
   deleteSmsVerificationChallenge(id: string): Promise<void>
   findActiveGrowthPlanById(id: string): Promise<GrowthPlanRecord | undefined>
+  findContentReservationById(id: string): Promise<ContentReservationRecord | undefined>
   findContentReservationByStudentAndContent(input: {
     contentId: string
     studentId: string
@@ -255,6 +256,10 @@ export interface MiniProgramRepository {
   findStudentById(id: string): Promise<StudentRecord | undefined>
   findStudentByOpenId(openId: string): Promise<StudentRecord | undefined>
   findStudentByPhone(phone: string): Promise<StudentRecord | undefined>
+  updateContentReservation(
+    id: string,
+    input: Partial<Omit<ContentReservationRecord, 'id'>>,
+  ): Promise<ContentReservationRecord>
   updateStudentVerificationStatus(id: string, status: VerificationStatus): Promise<StudentRecord>
   updateMembership(id: string, input: Partial<Omit<MembershipRecord, 'id'>>): Promise<MembershipRecord>
   updateOrder(id: string, input: Partial<Omit<OrderRecord, 'id'>>): Promise<OrderRecord>
