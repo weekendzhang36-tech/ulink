@@ -8,6 +8,8 @@ import type {
   PaymentGateway,
 } from './types.ts'
 
+const orderPaymentWindowMs = 30 * 60 * 1000
+
 function formatOrderNo(now: Date, suffix: string) {
   const y = now.getUTCFullYear()
   const m = String(now.getUTCMonth() + 1).padStart(2, '0')
@@ -60,6 +62,28 @@ function formatOrderSummary(order: OrderRecord) {
     status: order.status,
     statusText: formatOrderStatusText(order.status),
   }
+}
+
+function isExpiredPendingOrder(order: OrderRecord, now: Date) {
+  const createdAt = Date.parse(order.createdAt)
+
+  return (
+    order.status === 'pending' &&
+    Number.isFinite(createdAt) &&
+    now.getTime() - createdAt > orderPaymentWindowMs
+  )
+}
+
+async function closeExpiredPendingOrder(
+  order: OrderRecord,
+  now: Date,
+  repository: MiniProgramRepository,
+) {
+  if (!isExpiredPendingOrder(order, now)) {
+    return order
+  }
+
+  return repository.updateOrder(order.id, { status: 'closed' })
 }
 
 async function findStudentFromSession({
@@ -188,9 +212,10 @@ export async function getMembershipOrderStatus({
     throw new MiniProgramError('订单不存在', 404)
   }
 
+  const currentOrder = await closeExpiredPendingOrder(order, now, repository)
   const membership = await repository.findMembershipByStudentId(student.id)
 
-  return { membership, order }
+  return { membership, order: currentOrder }
 }
 
 export async function listMembershipOrdersForStudent({
@@ -213,8 +238,11 @@ export async function listMembershipOrdersForStudent({
     sessionToken: input.sessionToken,
   })
   const orders = await repository.findOrdersByStudentId(student.id)
+  const currentOrders = await Promise.all(
+    orders.map((order) => closeExpiredPendingOrder(order, now, repository)),
+  )
 
-  return { orders: orders.map(formatOrderSummary) }
+  return { orders: currentOrders.map(formatOrderSummary) }
 }
 
 export async function cancelMembershipOrder({

@@ -197,6 +197,38 @@ test('lists only membership orders for the current student', async () => {
   })
 })
 
+test('closes a pending membership order when its payment window has expired', async () => {
+  const repository = createMemoryRepository()
+
+  const result = await getMembershipOrderStatus({
+    input: {
+      orderNo: 'order_paid_once',
+      sessionToken: tokenFor('student_001'),
+    },
+    now: new Date('2026-08-26T10:30:01.000Z'),
+    repository,
+    secret,
+  })
+
+  assert.equal(result.order.status, 'closed')
+  assert.equal(repository.orders.get('order_paid_once')?.status, 'closed')
+})
+
+test('closes expired pending membership orders before listing them', async () => {
+  const repository = createMemoryRepository()
+
+  const result = await listMembershipOrdersForStudent({
+    input: { sessionToken: tokenFor('student_001') },
+    now: new Date('2026-08-26T10:30:01.000Z'),
+    repository,
+    secret,
+  })
+
+  assert.equal(result.orders[0].status, 'closed')
+  assert.equal(result.orders[0].statusText, '已关闭')
+  assert.equal(repository.orders.get('order_paid_once')?.status, 'closed')
+})
+
 test('cancels a pending membership order owned by the current student', async () => {
   const repository = createMemoryRepository()
 
