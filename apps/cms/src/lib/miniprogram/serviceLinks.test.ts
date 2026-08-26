@@ -58,6 +58,7 @@ test('lists active career planning service links without exposing inactive entri
   )
   assert.equal(links[0].typeLabel, '职业测评')
   assert.equal(links[0].actionLabel, '开始测评')
+  assert.equal(links[0].entryType, 'external_link')
   assert.equal(links[1].typeLabel, '简历服务')
   assert.equal(links[1].actionLabel, '查看简历服务')
 })
@@ -92,4 +93,59 @@ test('uses the configured module when listing active service links', async () =>
     ['service_finance_consulting'],
   )
   assert.equal(links[0].module, 'finance_foundation')
+})
+
+test('keeps configured Mini Program service entry fields for third-party services', async () => {
+  const links = await listActiveServiceLinks({
+    module: 'career_planning',
+    payload: payloadFor([
+      {
+        description: '打开第三方职业测评小程序。',
+        entryType: 'mini_program',
+        id: 'service_assessment_miniprogram',
+        isActive: true,
+        miniProgramAppId: 'wx1234567890abcdef',
+        miniProgramPath: 'pages/start/index?source=ulink',
+        module: 'career_planning',
+        serviceType: 'assessment',
+        title: '职业测评小程序',
+      },
+    ]),
+  })
+
+  assert.deepEqual(links[0], {
+    actionLabel: '开始测评',
+    contactHint: undefined,
+    description: '打开第三方职业测评小程序。',
+    entryType: 'mini_program',
+    id: 'service_assessment_miniprogram',
+    miniProgramAppId: 'wx1234567890abcdef',
+    miniProgramPath: 'pages/start/index?source=ulink',
+    module: 'career_planning',
+    serviceType: 'assessment',
+    title: '职业测评小程序',
+    typeLabel: '职业测评',
+    url: undefined,
+  })
+})
+
+test('keeps configured consultation hint for service entries without a direct link', async () => {
+  const links = await listActiveServiceLinks({
+    module: 'career_planning',
+    payload: payloadFor([
+      {
+        contactHint: '请先预约顾问，确认第三方简历服务开放时间。',
+        description: '由顾问承接简历服务需求。',
+        entryType: 'consultation',
+        id: 'service_resume_contact',
+        isActive: true,
+        module: 'career_planning',
+        serviceType: 'resume',
+        title: '简历服务咨询',
+      },
+    ]),
+  })
+
+  assert.equal(links[0].entryType, 'consultation')
+  assert.equal(links[0].contactHint, '请先预约顾问，确认第三方简历服务开放时间。')
 })

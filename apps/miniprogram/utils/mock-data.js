@@ -46,6 +46,7 @@ const serviceLinks = [
   {
     actionLabel: '开始测评',
     description: '进入合作服务页，完成职业兴趣和能力倾向测评。',
+    entryType: 'external_link',
     id: 'service-assessment',
     module: 'career_planning',
     serviceType: 'assessment',
@@ -56,6 +57,8 @@ const serviceLinks = [
   {
     actionLabel: '查看简历服务',
     description: '查看简历制作、简历优化和投递前检查服务。',
+    entryType: 'consultation',
+    contactHint: '请先预约顾问，确认简历制作或优化服务的开放时间。',
     id: 'service-resume',
     module: 'career_planning',
     serviceType: 'resume',

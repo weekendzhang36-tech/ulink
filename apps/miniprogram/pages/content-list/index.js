@@ -1,4 +1,5 @@
 const { getContentsByModule, getServiceLinksByModule } = require('../../utils/api')
+const { getServiceLinkAction } = require('../../utils/service-link-action')
 
 Page({
   data: {
@@ -42,16 +43,36 @@ Page({
   openService(event) {
     const { id } = event.currentTarget.dataset
     const service = this.data.serviceLinks.find((item) => item.id === id)
-    if (!service || !service.url) {
-      wx.showToast({ icon: 'none', title: '暂未开放' })
+    const action = getServiceLinkAction(service)
+    if (action.type === 'copy_link') {
+      wx.setClipboardData({
+        data: action.data,
+        success() {
+          wx.showToast({ title: action.toastText })
+        },
+      })
+      return
+    }
+    if (action.type === 'mini_program') {
+      wx.navigateToMiniProgram({
+        appId: action.appId,
+        path: action.path,
+        fail() {
+          wx.showToast({ icon: 'none', title: '暂时无法打开' })
+        },
+      })
+      return
+    }
+    if (action.type === 'consultation') {
+      wx.showModal({
+        confirmText: '知道了',
+        content: action.content,
+        showCancel: false,
+        title: action.title,
+      })
       return
     }
 
-    wx.setClipboardData({
-      data: service.url,
-      success() {
-        wx.showToast({ title: '链接已复制' })
-      },
-    })
+    wx.showToast({ icon: 'none', title: action.title })
   },
 })

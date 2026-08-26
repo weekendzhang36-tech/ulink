@@ -15,6 +15,13 @@ function serviceTypeLabel(serviceType: string) {
   return '服务入口'
 }
 
+function normalizeEntryType(doc: Record<string, unknown>) {
+  const entryType = String(doc.entryType || '')
+  if (entryType === 'mini_program' || entryType === 'consultation') return entryType
+
+  return 'external_link'
+}
+
 function actionLabel(serviceType: string) {
   if (serviceType === 'assessment') return '开始测评'
   if (serviceType === 'resume') return '查看简历服务'
@@ -26,11 +33,16 @@ function actionLabel(serviceType: string) {
 
 export function toServiceLinkSummary(doc: Record<string, unknown>) {
   const serviceType = String(doc.serviceType || '')
+  const entryType = normalizeEntryType(doc)
 
   return {
     actionLabel: actionLabel(serviceType),
+    contactHint: optionalString(doc.contactHint),
     description: String(doc.description || ''),
+    entryType,
     id: String(doc.id),
+    miniProgramAppId: optionalString(doc.miniProgramAppId),
+    miniProgramPath: optionalString(doc.miniProgramPath),
     module: optionalString(doc.module),
     serviceType,
     title: String(doc.title || ''),

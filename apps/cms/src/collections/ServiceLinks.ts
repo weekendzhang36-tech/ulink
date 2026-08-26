@@ -3,7 +3,7 @@ import type { CollectionConfig } from 'payload'
 export const ServiceLinks: CollectionConfig = {
   slug: 'service-links',
   admin: {
-    defaultColumns: ['title', 'module', 'serviceType', 'isActive'],
+    defaultColumns: ['title', 'module', 'serviceType', 'entryType', 'isActive'],
     group: '服务入口',
     useAsTitle: 'title',
   },
@@ -39,7 +39,50 @@ export const ServiceLinks: CollectionConfig = {
       ],
     },
     { name: 'description', type: 'textarea', label: '说明' },
-    { name: 'url', type: 'text', label: '跳转链接' },
+    {
+      name: 'entryType',
+      type: 'select',
+      label: '入口方式',
+      required: true,
+      defaultValue: 'external_link',
+      options: [
+        { label: '复制外部链接', value: 'external_link' },
+        { label: '跳转第三方小程序', value: 'mini_program' },
+        { label: '咨询承接', value: 'consultation' },
+      ],
+    },
+    {
+      name: 'url',
+      type: 'text',
+      label: '外部链接',
+      admin: {
+        description: '入口方式为“复制外部链接”时填写。',
+      },
+    },
+    {
+      name: 'miniProgramAppId',
+      type: 'text',
+      label: '第三方小程序 AppID',
+      admin: {
+        description: '入口方式为“跳转第三方小程序”时填写。',
+      },
+    },
+    {
+      name: 'miniProgramPath',
+      type: 'text',
+      label: '第三方小程序路径',
+      admin: {
+        description: '可选，例如 pages/start/index?source=ulink。',
+      },
+    },
+    {
+      name: 'contactHint',
+      type: 'textarea',
+      label: '咨询承接说明',
+      admin: {
+        description: '入口方式为“咨询承接”时展示给学生。',
+      },
+    },
     { name: 'isActive', type: 'checkbox', label: '启用', defaultValue: true },
   ],
 }
