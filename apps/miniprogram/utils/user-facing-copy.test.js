@@ -6,6 +6,7 @@ const test = require('node:test')
 const appRoot = path.resolve(__dirname, '..')
 const runtimeDirs = ['pages', 'utils']
 const visibleFileExtensions = new Set(['.js', '.wxml', '.wxs'])
+const internalTerms = ['后台', '后端']
 
 function collectRuntimeFiles(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -18,14 +19,14 @@ function collectRuntimeFiles(dir) {
   })
 }
 
-test('student-facing Mini Program runtime copy does not expose internal backend wording', () => {
+test('student-facing Mini Program runtime copy does not expose internal implementation wording', () => {
   const files = runtimeDirs.flatMap((dir) => collectRuntimeFiles(path.join(appRoot, dir)))
   const offenders = files
     .map((filePath) => ({
       filePath,
       text: fs.readFileSync(filePath, 'utf8'),
     }))
-    .filter(({ text }) => text.includes('后台'))
+    .filter(({ text }) => internalTerms.some((term) => text.includes(term)))
     .map(({ filePath }) => path.relative(appRoot, filePath))
 
   assert.deepEqual(offenders, [])

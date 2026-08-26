@@ -57,7 +57,7 @@ function getGrowthPlanActionState({
 
   return {
     disabled: false,
-    hintText: hasSession ? '点击后拉起微信支付，会员状态以后端支付结果为准' : '登录后可开通成长计划',
+    hintText: hasSession ? '点击后拉起微信支付，会员状态以平台支付结果为准' : '登录后可开通成长计划',
     label: '加入成长计划',
     type: 'join',
   }

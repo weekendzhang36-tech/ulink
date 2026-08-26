@@ -82,6 +82,28 @@ test('asks a pending student to wait for verification before joining the growth 
   )
 })
 
+test('uses student-facing payment result wording for verified students', () => {
+  assert.deepEqual(
+    getGrowthPlanActionState({
+      hasSession: true,
+      membershipState: {
+        expiresText: '加入后可查看有效期',
+        isActive: false,
+        statusText: '未开通',
+      },
+      plan: { id: 'growth-plan-half-year' },
+      profileCompleted: true,
+      verificationStatus: 'verified',
+    }),
+    {
+      disabled: false,
+      hintText: '点击后拉起微信支付，会员状态以平台支付结果为准',
+      label: '加入成长计划',
+      type: 'join',
+    },
+  )
+})
+
 test('disables the action while a payment request is loading', () => {
   assert.deepEqual(
     getGrowthPlanActionState({
