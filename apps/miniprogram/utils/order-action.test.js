@@ -34,7 +34,7 @@ test('does not allow a paid membership order to be cancelled', () => {
     }),
     {
       disabled: true,
-      hintText: '会员权益以后台支付结果为准',
+      hintText: '会员权益以支付完成状态为准',
       label: '已完成',
       type: 'paid',
     },

@@ -63,7 +63,7 @@ function getContentActionState(article = {}) {
   if (article.actionLabel) {
     return {
       disabled: false,
-      hintText: '点击后提交预约，结果以后台记录为准',
+      hintText: '点击后提交预约，结果以平台记录为准',
       label: article.actionLabel,
       type: 'reserve',
     }

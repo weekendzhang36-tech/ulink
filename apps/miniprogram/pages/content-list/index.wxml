@@ -2,7 +2,7 @@
   <view class="card hero">
     <text class="eyebrow">成长模块</text>
     <view class="title">{{title}}</view>
-    <view class="subtitle">这里展示后台已发布的活动、文章、机会和服务入口。</view>
+    <view class="subtitle">这里展示本模块已开放的活动、文章、机会和服务入口。</view>
   </view>
 
   <view wx:if="{{loading}}" class="card empty-card">
@@ -11,7 +11,7 @@
 
   <view wx:elif="{{contentEmpty && servicesEmpty}}" class="card empty-card">
     <view class="section-title">暂无已发布内容</view>
-    <view class="subtitle">后台发布并启用分类后，会自动显示在这里。</view>
+    <view class="subtitle">有新的内容开放后，会自动显示在这里。</view>
   </view>
 
   <view wx:else>

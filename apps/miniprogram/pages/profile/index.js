@@ -256,7 +256,7 @@ Page({
     const major = campus.majors[indexes.major]
     const classInfo = campus.classes[indexes.class]
     if (!school || !college || !major || !classInfo) {
-      wx.showToast({ icon: 'none', title: '请先在后台配置学校数据' })
+      wx.showToast({ icon: 'none', title: '学校资料暂未开放' })
       return
     }
     if (

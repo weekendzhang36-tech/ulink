@@ -111,7 +111,7 @@ test('uses reservation action for open own content without external link', () =>
     }),
     {
       disabled: false,
-      hintText: '点击后提交预约，结果以后台记录为准',
+      hintText: '点击后提交预约，结果以平台记录为准',
       label: '预约报名',
       type: 'reserve',
     },

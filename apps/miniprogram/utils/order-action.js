@@ -21,7 +21,7 @@ function getOrderActionState(order = {}) {
   if (order.status === 'paid') {
     return {
       disabled: true,
-      hintText: '会员权益以后台支付结果为准',
+      hintText: '会员权益以支付完成状态为准',
       label: '已完成',
       type: 'paid',
     }
