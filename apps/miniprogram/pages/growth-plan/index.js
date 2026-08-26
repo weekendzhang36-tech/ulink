@@ -6,6 +6,7 @@ const {
   getSessionToken,
   mockConfirmPayment,
 } = require('../../utils/api')
+const { hasActivatedMembership } = require('../../utils/membership-result')
 
 function requestWechatPayment(paymentParams) {
   return new Promise((resolve, reject) => {
@@ -77,8 +78,9 @@ Page({
         return requestWechatPayment(paymentParams).then(() => waitForPaidOrder(order.orderNo))
       })
       .then((result) => {
-        if (result.order && result.order.status === 'paid' && result.membership) {
+        if (hasActivatedMembership(result)) {
           wx.showToast({ icon: 'success', title: '已加入' })
+          wx.switchTab({ url: '/pages/mine/index' })
           return
         }
 
