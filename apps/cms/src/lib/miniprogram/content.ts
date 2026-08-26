@@ -94,6 +94,14 @@ function statusText(status: unknown) {
   return '报名中'
 }
 
+function contentTypeText(contentType: string) {
+  if (contentType === 'event') return '活动'
+  if (contentType === 'opportunity') return '机会'
+  if (contentType === 'service_link') return '服务入口'
+
+  return '文章'
+}
+
 function capacityText(doc: Record<string, unknown>) {
   const capacity = positiveNumber(doc.capacity)
   const reservedCount = Math.max(0, Number(doc.reservedCount || 0))
@@ -171,16 +179,20 @@ function textFromRichText(value: unknown): string | null {
 }
 
 export function toContentSummary(doc: Record<string, unknown>) {
+  const contentType = String(doc.contentType || 'article')
+  const readableContentType = contentTypeText(contentType)
+
   return {
     actionLabel: optionalString(doc.actionLabel),
     actionUrl: optionalString(doc.actionUrl),
     capacityText: capacityText(doc),
     categoryTitle: relationTitle(doc.category),
-    contentType: String(doc.contentType || 'article'),
+    contentType,
+    contentTypeText: readableContentType,
     coverImageUrl: mediaUrl(doc.coverImage),
     id: String(doc.id),
     isMemberOnly: Boolean(doc.isMemberOnly),
-    meta: [doc.publishedAt ? String(doc.publishedAt).slice(5, 10) : '', String(doc.contentType || '')]
+    meta: [doc.publishedAt ? String(doc.publishedAt).slice(5, 10) : '', readableContentType]
       .filter(Boolean)
       .join(' · '),
     module: relationModule(doc.category),

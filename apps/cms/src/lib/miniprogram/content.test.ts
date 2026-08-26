@@ -7,6 +7,7 @@ import {
   listContentReservationsForStudent,
   listPublishedContents,
   registerForPublishedContent,
+  toContentSummary,
 } from './content.ts'
 import { createSessionToken } from './session.ts'
 import { createMemoryRepository } from './testing/memoryRepository.ts'
@@ -101,6 +102,26 @@ test('lists only published contents from active categories for the requested mod
   assert.equal(contents[0].capacityText, '36 人已预约 · 剩余 14 个名额')
   assert.equal(contents[0].isMemberOnly, true)
   assert.equal(contents[0].statusText, '报名中')
+})
+
+test('returns student-readable Chinese content type labels in content summaries', () => {
+  const summary = toContentSummary({
+    _status: 'published',
+    category: {
+      isActive: true,
+      module: 'practice',
+      title: '实习实践',
+    },
+    contentType: 'event',
+    id: 'content_practice_label_001',
+    publishedAt: '2026-08-22T08:00:00.000Z',
+    summary: '2 小时体验客户资料整理和风险提示任务。',
+    title: '金融岗位模拟实训营开放报名',
+  })
+
+  assert.equal(summary.contentType, 'event')
+  assert.equal(summary.contentTypeText, '活动')
+  assert.equal(summary.meta, '08-22 · 活动')
 })
 
 test('returns readable text for Payload richText content detail', async () => {
