@@ -122,12 +122,19 @@ export async function submitStudentProfile({
   const classId = requireValue(input.classId, '班级')
   const birthday = requireValue(input.birthday, '生日')
   const session = verifySessionToken({ now, secret, token: input.sessionToken })
-  verifyPhoneVerificationToken({
-    expectedPhone: phone,
-    now,
-    secret,
-    token: input.phoneVerificationToken,
-  })
+  const existing = await repository.findStudentByOpenId(session.openId)
+  const phoneChanged = !existing || existing.phone !== phone
+  if (phoneChanged) {
+    if (!input.phoneVerificationToken) {
+      throw new MiniProgramError('请先完成手机号认证')
+    }
+    verifyPhoneVerificationToken({
+      expectedPhone: phone,
+      now,
+      secret,
+      token: input.phoneVerificationToken,
+    })
+  }
 
   const phoneOwner = await repository.findStudentByPhone(phone)
   if (phoneOwner && phoneOwner.wechatOpenId !== session.openId) {
@@ -144,7 +151,6 @@ export async function submitStudentProfile({
     throw new MiniProgramError('学校、学院、专业或班级不可用，请重新选择')
   }
 
-  const existing = await repository.findStudentByOpenId(session.openId)
   const submittedAt = now.toISOString()
 
   const student = existing

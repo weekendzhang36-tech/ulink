@@ -244,6 +244,89 @@ test('moves a needs-review student back to pending after resubmitting a complete
   assert.equal(result.student.verificationStatus, 'pending')
 })
 
+test('keeps verified status when editing birthday without changing the verified phone', async () => {
+  const repository = createMemoryRepository({ seedStudents: false })
+  repository.students.set('student_verified', {
+    birthday: '2007-09-01',
+    classId: 'class_001',
+    collegeId: 'college_001',
+    gender: 'female',
+    id: 'student_verified',
+    majorId: 'major_001',
+    phone: '13800000001',
+    realName: '林一诺',
+    schoolId: 'school_001',
+    submittedAt: '2026-08-26T09:00:00.000Z',
+    verificationStatus: 'verified',
+    wechatOpenId: 'openid_001',
+  })
+
+  const result = await submitStudentProfile({
+    input: {
+      agreedToPolicies: true,
+      birthday: '2007-09-02',
+      classId: 'class_001',
+      collegeId: 'college_001',
+      gender: 'female',
+      majorId: 'major_001',
+      phone: '13800000001',
+      phoneVerificationToken: '',
+      realName: '林一诺',
+      schoolId: 'school_001',
+      sessionToken: tokenFor('openid_001', 'student_verified'),
+    },
+    now: new Date('2026-08-26T10:01:00.000Z'),
+    repository,
+    secret,
+  })
+
+  assert.equal(result.student.birthday, '2007-09-02')
+  assert.equal(result.student.verificationStatus, 'verified')
+})
+
+test('requires a new phone verification token when editing profile phone', async () => {
+  const repository = createMemoryRepository({ seedStudents: false })
+  repository.students.set('student_verified', {
+    birthday: '2007-09-01',
+    classId: 'class_001',
+    collegeId: 'college_001',
+    gender: 'female',
+    id: 'student_verified',
+    majorId: 'major_001',
+    phone: '13800000001',
+    realName: '林一诺',
+    schoolId: 'school_001',
+    submittedAt: '2026-08-26T09:00:00.000Z',
+    verificationStatus: 'verified',
+    wechatOpenId: 'openid_001',
+  })
+
+  await assert.rejects(
+    () =>
+      submitStudentProfile({
+        input: {
+          agreedToPolicies: true,
+          birthday: '2007-09-01',
+          classId: 'class_001',
+          collegeId: 'college_001',
+          gender: 'female',
+          majorId: 'major_001',
+          phone: '13800000002',
+          phoneVerificationToken: '',
+          realName: '林一诺',
+          schoolId: 'school_001',
+          sessionToken: tokenFor('openid_001', 'student_verified'),
+        },
+        now: new Date('2026-08-26T10:01:00.000Z'),
+        repository,
+        secret,
+      }),
+    /请先完成手机号认证/,
+  )
+
+  assert.equal(repository.students.get('student_verified')?.phone, '13800000001')
+})
+
 test('notifies subscribed instructors when a student submits a pending profile', async () => {
   const repository = createMemoryRepository({
     seedInstructor: true,

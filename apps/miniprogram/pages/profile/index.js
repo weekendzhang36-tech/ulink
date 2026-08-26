@@ -11,6 +11,7 @@ const {
   loadProfileDraft,
   saveProfileDraft,
 } = require('../../utils/profile-draft')
+const { canSubmitProfilePhone } = require('../../utils/profile-phone-submit')
 const {
   buildCampusSelection,
   emptyCampus,
@@ -60,6 +61,7 @@ Page({
     phoneAuthMethod: 'wechat',
     phoneVerificationToken: '',
     phoneVerified: false,
+    originalPhone: '',
     realName: '',
     selectedLabels: fallbackLabels,
     smsCode: '',
@@ -96,7 +98,8 @@ Page({
                 phone: profile.phone || '',
                 phoneAuthMethod: 'wechat',
                 phoneVerificationToken: '',
-                phoneVerified: false,
+                phoneVerified: Boolean(profile.phone),
+                originalPhone: profile.phone || '',
                 realName: profile.realName || '',
                 smsPhone: profile.phone || '',
                 ...selection,
@@ -240,6 +243,8 @@ Page({
       genderIndex,
       genderOptions,
       indexes,
+      mode,
+      originalPhone,
       phone,
       phoneVerificationToken,
       phoneVerified,
@@ -253,7 +258,15 @@ Page({
       wx.showToast({ icon: 'none', title: '请先在后台配置学校数据' })
       return
     }
-    if (!phoneVerified || !phoneVerificationToken) {
+    if (
+      !canSubmitProfilePhone({
+        mode,
+        originalPhone,
+        phone,
+        phoneVerificationToken,
+        phoneVerified,
+      })
+    ) {
       wx.showToast({ icon: 'none', title: '请先完成手机号认证' })
       return
     }

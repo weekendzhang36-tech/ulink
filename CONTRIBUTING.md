@@ -42,6 +42,8 @@
 pnpm verify:precommit
 ```
 
+`verify:precommit` 会先运行 `pnpm check:principles`，确认根目录开发原则仍然接入 README、AGENTS、贡献规约、开发工作流和检查清单，避免这些原则后续变成没人执行的孤立文档。
+
 涉及生产构建或发布前，还需要执行 PayloadCMS 构建检查：
 
 ```bash

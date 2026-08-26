@@ -140,6 +140,7 @@ pnpm verify:cms      # 后台测试 + 类型检查 + lint
 pnpm test:miniprogram
 pnpm verify:miniprogram
 pnpm verify          # 后台检查 + 小程序 JS/JSON 检查
+pnpm check:principles # 检查开发原则是否仍接入 README、AGENTS、规约和清单
 pnpm verify:precommit # 完整检查 + git diff 空白检查
 ```
 
