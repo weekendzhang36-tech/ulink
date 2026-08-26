@@ -1,0 +1,38 @@
+.form-card {
+  padding: 0 32rpx;
+}
+
+.form-row {
+  align-items: center;
+  border-bottom: 1rpx solid #e5e5ea;
+  display: flex;
+  justify-content: space-between;
+  min-height: 104rpx;
+}
+
+.form-row:last-child {
+  border-bottom: 0;
+}
+
+.form-row text {
+  color: #1d1d1f;
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.form-row input,
+.picker-value {
+  color: #6e6e73;
+  font-size: 30rpx;
+  max-width: 430rpx;
+  text-align: right;
+}
+
+.agreement {
+  align-items: center;
+  color: #6e6e73;
+  display: flex;
+  font-size: 26rpx;
+  gap: 12rpx;
+  margin: 24rpx 8rpx 40rpx;
+}

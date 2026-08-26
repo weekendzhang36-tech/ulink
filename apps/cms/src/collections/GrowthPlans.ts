@@ -60,3 +60,66 @@ export const Orders: CollectionConfig = {
     { name: 'wechatTransactionId', type: 'text', label: '微信支付交易号' },
   ],
 }
+
+export const Memberships: CollectionConfig = {
+  slug: 'memberships',
+  admin: {
+    defaultColumns: ['student', 'growthPlan', 'status', 'expiresAt'],
+    group: '会员与订单',
+    useAsTitle: 'student',
+  },
+  labels: {
+    singular: '会员状态',
+    plural: '会员状态',
+  },
+  fields: [
+    { name: 'student', type: 'relationship', label: '学生', relationTo: 'students', required: true },
+    { name: 'growthPlan', type: 'relationship', label: '成长计划', relationTo: 'growth-plans', required: true },
+    {
+      name: 'status',
+      type: 'select',
+      label: '会员状态',
+      defaultValue: 'active',
+      required: true,
+      options: [
+        { label: '生效中', value: 'active' },
+        { label: '已过期', value: 'expired' },
+        { label: '已取消', value: 'cancelled' },
+      ],
+    },
+    { name: 'startedAt', type: 'date', label: '开始时间', required: true },
+    { name: 'expiresAt', type: 'date', label: '到期时间', required: true },
+    { name: 'sourceOrder', type: 'relationship', label: '来源订单', relationTo: 'orders', required: true },
+  ],
+}
+
+export const PaymentEvents: CollectionConfig = {
+  slug: 'payment-events',
+  admin: {
+    defaultColumns: ['eventKey', 'order', 'status', 'processedAt'],
+    group: '会员与订单',
+    useAsTitle: 'eventKey',
+  },
+  labels: {
+    singular: '支付事件',
+    plural: '支付事件',
+  },
+  fields: [
+    { name: 'eventKey', type: 'text', label: '事件唯一键', required: true, unique: true },
+    { name: 'order', type: 'relationship', label: '订单', relationTo: 'orders', required: true },
+    {
+      name: 'status',
+      type: 'select',
+      label: '支付状态',
+      defaultValue: 'paid',
+      required: true,
+      options: [
+        { label: '已支付', value: 'paid' },
+        { label: '支付失败', value: 'failed' },
+      ],
+    },
+    { name: 'transactionId', type: 'text', label: '微信支付交易号' },
+    { name: 'processedAt', type: 'date', label: '处理时间', required: true },
+    { name: 'rawPayload', type: 'json', label: '原始回调内容' },
+  ],
+}

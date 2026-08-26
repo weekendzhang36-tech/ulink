@@ -1,17 +1,26 @@
-const { getStudentState } = require('../../utils/api')
+const { getSessionToken, getStudentState } = require('../../utils/api')
 
 Page({
   data: {
     state: null,
   },
 
-  onLoad() {
-    getStudentState().then((state) => {
-      this.setData({
-        avatarText: state.name.slice(0, 1),
-        state,
+  onShow() {
+    if (!getSessionToken()) {
+      wx.navigateTo({ url: '/pages/login/index' })
+      return
+    }
+
+    getStudentState()
+      .then((state) => {
+        this.setData({
+          avatarText: state.name.slice(0, 1),
+          state,
+        })
       })
-    })
+      .catch((error) => {
+        wx.showToast({ icon: 'none', title: error.message || '个人信息加载失败' })
+      })
   },
 
   openVerification() {

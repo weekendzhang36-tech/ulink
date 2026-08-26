@@ -96,9 +96,35 @@ apps/miniprogram
 
 ```bash
 pnpm dev:cms          # 启动 PayloadCMS 后台
+pnpm --filter @ulink/cms test
 pnpm typecheck       # 后台 TypeScript 检查
 pnpm lint            # 后台 lint
 ```
+
+## 小程序 API
+
+后台已提供第一批小程序业务 API：
+
+- `POST /api/miniprogram/auth/login`
+- `POST /api/miniprogram/profile/submit`
+- `GET /api/miniprogram/profile/status`
+- `GET /api/miniprogram/home`
+- `GET /api/miniprogram/campus`
+- `GET /api/miniprogram/content`
+- `GET /api/miniprogram/content/:id`
+- `GET /api/miniprogram/growth-plan`
+- `POST /api/miniprogram/orders`
+- `GET /api/miniprogram/orders/:orderNo`
+- `POST /api/miniprogram/payments/mock-callback`
+
+本地开发可以在 `apps/cms/.env` 中开启：
+
+```text
+MINIPROGRAM_MOCK_WECHAT_LOGIN=true
+MINIPROGRAM_MOCK_PAYMENT=true
+```
+
+这两个开关只用于本地开发。生产环境需要接入真实微信登录、微信支付商户配置和回调验签，不能用 mock 结果冒充真实成功。
 
 ## 下一步
 

@@ -1,29 +1,189 @@
 const mockData = require('./mock-data')
 
+function isDemoMode() {
+  const app = getApp()
+
+  return Boolean(app.globalData.demoMode)
+}
+
+function getApiBaseURL() {
+  const app = getApp()
+
+  return app.globalData.apiBaseURL
+}
+
+function getSessionToken() {
+  return wx.getStorageSync('ulinkSessionToken')
+}
+
+function setSessionToken(token) {
+  wx.setStorageSync('ulinkSessionToken', token)
+}
+
+function formatGrowthPlan(plan) {
+  if (!plan) return null
+
+  return {
+    ...plan,
+    priceText: plan.priceText || `¥${Number(plan.priceCents || 0) / 100} / 半年`,
+    benefits: Array.isArray(plan.benefits)
+      ? plan.benefits.map((item) => item.text || item).filter(Boolean)
+      : [],
+  }
+}
+
+function request({ auth = false, data, method = 'GET', path }) {
+  if (isDemoMode()) {
+    return Promise.reject(new Error('demo-mode'))
+  }
+
+  return new Promise((resolve, reject) => {
+    const header = {}
+    const token = getSessionToken()
+    if (auth && token) {
+      header.Authorization = `Bearer ${token}`
+    }
+
+    wx.request({
+      data,
+      header,
+      method,
+      url: `${getApiBaseURL()}${path}`,
+      fail: reject,
+      success(response) {
+        const responseData = response.data || {}
+        if (response.statusCode >= 400 || responseData.error) {
+          reject(new Error((responseData.error && responseData.error.message) || '请求失败'))
+          return
+        }
+
+        resolve(responseData.data)
+      },
+    })
+  })
+}
+
+function withDemoFallback(promise, fallback) {
+  return promise.catch((error) => {
+    if (isDemoMode() || error.message === 'demo-mode') {
+      return fallback()
+    }
+
+    throw error
+  })
+}
+
 function getHomeData() {
-  return Promise.resolve({
+  return withDemoFallback(request({ auth: true, path: '/home' }), () => ({
     growthPlan: mockData.growthPlan,
     modules: mockData.modules,
     articles: mockData.articles,
     studentState: mockData.studentState,
-  })
+  })).then((data) => ({
+    ...data,
+    growthPlan: formatGrowthPlan(data.growthPlan),
+  }))
 }
 
 function getGrowthPlan() {
-  return Promise.resolve(mockData.growthPlan)
+  return withDemoFallback(request({ path: '/growth-plan' }), () => mockData.growthPlan).then(formatGrowthPlan)
 }
 
 function getArticleById(id) {
-  return Promise.resolve(mockData.articles.find((article) => article.id === id) || mockData.articles[0])
+  return withDemoFallback(request({ path: `/content/${id}` }), () =>
+    mockData.articles.find((article) => article.id === id) || mockData.articles[0],
+  ).then((article) => ({
+    ...article,
+    body: typeof article.body === 'string' ? article.body : article.summary,
+  }))
 }
 
 function getStudentState() {
-  return Promise.resolve(mockData.studentState)
+  return withDemoFallback(request({ auth: true, path: '/profile/status' }), () => ({
+    student: mockData.studentState,
+  })).then((data) => {
+    const student = data.student || {}
+
+    return {
+      className: student.className || student.classId || '',
+      message:
+        student.message ||
+        (student.verificationStatus === 'verified'
+          ? '资料已认证，可以继续查看成长服务。'
+          : '资料已提交，等待指导员确认。'),
+      name: student.name || student.realName || '未登录',
+      school: student.school || student.schoolId || '',
+      verificationStatus:
+        student.verificationStatus === 'needs_review'
+          ? '需确认'
+          : student.verificationStatus || '未提交',
+    }
+  })
+}
+
+function getCampusOptions() {
+  return withDemoFallback(request({ path: '/campus' }), () => mockData.campus)
+}
+
+function loginWithWechatCode(code) {
+  return request({
+    data: { code },
+    method: 'POST',
+    path: '/auth/login',
+  }).then((data) => {
+    setSessionToken(data.sessionToken)
+
+    return data
+  })
+}
+
+function submitProfile(profile) {
+  const sessionToken = getSessionToken()
+
+  return request({
+    data: {
+      ...profile,
+      sessionToken,
+    },
+    method: 'POST',
+    path: '/profile/submit',
+  }).then((data) => {
+    if (data.sessionToken) {
+      setSessionToken(data.sessionToken)
+    }
+
+    return data
+  })
+}
+
+function createGrowthPlanOrder(growthPlanId) {
+  return request({
+    data: {
+      growthPlanId,
+      sessionToken: getSessionToken(),
+    },
+    method: 'POST',
+    path: '/orders',
+  })
+}
+
+function mockConfirmPayment(orderNo) {
+  return request({
+    data: { orderNo },
+    method: 'POST',
+    path: '/payments/mock-callback',
+  })
 }
 
 module.exports = {
+  createGrowthPlanOrder,
   getArticleById,
+  getCampusOptions,
   getGrowthPlan,
   getHomeData,
+  getSessionToken,
   getStudentState,
+  loginWithWechatCode,
+  mockConfirmPayment,
+  submitProfile,
 }

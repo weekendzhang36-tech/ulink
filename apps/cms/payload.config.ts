@@ -8,7 +8,7 @@ import sharp from 'sharp'
 import { Admins } from './src/collections/Admins'
 import { Classes, Colleges, Majors, Schools } from './src/collections/Campus'
 import { ContentCategories, Contents } from './src/collections/Content'
-import { GrowthPlans, Orders } from './src/collections/GrowthPlans'
+import { GrowthPlans, Memberships, Orders, PaymentEvents } from './src/collections/GrowthPlans'
 import { ServiceLinks } from './src/collections/ServiceLinks'
 import { Students } from './src/collections/Students'
 
@@ -33,6 +33,8 @@ export default buildConfig({
     Contents,
     GrowthPlans,
     Orders,
+    Memberships,
+    PaymentEvents,
     ServiceLinks,
   ],
   cors: [process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3000'],

@@ -11,5 +11,5 @@
     <view class="benefit" wx:for="{{plan.benefits}}" wx:key="*this">{{item}}</view>
   </view>
 
-  <button class="primary-button join-button" bindtap="joinPlan">模拟加入计划</button>
+  <button class="primary-button join-button" loading="{{loading}}" bindtap="joinPlan">加入成长计划</button>
 </view>

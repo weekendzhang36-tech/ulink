@@ -40,8 +40,16 @@ const studentState = {
   message: '资料已提交，等待指导员确认。',
 }
 
+const campus = {
+  classes: [{ id: 'class_001', name: '金融学 2026-1 班' }],
+  colleges: [{ id: 'college_001', name: '金融学院' }],
+  majors: [{ id: 'major_001', name: '金融学' }],
+  schools: [{ id: 'school_001', name: '广东金融学院' }],
+}
+
 module.exports = {
   articles,
+  campus,
   growthPlan,
   modules,
   studentState,

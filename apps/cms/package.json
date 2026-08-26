@@ -8,6 +8,7 @@
     "start": "next start",
     "payload": "payload",
     "generate:types": "payload generate:types",
+    "test": "node --test src/lib/miniprogram/*.test.ts",
     "typecheck": "tsc --noEmit",
     "lint": "tsc --noEmit"
   },

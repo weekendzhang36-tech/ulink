@@ -1,4 +1,4 @@
-const { getHomeData } = require('../../utils/api')
+const { getHomeData, getSessionToken } = require('../../utils/api')
 
 Page({
   data: {
@@ -8,10 +8,19 @@ Page({
     studentState: null,
   },
 
-  onLoad() {
-    getHomeData().then((data) => {
-      this.setData(data)
-    })
+  onShow() {
+    if (!getSessionToken()) {
+      wx.navigateTo({ url: '/pages/login/index' })
+      return
+    }
+
+    getHomeData()
+      .then((data) => {
+        this.setData(data)
+      })
+      .catch((error) => {
+        wx.showToast({ icon: 'none', title: error.message || '首页加载失败' })
+      })
   },
 
   openGrowthPlan() {

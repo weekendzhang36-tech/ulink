@@ -1,0 +1,9 @@
+<view class="page login-page">
+  <view class="card hero">
+    <text class="eyebrow">U Link 友邻</text>
+    <view class="title">先完成登录</view>
+    <view class="subtitle">登录后继续完善学生资料，进入成长服务首页。</view>
+  </view>
+
+  <button class="primary-button" loading="{{loading}}" bindtap="startLogin">微信登录</button>
+</view>
