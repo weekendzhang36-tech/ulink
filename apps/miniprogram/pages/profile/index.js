@@ -5,6 +5,11 @@ const {
   verifySmsPhone,
   verifyWechatPhone,
 } = require('../../utils/api')
+const {
+  clearProfileDraft,
+  loadProfileDraft,
+  saveProfileDraft,
+} = require('../../utils/profile-draft')
 
 const genderOptions = [
   { label: '男', value: 'male' },
@@ -24,6 +29,21 @@ function buildSelectedLabels(campus, indexes) {
     college: selectedLabel(campus.colleges, indexes.college, '请选择学院'),
     major: selectedLabel(campus.majors, indexes.major, '请选择专业'),
     school: selectedLabel(campus.schools, indexes.school, '请选择学校'),
+  }
+}
+
+function mergeDraft(baseData, draft) {
+  if (!draft) return baseData
+
+  return {
+    ...baseData,
+    agreedToPolicies: draft.agreedToPolicies,
+    birthday: draft.birthday,
+    genderIndex: draft.genderIndex,
+    indexes: draft.indexes,
+    phoneAuthMethod: draft.phoneAuthMethod,
+    realName: draft.realName,
+    smsPhone: draft.smsPhone,
   }
 }
 
@@ -58,6 +78,11 @@ Page({
   },
 
   onLoad() {
+    const draft = loadProfileDraft(wx)
+    if (draft) {
+      this.setData(mergeDraft(this.data, draft))
+    }
+
     getCampusOptions()
       .then((campus) => {
         this.setData({
@@ -72,14 +97,17 @@ Page({
 
   changeAgreed(event) {
     this.setData({ agreedToPolicies: event.detail.value.length > 0 })
+    this.saveDraft()
   },
 
   changeBirthday(event) {
     this.setData({ birthday: event.detail.value })
+    this.saveDraft()
   },
 
   changeGender(event) {
     this.setData({ genderIndex: Number(event.detail.value) })
+    this.saveDraft()
   },
 
   changePicker(event) {
@@ -92,11 +120,13 @@ Page({
       indexes,
       selectedLabels: buildSelectedLabels(this.data.campus, indexes),
     })
+    this.saveDraft()
   },
 
   changeText(event) {
     const key = event.currentTarget.dataset.key
     this.setData({ [key]: event.detail.value })
+    this.saveDraft()
   },
 
   changePhoneAuthMethod(event) {
@@ -112,6 +142,7 @@ Page({
       smsCodeSent: false,
       smsPhone: '',
     })
+    this.saveDraft()
   },
 
   getWechatPhone(event) {
@@ -129,6 +160,7 @@ Page({
           phoneVerificationToken: result.phoneVerificationToken,
           phoneVerified: true,
         })
+        this.saveDraft()
         wx.showToast({ title: '手机号已授权' })
       })
       .catch((error) => {
@@ -150,6 +182,7 @@ Page({
     requestSmsPhone(smsPhone)
       .then(() => {
         this.setData({ smsCodeSent: true })
+        this.saveDraft()
         wx.showToast({ title: '验证码已发送' })
       })
       .catch((error) => {
@@ -176,6 +209,7 @@ Page({
           phoneVerificationToken: result.phoneVerificationToken,
           phoneVerified: true,
         })
+        this.saveDraft()
         wx.showToast({ title: '手机号已验证' })
       })
       .catch((error) => {
@@ -226,6 +260,7 @@ Page({
       schoolId: school.id,
     })
       .then(() => {
+        clearProfileDraft(wx)
         wx.switchTab({ url: '/pages/home/index' })
       })
       .catch((error) => {
@@ -234,5 +269,9 @@ Page({
       .finally(() => {
         this.setData({ loading: false })
       })
+  },
+
+  saveDraft() {
+    saveProfileDraft(wx, this.data)
   },
 })
