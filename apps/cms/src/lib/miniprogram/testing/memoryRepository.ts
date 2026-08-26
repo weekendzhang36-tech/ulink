@@ -290,12 +290,21 @@ export function createMemoryRepository(
         .filter((student) => !input.status || student.verificationStatus === input.status)
         .map<InstructorStudentSummary>((student) => ({
           classId: student.classId,
+          className:
+            student.classId === 'class_001'
+              ? '金融学 2026-1 班'
+              : student.classId === 'class_999'
+                ? '金融学 2026-9 班'
+                : undefined,
           collegeId: student.collegeId,
+          collegeName: student.collegeId === 'college_001' ? '金融学院' : undefined,
           id: student.id,
           majorId: student.majorId,
+          majorName: student.majorId === 'major_001' ? '金融学' : undefined,
           phone: student.phone,
           realName: student.realName,
           schoolId: student.schoolId,
+          schoolName: student.schoolId === 'school_001' ? '广东金融学院' : undefined,
           submittedAt: student.submittedAt,
           verificationStatus: student.verificationStatus,
         }))

@@ -68,10 +68,11 @@
         </view>
         <text class="status-pill">{{item.statusLabel}}</text>
       </view>
-      <view class="info-line">学校：{{item.schoolId}}</view>
-      <view class="info-line">学院：{{item.collegeId}}</view>
-      <view class="info-line">专业：{{item.majorId}}</view>
-      <view class="info-line">班级：{{item.classId}}</view>
+      <view class="info-line">学校：{{item.schoolText}}</view>
+      <view class="info-line">学院：{{item.collegeText}}</view>
+      <view class="info-line">专业：{{item.majorText}}</view>
+      <view class="info-line">班级：{{item.classText}}</view>
+      <view class="info-line">提交：{{item.submittedAtText}}</view>
       <view class="action-row" wx:if="{{item.verificationStatus !== 'verified'}}">
         <button class="secondary-button" data-action="needs_review" data-id="{{item.id}}" bindtap="reviewOne">需确认</button>
         <button class="primary-small-button" data-action="verified" data-id="{{item.id}}" bindtap="reviewOne">确认通过</button>

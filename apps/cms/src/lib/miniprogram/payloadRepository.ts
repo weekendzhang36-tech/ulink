@@ -34,6 +34,14 @@ function optionalString(value: unknown) {
   return typeof value === 'string' ? value : undefined
 }
 
+function nameOf(value: unknown) {
+  if (value && typeof value === 'object' && 'name' in value) {
+    return optionalString((value as { name: unknown }).name)
+  }
+
+  return undefined
+}
+
 function toStudent(doc: Record<string, unknown>): StudentRecord {
   return {
     birthday: String(doc.birthday || ''),
@@ -183,12 +191,16 @@ function toStudentVerificationLog(doc: Record<string, unknown>): StudentVerifica
 function toInstructorStudentSummary(doc: Record<string, unknown>): InstructorStudentSummary {
   return {
     classId: idOf(doc.class),
+    className: nameOf(doc.class),
     collegeId: idOf(doc.college),
+    collegeName: nameOf(doc.college),
     id: String(doc.id),
     majorId: idOf(doc.major),
+    majorName: nameOf(doc.major),
     phone: String(doc.phone || ''),
     realName: String(doc.realName || ''),
     schoolId: idOf(doc.school),
+    schoolName: nameOf(doc.school),
     submittedAt: String(doc.submittedAt || doc.updatedAt || ''),
     verificationStatus:
       doc.verificationStatus === 'verified' || doc.verificationStatus === 'needs_review'
@@ -579,7 +591,7 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
         : { class: { in: input.classIds } }
       const result = await payload.find({
         collection: 'students',
-        depth: 0,
+        depth: 1,
         limit: 500,
         sort: '-submittedAt',
         where,

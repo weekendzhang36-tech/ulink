@@ -34,12 +34,16 @@ export interface StudentRecord {
 
 export interface InstructorStudentSummary {
   classId: string
+  className?: string
   collegeId: string
+  collegeName?: string
   id: string
   majorId: string
+  majorName?: string
   phone: string
   realName: string
   schoolId: string
+  schoolName?: string
   submittedAt: string
   verificationStatus: VerificationStatus
 }

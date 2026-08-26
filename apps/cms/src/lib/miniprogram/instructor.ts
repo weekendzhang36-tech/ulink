@@ -63,13 +63,23 @@ export async function listInstructorVerificationStudents({
       ? [input.classId]
       : []
     : classIds
-  const [students, pendingStudents] = await Promise.all([
+  const [students, pendingStudents, allAssignedStudents] = await Promise.all([
     repository.findStudentsByClassIds({ classIds: targetClassIds, status: input.status }),
     repository.findStudentsByClassIds({ classIds, status: 'pending' }),
+    repository.findStudentsByClassIds({ classIds }),
   ])
+  const classNameById = new Map(
+    allAssignedStudents
+      .filter((student) => student.className)
+      .map((student) => [student.classId, student.className as string]),
+  )
 
   return {
     classIds,
+    classOptions: classIds.map((classId) => ({
+      id: classId,
+      name: classNameById.get(classId) || classId,
+    })),
     pendingCount: pendingStudents.length,
     students,
   }

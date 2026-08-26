@@ -48,9 +48,9 @@ Page({
     getInstructorVerifications({
       classId: this.data.activeClassId,
       status: this.data.activeStatus,
-    })
+      })
       .then((data) => {
-        const classFilterOptions = createClassFilterOptions(data.classIds || [])
+        const classFilterOptions = createClassFilterOptions(data.classOptions || data.classIds || [])
         const classFilterIndex = Math.max(
           classFilterOptions.findIndex((option) => option.value === this.data.activeClassId),
           0,

@@ -74,6 +74,10 @@ test('filters instructor verification students by an assigned class', async () =
     ['student_other_class'],
   )
   assert.deepEqual(result.classIds, ['class_001', 'class_999'])
+  assert.deepEqual(result.classOptions, [
+    { id: 'class_001', name: '金融学 2026-1 班' },
+    { id: 'class_999', name: '金融学 2026-9 班' },
+  ])
   assert.equal(result.pendingCount, 2)
 })
 

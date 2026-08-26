@@ -87,16 +87,21 @@ const instructorVerifications = {
   students: [
     {
       classId: 'class_001',
+      className: '金融学 2026-1 班',
       collegeId: 'college_001',
+      collegeName: '金融学院',
       id: 'student_001',
       majorId: 'major_001',
+      majorName: '金融学',
       phone: '13800000001',
       realName: '林一诺',
       schoolId: 'school_001',
+      schoolName: '广东金融学院',
       submittedAt: '2026-08-26T09:00:00.000Z',
       verificationStatus: 'pending',
     },
   ],
+  classOptions: [{ id: 'class_001', name: '金融学 2026-1 班' }],
 }
 
 const orders = [
