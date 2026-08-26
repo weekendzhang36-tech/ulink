@@ -98,6 +98,30 @@ function getArticleById(id) {
   }))
 }
 
+function reserveContent(id) {
+  return withDemoFallback(
+    request({
+      auth: true,
+      method: 'POST',
+      path: `/content/${id}/reservations`,
+    }),
+    () => {
+      const article = mockData.articles.find((item) => item.id === id) || mockData.articles[0]
+
+      return {
+        alreadyReserved: false,
+        content: article,
+        reservation: {
+          id: `demo-reservation-${id}`,
+          reservedAt: new Date().toISOString(),
+          status: 'reserved',
+          statusText: '已预约',
+        },
+      }
+    },
+  )
+}
+
 function getContentsByModule(moduleKey) {
   return withDemoFallback(request({ path: `/content?module=${moduleKey}` }), () =>
     mockData.articles.filter((article) => article.module === moduleKey),
@@ -305,6 +329,7 @@ module.exports = {
   loginWithWechatCode,
   mockConfirmPayment,
   requestSmsPhone,
+  reserveContent,
   reviewInstructorStudents,
   submitProfile,
   verifySmsPhone,

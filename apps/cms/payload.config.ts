@@ -7,7 +7,7 @@ import sharp from 'sharp'
 
 import { Admins } from './src/collections/Admins'
 import { Classes, Colleges, Majors, Schools } from './src/collections/Campus'
-import { ContentCategories, Contents } from './src/collections/Content'
+import { ContentCategories, ContentReservations, Contents } from './src/collections/Content'
 import { GrowthPlans, Memberships, Orders, PaymentEvents } from './src/collections/GrowthPlans'
 import { ServiceLinks } from './src/collections/ServiceLinks'
 import { SmsVerificationChallenges, Students } from './src/collections/Students'
@@ -41,6 +41,7 @@ export default buildConfig({
     SmsVerificationChallenges,
     ContentCategories,
     Contents,
+    ContentReservations,
     GrowthPlans,
     Orders,
     Memberships,

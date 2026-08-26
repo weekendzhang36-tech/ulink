@@ -1,7 +1,11 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 
-import { getPublishedContentDetail, listPublishedContents } from './content.ts'
+import { getPublishedContentDetail, listPublishedContents, registerForPublishedContent } from './content.ts'
+import { createSessionToken } from './session.ts'
+import { createMemoryRepository } from './testing/memoryRepository.ts'
+
+const secret = 'test-secret'
 
 const docs = [
   {
@@ -50,7 +54,24 @@ function payloadFor(contentDocs: Record<string, unknown>[]) {
 
       return doc
     },
+    update: async ({ data, id }: Record<string, unknown>) => {
+      const index = contentDocs.findIndex((item) => item.id === id)
+      if (index < 0) throw new Error('not found')
+      contentDocs[index] = { ...contentDocs[index], ...(data as Record<string, unknown>) }
+
+      return contentDocs[index]
+    },
   }
+}
+
+function tokenFor(studentId: string) {
+  return createSessionToken({
+    expiresInSeconds: 60 * 60,
+    now: new Date('2026-08-26T10:00:00.000Z'),
+    openId: 'openid_001',
+    secret,
+    studentId,
+  })
 }
 
 test('lists only published contents from active categories for the requested module', async () => {
@@ -144,4 +165,93 @@ test('locks member-only content details for viewers without active membership', 
   assert.equal(detail?.actionLabel, '开通成长计划')
   assert.equal(detail?.actionUrl, undefined)
   assert.match(detail?.body || '', /开通友邻成长计划/)
+})
+
+test('requires active membership before reserving member-only content', async () => {
+  const repository = createMemoryRepository()
+
+  await assert.rejects(
+    () =>
+      registerForPublishedContent({
+        id: 'content_member_only_001',
+        input: { sessionToken: tokenFor('student_001') },
+        now: new Date('2026-08-26T10:10:00.000Z'),
+        payload: payloadFor([
+          {
+            _status: 'published',
+            capacity: 2,
+            category: {
+              isActive: true,
+              module: 'practice',
+              title: '实习实践',
+            },
+            contentType: 'event',
+            id: 'content_member_only_001',
+            isMemberOnly: true,
+            publishedAt: '2026-08-22T08:00:00.000Z',
+            reservedCount: 0,
+            status: 'open',
+            summary: '会员专属实训营。',
+            title: '会员专属实训营',
+          },
+        ]),
+        repository,
+        secret,
+      }),
+    /开通友邻成长计划/,
+  )
+})
+
+test('creates one reservation per student and updates reserved count', async () => {
+  const repository = createMemoryRepository()
+  await repository.createMembership({
+    expiresAt: '2027-02-25T10:03:00.000Z',
+    growthPlanId: 'growth_plan_001',
+    sourceOrderNo: 'order_paid_once',
+    startedAt: '2026-08-26T10:03:00.000Z',
+    status: 'active',
+    studentId: 'student_001',
+  })
+  const payload = payloadFor([
+    {
+      _status: 'published',
+      capacity: 2,
+      category: {
+        isActive: true,
+        module: 'practice',
+        title: '实习实践',
+      },
+      contentType: 'event',
+      id: 'content_practice_001',
+      isMemberOnly: true,
+      publishedAt: '2026-08-22T08:00:00.000Z',
+      reservedCount: 1,
+      status: 'open',
+      summary: '2 小时体验客户资料整理和风险提示任务。',
+      title: '金融岗位模拟实训营开放报名',
+    },
+  ])
+
+  const first = await registerForPublishedContent({
+    id: 'content_practice_001',
+    input: { sessionToken: tokenFor('student_001') },
+    now: new Date('2026-08-26T10:11:00.000Z'),
+    payload,
+    repository,
+    secret,
+  })
+  const second = await registerForPublishedContent({
+    id: 'content_practice_001',
+    input: { sessionToken: tokenFor('student_001') },
+    now: new Date('2026-08-26T10:12:00.000Z'),
+    payload,
+    repository,
+    secret,
+  })
+
+  assert.equal(first.alreadyReserved, false)
+  assert.equal(first.content.capacityText, '2 人已预约 · 剩余 0 个名额')
+  assert.equal(first.reservation.statusText, '已预约')
+  assert.equal(second.alreadyReserved, true)
+  assert.equal(repository.contentReservations.size, 1)
 })

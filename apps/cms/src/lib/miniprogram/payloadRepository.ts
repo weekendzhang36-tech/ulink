@@ -1,5 +1,6 @@
 import { MiniProgramError } from './errors.ts'
 import type {
+  ContentReservationRecord,
   GrowthPlanRecord,
   InstructorStudentSummary,
   MembershipRecord,
@@ -122,6 +123,16 @@ function toSmsVerificationChallenge(doc: Record<string, unknown>): SmsVerificati
   }
 }
 
+function toContentReservation(doc: Record<string, unknown>): ContentReservationRecord {
+  return {
+    contentId: idOf(doc.content),
+    id: String(doc.id),
+    reservedAt: String(doc.reservedAt || ''),
+    status: doc.status === 'cancelled' ? 'cancelled' : 'reserved',
+    studentId: idOf(doc.student),
+  }
+}
+
 function toInstructorStudentSummary(doc: Record<string, unknown>): InstructorStudentSummary {
   return {
     classId: idOf(doc.class),
@@ -152,6 +163,19 @@ async function first(payload: PayloadLike, collection: string, where: Record<str
 
 export function createPayloadRepository(payload: PayloadLike): MiniProgramRepository {
   return {
+    async createContentReservation(input) {
+      return toContentReservation(
+        await payload.create({
+          collection: 'content-reservations',
+          data: {
+            content: input.contentId,
+            reservedAt: input.reservedAt,
+            status: input.status,
+            student: input.studentId,
+          },
+        }),
+      )
+    },
     async createMembership(input) {
       const sourceOrder = await first(payload, 'orders', { orderNo: { equals: input.sourceOrderNo } })
       if (!sourceOrder) {
@@ -248,6 +272,22 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
       })
 
       return doc ? toGrowthPlan(doc) : undefined
+    },
+    async findContentReservationByStudentAndContent(input) {
+      const doc = await first(
+        payload,
+        'content-reservations',
+        {
+          and: [
+            { content: { equals: input.contentId } },
+            { student: { equals: input.studentId } },
+            { status: { equals: 'reserved' } },
+          ],
+        },
+        0,
+      )
+
+      return doc ? toContentReservation(doc) : undefined
     },
     async findMembershipByStudentId(studentId) {
       const doc = await first(

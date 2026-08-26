@@ -3,6 +3,7 @@ export type VerificationStatus = 'pending' | 'verified' | 'needs_review'
 export type OrderStatus = 'pending' | 'paid' | 'cancelled' | 'closed' | 'failed'
 export type MembershipStatus = 'active' | 'expired' | 'cancelled'
 export type PaymentStatus = 'paid' | 'failed'
+export type ContentReservationStatus = 'reserved' | 'cancelled'
 
 export interface MiniProgramSession {
   exp: number
@@ -93,6 +94,14 @@ export interface PaymentEventRecord {
   transactionId?: string
 }
 
+export interface ContentReservationRecord {
+  contentId: string
+  id: string
+  reservedAt: string
+  status: ContentReservationStatus
+  studentId: string
+}
+
 export interface SmsVerificationChallengeRecord {
   attemptCount: number
   codeHash: string
@@ -143,6 +152,7 @@ export interface SmsGateway {
 }
 
 export interface MiniProgramRepository {
+  createContentReservation(input: Omit<ContentReservationRecord, 'id'>): Promise<ContentReservationRecord>
   createMembership(input: Omit<MembershipRecord, 'id'>): Promise<MembershipRecord>
   createOrder(input: Omit<OrderRecord, 'id'>): Promise<OrderRecord>
   createPaymentEvent(input: Omit<PaymentEventRecord, 'id'>): Promise<PaymentEventRecord>
@@ -151,6 +161,10 @@ export interface MiniProgramRepository {
   ): Promise<SmsVerificationChallengeRecord>
   createStudent(input: Omit<StudentRecord, 'id'>): Promise<StudentRecord>
   findActiveGrowthPlanById(id: string): Promise<GrowthPlanRecord | undefined>
+  findContentReservationByStudentAndContent(input: {
+    contentId: string
+    studentId: string
+  }): Promise<ContentReservationRecord | undefined>
   findMembershipByStudentId(studentId: string): Promise<MembershipRecord | undefined>
   findOrderByOrderNo(orderNo: string): Promise<OrderRecord | undefined>
   findOrdersByStudentId(studentId: string): Promise<OrderRecord[]>

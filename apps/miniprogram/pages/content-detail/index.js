@@ -1,7 +1,8 @@
-const { getArticleById } = require('../../utils/api')
+const { getArticleById, getSessionToken, reserveContent } = require('../../utils/api')
 
 Page({
   data: {
+    actionLoading: false,
     article: null,
   },
 
@@ -23,7 +24,33 @@ Page({
     }
 
     if (!article.actionUrl) {
-      wx.showToast({ icon: 'none', title: '暂未开放' })
+      if (!getSessionToken()) {
+        wx.navigateTo({ url: '/pages/login/index' })
+        return
+      }
+      if (article.reservation) {
+        wx.showToast({ icon: 'none', title: '已预约' })
+        return
+      }
+
+      this.setData({ actionLoading: true })
+      reserveContent(article.id)
+        .then((result) => {
+          this.setData({
+            article: {
+              ...article,
+              ...result.content,
+              reservation: result.reservation,
+            },
+          })
+          wx.showToast({ icon: 'success', title: result.alreadyReserved ? '已预约' : '预约成功' })
+        })
+        .catch((error) => {
+          wx.showToast({ icon: 'none', title: error.message || '预约失败' })
+        })
+        .finally(() => {
+          this.setData({ actionLoading: false })
+        })
       return
     }
 

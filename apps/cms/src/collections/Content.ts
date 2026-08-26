@@ -94,3 +94,32 @@ export const Contents: CollectionConfig = {
     { name: 'isFeatured', type: 'checkbox', label: '推荐展示', defaultValue: false },
   ],
 }
+
+export const ContentReservations: CollectionConfig = {
+  slug: 'content-reservations',
+  admin: {
+    defaultColumns: ['content', 'student', 'status', 'reservedAt'],
+    group: '内容运营',
+    useAsTitle: 'content',
+  },
+  labels: {
+    singular: '内容预约',
+    plural: '内容预约',
+  },
+  fields: [
+    { name: 'content', type: 'relationship', label: '内容', relationTo: 'contents', required: true },
+    { name: 'student', type: 'relationship', label: '学生', relationTo: 'students', required: true },
+    {
+      name: 'status',
+      type: 'select',
+      label: '预约状态',
+      defaultValue: 'reserved',
+      required: true,
+      options: [
+        { label: '已预约', value: 'reserved' },
+        { label: '已取消', value: 'cancelled' },
+      ],
+    },
+    { name: 'reservedAt', type: 'date', label: '预约时间', required: true },
+  ],
+}

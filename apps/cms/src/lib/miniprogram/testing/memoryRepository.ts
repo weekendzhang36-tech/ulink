@@ -1,4 +1,5 @@
 import type {
+  ContentReservationRecord,
   GrowthPlanRecord,
   InstructorStudentSummary,
   MembershipRecord,
@@ -100,10 +101,12 @@ export function createMemoryRepository(
     ],
   ])
   const memberships = new Map<string, MembershipRecord>()
+  const contentReservations = new Map<string, ContentReservationRecord>()
   const paymentEvents = new Map<string, PaymentEventRecord>()
   const smsVerificationChallenges = new Map<string, SmsVerificationChallengeRecord>()
 
   const repository: MiniProgramRepository & {
+    contentReservations: Map<string, ContentReservationRecord>
     growthPlans: Map<string, GrowthPlanRecord>
     memberships: Map<string, MembershipRecord>
     orders: Map<string, OrderRecord>
@@ -111,12 +114,19 @@ export function createMemoryRepository(
     smsVerificationChallenges: Map<string, SmsVerificationChallengeRecord>
     students: Map<string, StudentRecord>
   } = {
+    contentReservations,
     growthPlans,
     memberships,
     orders,
     paymentEvents,
     smsVerificationChallenges,
     students,
+    async createContentReservation(input) {
+      const reservation = { ...input, id: nextId('content_reservation', contentReservations.size) }
+      contentReservations.set(reservation.id, reservation)
+
+      return reservation
+    },
     async createMembership(input) {
       const membership = { ...input, id: nextId('membership', memberships.size) }
       memberships.set(membership.id, membership)
@@ -151,6 +161,14 @@ export function createMemoryRepository(
       const growthPlan = growthPlans.get(id)
 
       return growthPlan?.isActive ? growthPlan : undefined
+    },
+    async findContentReservationByStudentAndContent(input) {
+      return [...contentReservations.values()].find(
+        (reservation) =>
+          reservation.contentId === input.contentId &&
+          reservation.studentId === input.studentId &&
+          reservation.status === 'reserved',
+      )
     },
     async findMembershipByStudentId(studentId) {
       return [...memberships.values()].find((membership) => membership.studentId === studentId)

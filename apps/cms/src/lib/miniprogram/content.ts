@@ -1,6 +1,18 @@
+import { MiniProgramError } from './errors.ts'
+import { verifySessionToken } from './session.ts'
+import type {
+  ContentReservationRecord,
+  MembershipRecord,
+  MiniProgramRepository,
+} from './types.ts'
+
 type PayloadLike = {
   find(input: Record<string, unknown>): Promise<{ docs: Record<string, unknown>[] }>
   findByID(input: Record<string, unknown>): Promise<Record<string, unknown>>
+}
+
+type ReservationPayloadLike = PayloadLike & {
+  update(input: Record<string, unknown>): Promise<Record<string, unknown>>
 }
 
 type ContentViewer = {
@@ -66,6 +78,47 @@ function capacityText(doc: Record<string, unknown>) {
   }
 
   return `${reservedCount} 人已预约 · 剩余 ${Math.max(0, capacity - reservedCount)} 个名额`
+}
+
+function hasUsableMembership(membership: MembershipRecord | undefined, now: Date) {
+  if (!membership || membership.status !== 'active') return false
+
+  return Date.parse(membership.expiresAt) > now.getTime()
+}
+
+function isReservableContentType(contentType: unknown) {
+  return contentType === 'event' || contentType === 'opportunity'
+}
+
+function formatReservation(reservation: ContentReservationRecord) {
+  return {
+    id: reservation.id,
+    reservedAt: reservation.reservedAt,
+    status: reservation.status,
+    statusText: reservation.status === 'reserved' ? '已预约' : '已取消',
+  }
+}
+
+async function findStudentFromSession({
+  now,
+  repository,
+  secret,
+  sessionToken,
+}: {
+  now: Date
+  repository: MiniProgramRepository
+  secret: string
+  sessionToken: string
+}) {
+  const session = verifySessionToken({ now, secret, token: sessionToken })
+  const student = session.studentId
+    ? await repository.findStudentById(session.studentId)
+    : await repository.findStudentByOpenId(session.openId)
+  if (!student) {
+    throw new MiniProgramError('请先完成学生资料')
+  }
+
+  return student
 }
 
 function textFromRichText(value: unknown): string | null {
@@ -185,4 +238,87 @@ export async function getPublishedContentDetail({
   }
 
   return detail
+}
+
+export async function registerForPublishedContent({
+  id,
+  input,
+  now,
+  payload,
+  repository,
+  secret,
+}: {
+  id: string
+  input: {
+    sessionToken: string
+  }
+  now: Date
+  payload: ReservationPayloadLike
+  repository: MiniProgramRepository
+  secret: string
+}) {
+  const student = await findStudentFromSession({
+    now,
+    repository,
+    secret,
+    sessionToken: input.sessionToken,
+  })
+  let doc: Record<string, unknown>
+  try {
+    doc = await payload.findByID({ collection: 'contents', depth: 1, id })
+  } catch {
+    throw new MiniProgramError('内容不存在或暂未发布', 404)
+  }
+  if (doc._status !== 'published' || !relationIsActive(doc.category)) {
+    throw new MiniProgramError('内容不存在或暂未发布', 404)
+  }
+  if (!isReservableContentType(doc.contentType)) {
+    throw new MiniProgramError('当前内容暂不支持预约')
+  }
+  if (doc.status !== 'open') {
+    throw new MiniProgramError('当前内容暂未开放预约')
+  }
+
+  const existingReservation = await repository.findContentReservationByStudentAndContent({
+    contentId: String(doc.id),
+    studentId: student.id,
+  })
+  if (existingReservation) {
+    return {
+      alreadyReserved: true,
+      content: toContentDetail(doc),
+      reservation: formatReservation(existingReservation),
+    }
+  }
+
+  if (Boolean(doc.isMemberOnly)) {
+    const membership = await repository.findMembershipByStudentId(student.id)
+    if (!hasUsableMembership(membership, now)) {
+      throw new MiniProgramError('开通友邻成长计划后可预约会员专属内容', 403)
+    }
+  }
+
+  const currentReservedCount = Math.max(0, Number(doc.reservedCount || 0))
+  const capacity = positiveNumber(doc.capacity)
+  if (capacity && currentReservedCount >= capacity) {
+    throw new MiniProgramError('名额已满')
+  }
+
+  const reservation = await repository.createContentReservation({
+    contentId: String(doc.id),
+    reservedAt: now.toISOString(),
+    status: 'reserved',
+    studentId: student.id,
+  })
+  const updatedDoc = await payload.update({
+    collection: 'contents',
+    data: { reservedCount: currentReservedCount + 1 },
+    id: String(doc.id),
+  })
+
+  return {
+    alreadyReserved: false,
+    content: toContentDetail(updatedDoc),
+    reservation: formatReservation(reservation),
+  }
 }

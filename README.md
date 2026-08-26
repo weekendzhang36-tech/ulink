@@ -132,6 +132,7 @@ pnpm verify          # 后台检查 + 小程序 JS/JSON 检查
 - `GET /api/miniprogram/campus`
 - `GET /api/miniprogram/content`
 - `GET /api/miniprogram/content/:id`
+- `POST /api/miniprogram/content/:id/reservations`
 - `GET /api/miniprogram/service-links`
 - `GET /api/miniprogram/growth-plan`
 - `GET /api/miniprogram/instructor/verifications`

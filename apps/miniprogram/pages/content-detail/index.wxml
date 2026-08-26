@@ -6,6 +6,7 @@
     <view class="subtitle">{{article.summary}}</view>
     <view class="content-flags">
       <text class="flag primary">{{article.statusText}}</text>
+      <text class="flag primary" wx:if="{{article.reservation}}">{{article.reservation.statusText}}</text>
       <text class="flag" wx:if="{{article.isMemberOnly}}">会员专属</text>
       <text class="flag" wx:if="{{article.capacityText}}">{{article.capacityText}}</text>
     </view>
@@ -23,7 +24,13 @@
     <view class="body-text">{{article.body}}</view>
   </view>
 
-  <button wx:if="{{article.actionLabel}}" class="primary-button action-button" bindtap="useAction">
-    {{article.actionLabel}}
+  <button
+    wx:if="{{article.actionLabel}}"
+    class="primary-button action-button"
+    bindtap="useAction"
+    disabled="{{actionLoading || article.reservation}}"
+    loading="{{actionLoading}}"
+  >
+    {{article.reservation ? article.reservation.statusText : article.actionLabel}}
   </button>
 </view>
