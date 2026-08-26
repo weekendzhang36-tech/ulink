@@ -106,3 +106,42 @@ test('returns readable text for Payload richText content detail', async () => {
 
   assert.equal(detail?.body, '第一段：介绍活动背景。\n\n第二段：说明适合人群。')
 })
+
+test('locks member-only content details for viewers without active membership', async () => {
+  const detail = await getPublishedContentDetail({
+    id: 'content_member_only_001',
+    payload: payloadFor([
+      {
+        _status: 'published',
+        actionLabel: '预约报名',
+        actionUrl: 'https://example.com/member-only-apply',
+        body: {
+          root: {
+            children: [
+              {
+                children: [{ text: '会员可见的完整活动安排与报名说明。' }],
+              },
+            ],
+          },
+        },
+        category: {
+          isActive: true,
+          module: 'practice',
+          title: '实习实践',
+        },
+        contentType: 'event',
+        id: 'content_member_only_001',
+        isMemberOnly: true,
+        publishedAt: '2026-08-22T08:00:00.000Z',
+        summary: '列表可见的活动摘要。',
+        title: '会员专属实训营',
+      },
+    ]),
+    viewer: { hasActiveMembership: false },
+  })
+
+  assert.equal(detail?.isLocked, true)
+  assert.equal(detail?.actionLabel, '开通成长计划')
+  assert.equal(detail?.actionUrl, undefined)
+  assert.match(detail?.body || '', /开通友邻成长计划/)
+})

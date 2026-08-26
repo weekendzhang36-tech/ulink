@@ -17,6 +17,11 @@ Page({
 
   useAction() {
     const article = this.data.article || {}
+    if (article.isLocked) {
+      wx.navigateTo({ url: '/pages/growth-plan/index' })
+      return
+    }
+
     if (!article.actionUrl) {
       wx.showToast({ icon: 'none', title: '暂未开放' })
       return

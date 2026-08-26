@@ -90,7 +90,7 @@ function getGrowthPlan() {
 }
 
 function getArticleById(id) {
-  return withDemoFallback(request({ path: `/content/${id}` }), () =>
+  return withDemoFallback(request({ auth: true, path: `/content/${id}` }), () =>
     mockData.articles.find((article) => article.id === id) || mockData.articles[0],
   ).then((article) => ({
     ...article,

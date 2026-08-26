@@ -9,6 +9,18 @@
   white-space: pre-wrap;
 }
 
+.lock-card {
+  background: #f8fbff;
+  border: 2rpx solid #dbeaff;
+}
+
+.lock-title {
+  color: #111111;
+  font-size: 34rpx;
+  font-weight: 800;
+  margin-bottom: 12rpx;
+}
+
 .content-flags {
   display: flex;
   flex-wrap: wrap;

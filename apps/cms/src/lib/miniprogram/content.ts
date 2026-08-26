@@ -3,6 +3,12 @@ type PayloadLike = {
   findByID(input: Record<string, unknown>): Promise<Record<string, unknown>>
 }
 
+type ContentViewer = {
+  hasActiveMembership?: boolean
+}
+
+const memberOnlyLockMessage = '这是会员专属内容，开通友邻成长计划后可查看完整内容和报名入口。'
+
 function relationModule(category: unknown) {
   if (category && typeof category === 'object' && 'module' in category) {
     return String((category as { module: unknown }).module)
@@ -112,7 +118,19 @@ export function toContentDetail(doc: Record<string, unknown>) {
   return {
     ...toContentSummary(doc),
     body: textFromRichText(doc.body) || String(doc.summary || ''),
+    isLocked: false,
     publishedAt: doc.publishedAt,
+  }
+}
+
+function lockMemberOnlyDetail(detail: ReturnType<typeof toContentDetail>) {
+  return {
+    ...detail,
+    actionLabel: '开通成长计划',
+    actionUrl: undefined,
+    body: memberOnlyLockMessage,
+    isLocked: true,
+    lockMessage: memberOnlyLockMessage,
   }
 }
 
@@ -145,9 +163,11 @@ export async function listPublishedContents({
 export async function getPublishedContentDetail({
   id,
   payload,
+  viewer,
 }: {
   id: string
   payload: PayloadLike
+  viewer?: ContentViewer
 }) {
   let doc: Record<string, unknown>
   try {
@@ -159,5 +179,10 @@ export async function getPublishedContentDetail({
     return undefined
   }
 
-  return toContentDetail(doc)
+  const detail = toContentDetail(doc)
+  if (detail.isMemberOnly && !viewer?.hasActiveMembership) {
+    return lockMemberOnlyDetail(detail)
+  }
+
+  return detail
 }
