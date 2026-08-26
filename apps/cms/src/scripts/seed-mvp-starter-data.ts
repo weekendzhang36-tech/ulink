@@ -21,9 +21,13 @@ async function main() {
       '已存在的数据不会重复创建，也不会被覆盖。',
     ].join('\n'),
   )
+
+  await payload.destroy()
 }
 
-main().catch((error: unknown) => {
-  console.error(error instanceof Error ? error.message : error)
-  process.exitCode = 1
-})
+main()
+  .then(() => process.exit(0))
+  .catch((error: unknown) => {
+    console.error(error instanceof Error ? error.message : error)
+    process.exit(1)
+  })

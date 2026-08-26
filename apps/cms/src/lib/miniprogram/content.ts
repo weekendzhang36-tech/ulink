@@ -7,12 +7,12 @@ import type {
 } from './types.ts'
 
 type PayloadLike = {
-  find(input: Record<string, unknown>): Promise<{ docs: Record<string, unknown>[] }>
-  findByID(input: Record<string, unknown>): Promise<Record<string, unknown>>
+  find(input: Record<string, unknown>): Promise<{ docs: unknown[] }>
+  findByID(input: Record<string, unknown>): Promise<unknown>
 }
 
 type ReservationPayloadLike = PayloadLike & {
-  update(input: Record<string, unknown>): Promise<Record<string, unknown>>
+  update(input: Record<string, unknown>): Promise<unknown>
 }
 
 type ContentViewer = {
@@ -92,6 +92,10 @@ function statusText(status: unknown) {
   if (status === 'closed') return '已结束'
 
   return '报名中'
+}
+
+function openStatusOf(doc: Record<string, unknown>) {
+  return doc.openStatus || doc.status || 'open'
 }
 
 function contentTypeText(contentType: string) {
@@ -196,8 +200,8 @@ export function toContentSummary(doc: Record<string, unknown>) {
       .filter(Boolean)
       .join(' · '),
     module: relationModule(doc.category),
-    status: String(doc.status || 'open'),
-    statusText: statusText(doc.status),
+    status: String(openStatusOf(doc)),
+    statusText: statusText(openStatusOf(doc)),
     summary: String(doc.summary || ''),
     tags: tagsOf(doc.tags),
     title: String(doc.coverTitle || doc.title || ''),
@@ -270,7 +274,10 @@ export async function listPublishedContents({
     sort: '-publishedAt',
     where: conditions.length === 1 ? conditions[0] : { and: conditions },
   })
-  const summaries = result.docs.filter((doc) => relationIsActive(doc.category)).map(toContentSummary)
+  const docs = result.docs.filter(
+    (doc): doc is Record<string, unknown> => Boolean(doc && typeof doc === 'object'),
+  )
+  const summaries = docs.filter((doc) => relationIsActive(doc.category)).map(toContentSummary)
 
   return module ? summaries.filter((content) => content.module === module) : summaries
 }
@@ -286,7 +293,9 @@ export async function getPublishedContentDetail({
 }) {
   let doc: Record<string, unknown>
   try {
-    doc = await payload.findByID({ collection: 'contents', depth: 1, id })
+    const result = await payload.findByID({ collection: 'contents', depth: 1, id })
+    if (!result || typeof result !== 'object') return undefined
+    doc = result as Record<string, unknown>
   } catch {
     return undefined
   }
@@ -330,7 +339,11 @@ export async function registerForPublishedContent({
   }))
   let doc: Record<string, unknown>
   try {
-    doc = await payload.findByID({ collection: 'contents', depth: 1, id })
+    const result = await payload.findByID({ collection: 'contents', depth: 1, id })
+    if (!result || typeof result !== 'object') {
+      throw new MiniProgramError('内容不存在或暂未发布', 404)
+    }
+    doc = result as Record<string, unknown>
   } catch {
     throw new MiniProgramError('内容不存在或暂未发布', 404)
   }
@@ -340,7 +353,7 @@ export async function registerForPublishedContent({
   if (!isReservableContentType(doc.contentType)) {
     throw new MiniProgramError('当前内容暂不支持预约')
   }
-  if (doc.status !== 'open') {
+  if (openStatusOf(doc) !== 'open') {
     throw new MiniProgramError('当前内容暂未开放预约')
   }
 
@@ -377,11 +390,15 @@ export async function registerForPublishedContent({
   })
   let updatedDoc: Record<string, unknown>
   try {
-    updatedDoc = await payload.update({
+    const result = await payload.update({
       collection: 'contents',
       data: { reservedCount: currentReservedCount + 1 },
       id: String(doc.id),
     })
+    if (!result || typeof result !== 'object') {
+      throw new MiniProgramError('预约结果暂时不可用', 500)
+    }
+    updatedDoc = result as Record<string, unknown>
   } catch (error) {
     await repository.deleteContentReservation(reservation.id)
     throw error
@@ -419,11 +436,15 @@ export async function listContentReservationsForStudent({
   const summaries = await Promise.all(
     reservations.map(async (reservation) => {
       try {
-        const doc = await payload.findByID({
+        const result = await payload.findByID({
           collection: 'contents',
           depth: 1,
           id: reservation.contentId,
         })
+        if (!result || typeof result !== 'object') {
+          return undefined
+        }
+        const doc = result as Record<string, unknown>
         if (doc._status !== 'published' || !relationIsActive(doc.category)) {
           return undefined
         }
@@ -477,7 +498,11 @@ export async function cancelContentReservation({
 
   let doc: Record<string, unknown>
   try {
-    doc = await payload.findByID({ collection: 'contents', depth: 0, id: reservation.contentId })
+    const result = await payload.findByID({ collection: 'contents', depth: 0, id: reservation.contentId })
+    if (!result || typeof result !== 'object') {
+      throw new MiniProgramError('预约内容不存在', 404)
+    }
+    doc = result as Record<string, unknown>
   } catch {
     throw new MiniProgramError('预约内容不存在', 404)
   }

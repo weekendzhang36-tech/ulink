@@ -3,13 +3,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3001",
     "build": "next build",
     "start": "next start",
     "payload": "payload",
     "generate:types": "payload generate:types",
-    "import:campus": "node src/scripts/import-campus-data.ts",
-    "seed:mvp": "node src/scripts/seed-mvp-starter-data.ts",
+    "import:campus": "node --env-file=.env src/scripts/import-campus-data.ts",
+    "seed:mvp": "node --env-file=.env src/scripts/seed-mvp-starter-data.ts",
     "test": "node --test \"src/lib/**/*.test.ts\"",
     "typecheck": "tsc --noEmit",
     "lint": "tsc --noEmit"

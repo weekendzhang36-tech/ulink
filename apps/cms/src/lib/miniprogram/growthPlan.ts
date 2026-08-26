@@ -1,5 +1,5 @@
 type PayloadLike = {
-  find(input: Record<string, unknown>): Promise<{ docs: Record<string, unknown>[] }>
+  find(input: Record<string, unknown>): Promise<{ docs: unknown[] }>
 }
 
 function textItems(value: unknown) {
@@ -51,5 +51,5 @@ export async function findActiveGrowthPlanForMiniProgram({ payload }: { payload:
   })
   const doc = result.docs[0]
 
-  return doc ? toGrowthPlanForMiniProgram(doc) : null
+  return doc && typeof doc === 'object' ? toGrowthPlanForMiniProgram(doc as Record<string, unknown>) : null
 }

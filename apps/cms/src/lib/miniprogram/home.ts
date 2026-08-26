@@ -9,8 +9,8 @@ import {
 } from './verificationStatusDisplay.ts'
 
 type PayloadLike = {
-  find(input: Record<string, unknown>): Promise<{ docs: Record<string, unknown>[] }>
-  findByID(input: Record<string, unknown>): Promise<Record<string, unknown>>
+  find(input: Record<string, unknown>): Promise<{ docs: unknown[] }>
+  findByID(input: Record<string, unknown>): Promise<unknown>
 }
 
 const modules = [

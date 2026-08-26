@@ -9,6 +9,14 @@
 3. 项目目录选择 `apps/miniprogram`。
 4. 没有真实 AppID 时使用测试号或复制 `project.private.config.json.example` 后填写本机 AppID。
 
+本地 API 默认连接：
+
+```text
+http://localhost:3001/api/miniprogram
+```
+
+`adforge` 本地保留使用 `3000/8000`，所以 `U Link` 后台/API 默认避开这两个端口。
+
 ## 当前状态
 
 - 页面通过 `utils/api.js` 调用 PayloadCMS 后台的 `/api/miniprogram/*` 接口。

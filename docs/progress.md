@@ -238,6 +238,7 @@
 - 2026-08-26：补充校园数据导入准备。
   - 新增校园数据 CSV/TSV 解析和校验，支持学校、城市、学院、专业、班级、入学年份和多个指导员手机号。
   - 新增 `pnpm import:campus <csv-or-tsv-path>`，通过 Payload 本地 API upsert 学校、学院、专业和班级，已有班级会更新指导员手机号。
+  - 本地测试端口约定为 U Link 使用 `3001`，避开 adforge 的 `3000/8000`；本机已可用 Homebrew PostgreSQL，不强制使用 Docker。
   - 新增 `docs/campus-import.md` 和导入模板，方便上线前准备首批学校班级数据。
 - 2026-08-26：补充内容预约取消闭环。
   - 后台新增 `POST /api/miniprogram/content/reservations/:reservationId/cancel`，只允许当前登录学生取消自己的预约。

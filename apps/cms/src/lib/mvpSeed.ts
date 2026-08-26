@@ -103,7 +103,7 @@ const starterContents = [
     contentType: 'article',
     coverTitle: '职业规划第一课',
     isFeatured: true,
-    status: 'open',
+    openStatus: 'open',
     summary: '用一篇短内容先看清银行、券商、基金、风控等岗位差异，帮助新生建立方向感。',
     tags: ['职业规划', '金融岗位', '新生'],
     title: '新生职业规划第一课：先看懂金融岗位地图',
@@ -115,7 +115,7 @@ const starterContents = [
     contentType: 'event',
     coverTitle: '模拟实训营',
     isFeatured: true,
-    status: 'open',
+    openStatus: 'open',
     summary: '2 小时体验一次客户资料整理、风险提示和汇报表达任务，适合还没有实习经验的同学。',
     tags: ['实训营', '真实任务', '实践机会'],
     title: '下周三｜金融岗位模拟实训营开放预约',
@@ -127,7 +127,7 @@ const starterContents = [
     contentType: 'event',
     coverTitle: '青年金融沙龙',
     isFeatured: true,
-    status: 'open',
+    openStatus: 'open',
     summary: '邀请在职学长聊一线岗位、客户沟通和新人适应，适合想先听真实经历的同学。',
     tags: ['金融沙龙', '行业交流', '线下活动'],
     title: '周六下午｜青年金融沙龙：从校园到银行网点',
@@ -138,7 +138,7 @@ const starterContents = [
     contentType: 'article',
     coverTitle: '文化交流路线',
     isFeatured: false,
-    status: 'upcoming',
+    openStatus: 'upcoming',
     summary: '从城市故事、非遗体验和中外交流主题开始，先了解后续文化交流模块的内容方向。',
     tags: ['非遗文化', '文化交流', '研学路线'],
     title: '文化交流预告：从城市故事和非遗体验开始',
@@ -240,7 +240,7 @@ async function ensureServiceLink(
 }
 
 async function ensureContent(input: {
-  categoryIdByModule: Map<string, string>
+  categoryIdByModule: Map<string, unknown>
   content: (typeof starterContents)[number]
   payload: MvpSeedPayload
   result: MvpSeedResult
@@ -280,11 +280,11 @@ export async function seedMvpStarterData({ payload }: { payload: MvpSeedPayload 
     growthPlansCreated: 0,
     serviceLinksCreated: 0,
   }
-  const categoryIdByModule = new Map<string, string>()
+  const categoryIdByModule = new Map<string, unknown>()
 
   for (const module of modules) {
     const category = await ensureCategory(payload, module, result)
-    categoryIdByModule.set(module.module, String(category.id))
+    categoryIdByModule.set(module.module, category.id)
   }
 
   await ensureGrowthPlan(payload, result)

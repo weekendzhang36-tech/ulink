@@ -100,6 +100,20 @@ PayloadCMS 已配置 `media` 上传集合。生产环境需要在 `apps/cms/.env
 cp apps/cms/.env.example apps/cms/.env
 ```
 
+本机如果已经有 Homebrew PostgreSQL，可以直接使用本机数据库，不一定要 Docker。当前本地测试建议使用：
+
+```text
+postgres://weekend@localhost:5432/ulink_local_dev
+```
+
+如果需要创建数据库：
+
+```bash
+createdb -h 127.0.0.1 -p 5432 ulink_local_dev
+```
+
+本机同时开发 `adforge` 时，`adforge` 保留使用 `3000/8000`；`U Link` 本地后台和小程序 API 固定使用 `3001`。
+
 启动 PayloadCMS：
 
 ```bash
@@ -109,7 +123,7 @@ pnpm dev:cms
 后台地址：
 
 ```text
-http://localhost:3000/admin
+http://localhost:3001/admin
 ```
 
 本地开发或客户演示需要首批模块内容时，可以在数据库和环境变量准备好后手动执行：

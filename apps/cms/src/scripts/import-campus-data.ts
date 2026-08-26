@@ -35,9 +35,13 @@ async function main(argv: string[]) {
       `更新班级 ${result.classesUpdated} 个`,
     ].join('\n'),
   )
+
+  await payload.destroy()
 }
 
-main(process.argv.slice(2)).catch((error: unknown) => {
-  console.error(error instanceof Error ? error.message : error)
-  process.exitCode = 1
-})
+main(process.argv.slice(2))
+  .then(() => process.exit(0))
+  .catch((error: unknown) => {
+    console.error(error instanceof Error ? error.message : error)
+    process.exit(1)
+  })

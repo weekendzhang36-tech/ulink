@@ -6,19 +6,19 @@ import { fileURLToPath } from 'node:url'
 import { buildConfig } from 'payload'
 import sharp from 'sharp'
 
-import { Admins } from './src/collections/Admins'
-import { Classes, Colleges, Majors, Schools } from './src/collections/Campus'
-import { ContentCategories, ContentReservations, Contents } from './src/collections/Content'
-import { GrowthPlans, Memberships, Orders, PaymentEvents } from './src/collections/GrowthPlans'
-import { Media } from './src/collections/Media'
-import { ServiceLinks } from './src/collections/ServiceLinks'
+import { Admins } from './src/collections/Admins.ts'
+import { Classes, Colleges, Majors, Schools } from './src/collections/Campus.ts'
+import { ContentCategories, ContentReservations, Contents } from './src/collections/Content.ts'
+import { GrowthPlans, Memberships, Orders, PaymentEvents } from './src/collections/GrowthPlans.ts'
+import { Media } from './src/collections/Media.ts'
+import { ServiceLinks } from './src/collections/ServiceLinks.ts'
 import {
   InstructorDataUseCommitments,
   NotificationSubscriptions,
   SmsVerificationChallenges,
   StudentVerificationLogs,
   Students,
-} from './src/collections/Students'
+} from './src/collections/Students.ts'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)

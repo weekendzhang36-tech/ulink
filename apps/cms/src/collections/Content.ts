@@ -36,7 +36,7 @@ export const Contents: CollectionConfig = {
     drafts: true,
   },
   admin: {
-    defaultColumns: ['title', 'category', 'contentType', 'status', 'isMemberOnly', 'publishedAt'],
+    defaultColumns: ['title', 'category', 'contentType', 'openStatus', 'isMemberOnly', 'publishedAt'],
     group: '内容运营',
     useAsTitle: 'title',
   },
@@ -63,7 +63,7 @@ export const Contents: CollectionConfig = {
       ],
     },
     {
-      name: 'status',
+      name: 'openStatus',
       type: 'select',
       label: '开放状态',
       defaultValue: 'open',

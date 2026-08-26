@@ -15,11 +15,24 @@ import type {
 } from './types.ts'
 
 type PayloadLike = {
-  create(input: Record<string, unknown>): Promise<Record<string, unknown>>
-  delete(input: Record<string, unknown>): Promise<Record<string, unknown>>
-  find(input: Record<string, unknown>): Promise<{ docs: Record<string, unknown>[] }>
-  findByID(input: Record<string, unknown>): Promise<Record<string, unknown>>
-  update(input: Record<string, unknown>): Promise<Record<string, unknown>>
+  create(input: Record<string, unknown>): Promise<unknown>
+  delete(input: Record<string, unknown>): Promise<unknown>
+  find(input: Record<string, unknown>): Promise<{ docs: unknown[] }>
+  findByID(input: Record<string, unknown>): Promise<unknown>
+  update(input: Record<string, unknown>): Promise<unknown>
+}
+
+function recordOf(value: unknown): Record<string, unknown> {
+  return value && typeof value === 'object' ? (value as Record<string, unknown>) : {}
+}
+
+function maybeRecordOf(value: unknown): Record<string, unknown> | undefined {
+  return value && typeof value === 'object' ? (value as Record<string, unknown>) : undefined
+}
+
+function recordsOf(values: unknown[]) {
+  return values
+    .filter((value): value is Record<string, unknown> => Boolean(value && typeof value === 'object'))
 }
 
 function idOf(value: unknown) {
@@ -217,14 +230,14 @@ async function first(payload: PayloadLike, collection: string, where: Record<str
     where,
   })
 
-  return result.docs[0]
+  return maybeRecordOf(result.docs[0])
 }
 
 export function createPayloadRepository(payload: PayloadLike): MiniProgramRepository {
   return {
     async createContentReservation(input) {
       return toContentReservation(
-        await payload.create({
+        recordOf(await payload.create({
           collection: 'content-reservations',
           data: {
             content: input.contentId,
@@ -232,7 +245,7 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
             status: input.status,
             student: input.studentId,
           },
-        }),
+        })),
       )
     },
     async createMembership(input) {
@@ -242,7 +255,7 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
       }
 
       return toMembership(
-        await payload.create({
+        recordOf(await payload.create({
           collection: 'memberships',
           data: {
             expiresAt: input.expiresAt,
@@ -252,12 +265,12 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
             status: input.status,
             student: input.studentId,
           },
-        }),
+        })),
       )
     },
     async createNotificationSubscription(input) {
       return toNotificationSubscription(
-        await payload.create({
+        recordOf(await payload.create({
           collection: 'notification-subscriptions',
           data: {
             purpose: input.purpose,
@@ -267,12 +280,12 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
             subscribedAt: input.subscribedAt,
             templateId: input.templateId,
           },
-        }),
+        })),
       )
     },
     async createInstructorDataUseCommitment(input) {
       return toInstructorDataUseCommitment(
-        await payload.create({
+        recordOf(await payload.create({
           collection: 'instructor-data-use-commitments',
           data: {
             commitmentVersion: input.commitmentVersion,
@@ -280,12 +293,12 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
             phone: input.phone,
             student: input.studentId,
           },
-        }),
+        })),
       )
     },
     async createOrder(input) {
       return toOrder(
-        await payload.create({
+        recordOf(await payload.create({
           collection: 'orders',
           data: {
             amountCents: input.amountCents,
@@ -294,7 +307,7 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
             status: input.status,
             student: input.studentId,
           },
-        }),
+        })),
       )
     },
     async createPaymentEvent(input) {
@@ -304,7 +317,7 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
       }
 
       return toPaymentEvent(
-        await payload.create({
+        recordOf(await payload.create({
           collection: 'payment-events',
           data: {
             eventKey: input.eventKey,
@@ -314,12 +327,12 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
             status: input.status,
             transactionId: input.transactionId,
           },
-        }),
+        })),
       )
     },
     async createStudentVerificationLog(input) {
       return toStudentVerificationLog(
-        await payload.create({
+        recordOf(await payload.create({
           collection: 'student-verification-logs',
           data: {
             action: input.action,
@@ -329,12 +342,12 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
             student: input.studentId,
             targetStatus: input.targetStatus,
           },
-        }),
+        })),
       )
     },
     async createSmsVerificationChallenge(input) {
       return toSmsVerificationChallenge(
-        await payload.create({
+        recordOf(await payload.create({
           collection: 'sms-verification-challenges',
           data: {
             attemptCount: input.attemptCount,
@@ -344,12 +357,12 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
             phone: input.phone,
             requestedAt: input.requestedAt,
           },
-        }),
+        })),
       )
     },
     async createStudent(input) {
       return toStudent(
-        await payload.create({
+        recordOf(await payload.create({
           collection: 'students',
           data: {
             agreedAt: input.submittedAt,
@@ -366,7 +379,7 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
             wechatOpenId: input.wechatOpenId,
             wechatUnionId: input.wechatUnionId,
           },
-        }),
+        })),
       )
     },
     async deleteContentReservation(id) {
@@ -391,11 +404,11 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
     async findContentReservationById(id) {
       try {
         return toContentReservation(
-          await payload.findByID({
+          recordOf(await payload.findByID({
             collection: 'content-reservations',
             depth: 0,
             id,
-          }),
+          })),
         )
       } catch {
         return undefined
@@ -428,7 +441,7 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
         },
       })
 
-      return result.docs.map(toContentReservation)
+      return recordsOf(result.docs).map(toContentReservation)
     },
     async findMembershipByStudentId(studentId) {
       const doc = await first(
@@ -471,7 +484,7 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
         where: { student: { equals: studentId } },
       })
 
-      return result.docs.map(toOrder)
+      return recordsOf(result.docs).map(toOrder)
     },
     async findPaymentEventByKey(eventKey) {
       const doc = await first(payload, 'payment-events', { eventKey: { equals: eventKey } }, 1)
@@ -486,7 +499,7 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
         sort: '-requestedAt',
         where: { phone: { equals: phone } },
       })
-      const doc = result.docs[0]
+      const doc = maybeRecordOf(result.docs[0])
 
       return doc ? toSmsVerificationChallenge(doc) : undefined
     },
@@ -502,12 +515,12 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
         },
       })
 
-      return result.docs.map((doc) => String(doc.id))
+      return recordsOf(result.docs).map((doc) => String(doc.id))
     },
     async findInstructorStudentsByClassId(classId) {
       let classInfo: Record<string, unknown> | undefined
       try {
-        classInfo = await payload.findByID({ collection: 'classes', depth: 0, id: classId })
+        classInfo = recordOf(await payload.findByID({ collection: 'classes', depth: 0, id: classId }))
       } catch {
         return []
       }
@@ -597,11 +610,11 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
         where,
       })
 
-      return result.docs.map(toInstructorStudentSummary)
+      return recordsOf(result.docs).map(toInstructorStudentSummary)
     },
     async findStudentById(id) {
       try {
-        return toStudent(await payload.findByID({ collection: 'students', id }))
+        return toStudent(recordOf(await payload.findByID({ collection: 'students', id })))
       } catch {
         return undefined
       }
@@ -624,11 +637,11 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
       if (input.studentId !== undefined) data.student = input.studentId
 
       return toContentReservation(
-        await payload.update({
+        recordOf(await payload.update({
           collection: 'content-reservations',
           data,
           id,
-        }),
+        })),
       )
     },
     async updateMembership(id, input) {
@@ -637,7 +650,7 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
         : undefined
 
       return toMembership(
-        await payload.update({
+        recordOf(await payload.update({
           collection: 'memberships',
           data: {
             expiresAt: input.expiresAt,
@@ -646,12 +659,12 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
             status: input.status,
           },
           id,
-        }),
+        })),
       )
     },
     async updateOrder(id, input) {
       return toOrder(
-        await payload.update({
+        recordOf(await payload.update({
           collection: 'orders',
           data: {
             paidAt: input.paidAt,
@@ -659,12 +672,12 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
             wechatTransactionId: input.wechatTransactionId,
           },
           id,
-        }),
+        })),
       )
     },
     async updateNotificationSubscription(id, input) {
       return toNotificationSubscription(
-        await payload.update({
+        recordOf(await payload.update({
           collection: 'notification-subscriptions',
           data: {
             deliveredAt: input.deliveredAt,
@@ -673,12 +686,12 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
             templateId: input.templateId,
           },
           id,
-        }),
+        })),
       )
     },
     async updateSmsVerificationChallenge(id, input) {
       return toSmsVerificationChallenge(
-        await payload.update({
+        recordOf(await payload.update({
           collection: 'sms-verification-challenges',
           data: {
             attemptCount: input.attemptCount,
@@ -689,12 +702,12 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
             requestedAt: input.requestedAt,
           },
           id,
-        }),
+        })),
       )
     },
     async updateStudent(id, input) {
       return toStudent(
-        await payload.update({
+        recordOf(await payload.update({
           collection: 'students',
           data: {
             birthday: input.birthday,
@@ -709,18 +722,18 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
             verificationStatus: input.verificationStatus,
           },
           id,
-        }),
+        })),
       )
     },
     async updateStudentVerificationStatus(id, status) {
       return toStudent(
-        await payload.update({
+        recordOf(await payload.update({
           collection: 'students',
           data: {
             verificationStatus: status,
           },
           id,
-        }),
+        })),
       )
     },
   }

@@ -4,7 +4,7 @@ import test from 'node:test'
 import { assertMvpSeedAllowed, seedMvpStarterData } from './mvpSeed.ts'
 
 type CollectionName = 'content-categories' | 'contents' | 'growth-plans' | 'service-links'
-type FakeDoc = Record<string, unknown> & { id: string }
+type FakeDoc = Record<string, unknown> & { id: number | string }
 
 test('creates MVP starter categories growth plan service links and contents', async () => {
   const payload = createFakeSeedPayload()
@@ -41,7 +41,7 @@ test('creates MVP starter categories growth plan service links and contents', as
   })
   assert.equal(payload.docs.contents.length, 4)
   assert.equal(payload.docs.contents[0]._status, 'published')
-  assert.equal(payload.docs.contents[0].category, 'content-categories_001')
+  assert.equal(payload.docs.contents[0].category, 1)
   assert.equal(payload.docs.contents[1].contentType, 'event')
 })
 
@@ -95,6 +95,10 @@ function createFakeSeedPayload(seed: Partial<Record<CollectionName, FakeDoc[]>> 
   }
 
   function nextId(collection: CollectionName) {
+    if (collection === 'content-categories') {
+      return docs[collection].length + 1
+    }
+
     return `${collection}_${String(docs[collection].length + 1).padStart(3, '0')}`
   }
 

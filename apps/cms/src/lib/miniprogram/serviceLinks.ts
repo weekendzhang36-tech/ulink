@@ -1,5 +1,5 @@
 type PayloadLike = {
-  find(input: Record<string, unknown>): Promise<{ docs: Record<string, unknown>[] }>
+  find(input: Record<string, unknown>): Promise<{ docs: unknown[] }>
 }
 
 function optionalString(value: unknown) {
@@ -67,6 +67,7 @@ export async function listActiveServiceLinks({
   })
 
   return result.docs
+    .filter((doc): doc is Record<string, unknown> => Boolean(doc && typeof doc === 'object'))
     .filter((doc) => Boolean(doc.isActive))
     .map(toServiceLinkSummary)
     .filter((link) => !module || link.module === module)
