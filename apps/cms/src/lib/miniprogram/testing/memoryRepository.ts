@@ -9,6 +9,7 @@ import type {
   OrderRecord,
   PaymentEventRecord,
   SmsVerificationChallengeRecord,
+  StudentVerificationLogRecord,
   StudentRecord,
 } from '../types.ts'
 
@@ -121,6 +122,7 @@ export function createMemoryRepository(
   const contentReservations = new Map<string, ContentReservationRecord>()
   const paymentEvents = new Map<string, PaymentEventRecord>()
   const smsVerificationChallenges = new Map<string, SmsVerificationChallengeRecord>()
+  const studentVerificationLogs = new Map<string, StudentVerificationLogRecord>()
   const campusSelections = new Set([
     'school_001/college_001/major_001/class_001',
     'school_001/college_001/major_001/class_999',
@@ -136,6 +138,7 @@ export function createMemoryRepository(
     orders: Map<string, OrderRecord>
     paymentEvents: Map<string, PaymentEventRecord>
     smsVerificationChallenges: Map<string, SmsVerificationChallengeRecord>
+    studentVerificationLogs: Map<string, StudentVerificationLogRecord>
     students: Map<string, StudentRecord>
   } = {
     contentReservations,
@@ -146,6 +149,7 @@ export function createMemoryRepository(
     orders,
     paymentEvents,
     smsVerificationChallenges,
+    studentVerificationLogs,
     students,
     async createContentReservation(input) {
       const reservation = { ...input, id: nextId('content_reservation', contentReservations.size) }
@@ -188,6 +192,12 @@ export function createMemoryRepository(
       paymentEvents.set(paymentEvent.eventKey, paymentEvent)
 
       return paymentEvent
+    },
+    async createStudentVerificationLog(input) {
+      const log = { ...input, id: nextId('student_verification_log', studentVerificationLogs.size) }
+      studentVerificationLogs.set(log.id, log)
+
+      return log
     },
     async createSmsVerificationChallenge(input) {
       const challenge = { ...input, id: nextId('sms_challenge', smsVerificationChallenges.size) }

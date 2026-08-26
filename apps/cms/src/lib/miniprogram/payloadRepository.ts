@@ -10,6 +10,7 @@ import type {
   OrderRecord,
   PaymentEventRecord,
   SmsVerificationChallengeRecord,
+  StudentVerificationLogRecord,
   StudentRecord,
 } from './types.ts'
 
@@ -68,7 +69,7 @@ function toGrowthPlan(doc: Record<string, unknown>): GrowthPlanRecord {
 function toOrder(doc: Record<string, unknown>): OrderRecord {
   return {
     amountCents: Number(doc.amountCents || 0),
-    createdAt: String(doc.createdAt || ''),
+    createdAt: String(doc.operatedAt || doc.createdAt || ''),
     growthPlanId: idOf(doc.growthPlan),
     id: String(doc.id),
     orderNo: String(doc.orderNo || ''),
@@ -159,6 +160,21 @@ function toInstructorDataUseCommitment(
     id: String(doc.id),
     phone: String(doc.phone || ''),
     studentId: idOf(doc.student),
+  }
+}
+
+function toStudentVerificationLog(doc: Record<string, unknown>): StudentVerificationLogRecord {
+  return {
+    action: doc.action === 'verified' ? 'verified' : 'needs_review',
+    createdAt: String(doc.createdAt || ''),
+    id: String(doc.id),
+    operatorId: idOf(doc.operator),
+    previousStatus:
+      doc.previousStatus === 'verified' || doc.previousStatus === 'needs_review'
+        ? doc.previousStatus
+        : 'pending',
+    studentId: idOf(doc.student),
+    targetStatus: doc.targetStatus === 'verified' ? 'verified' : 'needs_review',
   }
 }
 
@@ -281,6 +297,21 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
             processedAt: input.processedAt,
             status: input.status,
             transactionId: input.transactionId,
+          },
+        }),
+      )
+    },
+    async createStudentVerificationLog(input) {
+      return toStudentVerificationLog(
+        await payload.create({
+          collection: 'student-verification-logs',
+          data: {
+            action: input.action,
+            operator: input.operatorId,
+            operatedAt: input.createdAt,
+            previousStatus: input.previousStatus,
+            student: input.studentId,
+            targetStatus: input.targetStatus,
           },
         }),
       )

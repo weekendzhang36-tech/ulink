@@ -120,7 +120,7 @@ export async function reviewInstructorStudents({
     throw new MiniProgramError('请选择需要处理的学生')
   }
 
-  const { classIds } = await getInstructorContext({
+  const { classIds, operator } = await getInstructorContext({
     now,
     repository,
     secret,
@@ -133,7 +133,16 @@ export async function reviewInstructorStudents({
     if (!student || !classIds.includes(student.classId)) {
       throw new MiniProgramError('无权操作该学生', 403)
     }
-    updatedStudents.push(await repository.updateStudentVerificationStatus(student.id, input.action))
+    const updatedStudent = await repository.updateStudentVerificationStatus(student.id, input.action)
+    await repository.createStudentVerificationLog({
+      action: input.action,
+      createdAt: now.toISOString(),
+      operatorId: operator.id,
+      previousStatus: student.verificationStatus,
+      studentId: student.id,
+      targetStatus: input.action,
+    })
+    updatedStudents.push(updatedStudent)
   }
 
   return { updatedStudents }

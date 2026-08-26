@@ -16,6 +16,7 @@ import {
   InstructorDataUseCommitments,
   NotificationSubscriptions,
   SmsVerificationChallenges,
+  StudentVerificationLogs,
   Students,
 } from './src/collections/Students'
 
@@ -98,6 +99,7 @@ export default buildConfig({
     SmsVerificationChallenges,
     NotificationSubscriptions,
     InstructorDataUseCommitments,
+    StudentVerificationLogs,
     ContentCategories,
     Contents,
     ContentReservations,

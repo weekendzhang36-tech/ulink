@@ -133,6 +133,16 @@ export interface InstructorDataUseCommitmentRecord {
   studentId: string
 }
 
+export interface StudentVerificationLogRecord {
+  action: Extract<VerificationStatus, 'needs_review' | 'verified'>
+  createdAt: string
+  id: string
+  operatorId: string
+  previousStatus: VerificationStatus
+  studentId: string
+  targetStatus: Extract<VerificationStatus, 'needs_review' | 'verified'>
+}
+
 export interface PaymentParams {
   mock?: boolean
   nonceStr: string
@@ -183,6 +193,9 @@ export interface MiniProgramRepository {
   ): Promise<InstructorDataUseCommitmentRecord>
   createOrder(input: Omit<OrderRecord, 'id'>): Promise<OrderRecord>
   createPaymentEvent(input: Omit<PaymentEventRecord, 'id'>): Promise<PaymentEventRecord>
+  createStudentVerificationLog(
+    input: Omit<StudentVerificationLogRecord, 'id'>,
+  ): Promise<StudentVerificationLogRecord>
   createSmsVerificationChallenge(
     input: Omit<SmsVerificationChallengeRecord, 'id'>,
   ): Promise<SmsVerificationChallengeRecord>

@@ -138,3 +138,49 @@ test('updates assigned students to verified in a batch review action', async () 
   assert.equal(result.updatedStudents.length, 1)
   assert.equal(repository.students.get('student_001')?.verificationStatus, 'verified')
 })
+
+test('records verification logs when an instructor reviews assigned students', async () => {
+  const repository = createMemoryRepository({
+    seedInstructor: true,
+    seedInstructorDataUseCommitment: true,
+    seedStudents: true,
+  })
+
+  await reviewInstructorStudents({
+    input: {
+      action: 'needs_review',
+      sessionToken: instructorToken(),
+      studentIds: ['student_001'],
+    },
+    now: new Date('2026-08-26T10:01:00.000Z'),
+    repository,
+    secret,
+  })
+
+  const logs = (
+    repository as unknown as {
+      studentVerificationLogs?: Map<
+        string,
+        {
+          action: string
+          createdAt: string
+          operatorId: string
+          previousStatus: string
+          studentId: string
+          targetStatus: string
+        }
+      >
+    }
+  ).studentVerificationLogs
+
+  assert.equal(logs?.size, 1)
+  assert.deepEqual([...logs!.values()][0], {
+    action: 'needs_review',
+    createdAt: '2026-08-26T10:01:00.000Z',
+    id: 'student_verification_log_001',
+    operatorId: 'student_instructor',
+    previousStatus: 'pending',
+    studentId: 'student_001',
+    targetStatus: 'needs_review',
+  })
+})

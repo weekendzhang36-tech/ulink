@@ -126,3 +126,52 @@ export const InstructorDataUseCommitments: CollectionConfig = {
     { name: 'confirmedAt', type: 'date', label: '确认时间', required: true },
   ],
 }
+
+export const StudentVerificationLogs: CollectionConfig = {
+  slug: 'student-verification-logs',
+  admin: {
+    defaultColumns: ['student', 'operator', 'previousStatus', 'targetStatus', 'operatedAt'],
+    group: '学生与认证',
+    useAsTitle: 'student',
+  },
+  labels: {
+    singular: '学生认证记录',
+    plural: '学生认证记录',
+  },
+  fields: [
+    { name: 'student', type: 'relationship', label: '学生', relationTo: 'students', required: true },
+    { name: 'operator', type: 'relationship', label: '操作账号', relationTo: 'students', required: true },
+    {
+      name: 'action',
+      type: 'select',
+      label: '操作',
+      required: true,
+      options: [
+        { label: '确认通过', value: 'verified' },
+        { label: '标记需确认', value: 'needs_review' },
+      ],
+    },
+    {
+      name: 'previousStatus',
+      type: 'select',
+      label: '原认证状态',
+      required: true,
+      options: [
+        { label: '待认证', value: 'pending' },
+        { label: '已认证', value: 'verified' },
+        { label: '需确认', value: 'needs_review' },
+      ],
+    },
+    {
+      name: 'targetStatus',
+      type: 'select',
+      label: '新认证状态',
+      required: true,
+      options: [
+        { label: '已认证', value: 'verified' },
+        { label: '需确认', value: 'needs_review' },
+      ],
+    },
+    { name: 'operatedAt', type: 'date', label: '操作时间', required: true },
+  ],
+}
