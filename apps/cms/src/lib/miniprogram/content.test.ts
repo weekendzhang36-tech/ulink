@@ -1,7 +1,12 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 
-import { getPublishedContentDetail, listPublishedContents, registerForPublishedContent } from './content.ts'
+import {
+  getPublishedContentDetail,
+  listContentReservationsForStudent,
+  listPublishedContents,
+  registerForPublishedContent,
+} from './content.ts'
 import { createSessionToken } from './session.ts'
 import { createMemoryRepository } from './testing/memoryRepository.ts'
 
@@ -345,4 +350,74 @@ test('does not keep a reservation when reserved count update fails', async () =>
   )
 
   assert.equal(repository.contentReservations.size, 0)
+})
+
+test('lists only current student reserved content reservations with content summaries', async () => {
+  const repository = createMemoryRepository()
+  await repository.createContentReservation({
+    contentId: 'content_practice_001',
+    reservedAt: '2026-08-26T10:11:00.000Z',
+    status: 'reserved',
+    studentId: 'student_001',
+  })
+  await repository.createContentReservation({
+    contentId: 'content_other_student',
+    reservedAt: '2026-08-26T10:12:00.000Z',
+    status: 'reserved',
+    studentId: 'student_other_class',
+  })
+  await repository.createContentReservation({
+    contentId: 'content_cancelled',
+    reservedAt: '2026-08-26T10:13:00.000Z',
+    status: 'cancelled',
+    studentId: 'student_001',
+  })
+
+  const result = await listContentReservationsForStudent({
+    input: { sessionToken: tokenFor('student_001') },
+    now: new Date('2026-08-26T10:20:00.000Z'),
+    payload: payloadFor([
+      {
+        _status: 'published',
+        category: {
+          isActive: true,
+          module: 'practice',
+          title: '实习实践',
+        },
+        contentType: 'event',
+        id: 'content_practice_001',
+        publishedAt: '2026-08-22T08:00:00.000Z',
+        reservedCount: 1,
+        status: 'open',
+        summary: '2 小时体验客户资料整理和风险提示任务。',
+        tags: [{ label: '实训营' }],
+        title: '金融岗位模拟实训营开放报名',
+      },
+      {
+        _status: 'published',
+        category: {
+          isActive: true,
+          module: 'practice',
+          title: '实习实践',
+        },
+        contentType: 'event',
+        id: 'content_other_student',
+        publishedAt: '2026-08-23T08:00:00.000Z',
+        status: 'open',
+        summary: '其他同学预约的内容。',
+        title: '其他同学预约',
+      },
+    ]),
+    repository,
+    secret,
+  })
+
+  assert.deepEqual(
+    result.reservations.map((reservation) => reservation.id),
+    ['content_reservation_001'],
+  )
+  assert.equal(result.reservations[0].statusText, '已预约')
+  assert.equal(result.reservations[0].content.id, 'content_practice_001')
+  assert.equal(result.reservations[0].content.title, '金融岗位模拟实训营开放报名')
+  assert.deepEqual(result.reservations[0].content.tags, ['实训营'])
 })

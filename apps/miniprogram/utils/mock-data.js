@@ -116,6 +116,20 @@ const orders = [
   },
 ]
 
+const reservations = [
+  {
+    id: 'demo-reservation-practice-camp',
+    reservedAt: '2026-08-26T10:11:00.000Z',
+    status: 'reserved',
+    statusText: '已预约',
+    content: {
+      ...articles[1],
+      categoryTitle: '实习实践',
+      tags: ['实训营', '真实任务'],
+    },
+  },
+]
+
 const campus = {
   classes: [{ id: 'class_001', majorId: 'major_001', name: '金融学 2026-1 班' }],
   colleges: [{ id: 'college_001', name: '金融学院', schoolId: 'school_001' }],
@@ -130,6 +144,7 @@ module.exports = {
   instructorVerifications,
   modules,
   orders,
+  reservations,
   serviceLinks,
   studentState,
 }

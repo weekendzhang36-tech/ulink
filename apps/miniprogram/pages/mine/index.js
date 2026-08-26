@@ -38,4 +38,8 @@ Page({
   openOrders() {
     wx.navigateTo({ url: '/pages/orders/index' })
   },
+
+  openReservations() {
+    wx.navigateTo({ url: '/pages/reservations/index' })
+  },
 })

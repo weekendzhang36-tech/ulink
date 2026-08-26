@@ -330,3 +330,52 @@ export async function registerForPublishedContent({
     reservation: formatReservation(reservation),
   }
 }
+
+export async function listContentReservationsForStudent({
+  input,
+  now,
+  payload,
+  repository,
+  secret,
+}: {
+  input: {
+    sessionToken: string
+  }
+  now: Date
+  payload: PayloadLike
+  repository: MiniProgramRepository
+  secret: string
+}) {
+  const student = await findStudentFromSession({
+    now,
+    repository,
+    secret,
+    sessionToken: input.sessionToken,
+  })
+  const reservations = await repository.findContentReservationsByStudentId(student.id)
+  const summaries = await Promise.all(
+    reservations.map(async (reservation) => {
+      try {
+        const doc = await payload.findByID({
+          collection: 'contents',
+          depth: 1,
+          id: reservation.contentId,
+        })
+        if (doc._status !== 'published' || !relationIsActive(doc.category)) {
+          return undefined
+        }
+
+        return {
+          ...formatReservation(reservation),
+          content: toContentSummary(doc),
+        }
+      } catch {
+        return undefined
+      }
+    }),
+  )
+
+  return {
+    reservations: summaries.filter((item): item is NonNullable<typeof item> => Boolean(item)),
+  }
+}

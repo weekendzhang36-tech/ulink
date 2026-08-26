@@ -194,6 +194,7 @@ export interface MiniProgramRepository {
     contentId: string
     studentId: string
   }): Promise<ContentReservationRecord | undefined>
+  findContentReservationsByStudentId(studentId: string): Promise<ContentReservationRecord[]>
   findMembershipByStudentId(studentId: string): Promise<MembershipRecord | undefined>
   findNotificationSubscriptionByStudentAndPurpose(input: {
     purpose: NotificationSubscriptionPurpose

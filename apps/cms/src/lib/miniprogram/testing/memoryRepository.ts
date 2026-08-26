@@ -220,6 +220,12 @@ export function createMemoryRepository(
           reservation.status === 'reserved',
       )
     },
+    async findContentReservationsByStudentId(studentId) {
+      return [...contentReservations.values()]
+        .filter((reservation) => reservation.studentId === studentId)
+        .filter((reservation) => reservation.status === 'reserved')
+        .sort((left, right) => right.reservedAt.localeCompare(left.reservedAt))
+    },
     async findMembershipByStudentId(studentId) {
       return [...memberships.values()].find((membership) => membership.studentId === studentId)
     },

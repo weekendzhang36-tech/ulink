@@ -135,6 +135,7 @@ pnpm verify:precommit # 完整检查 + git diff 空白检查
 - `GET /api/miniprogram/home`
 - `GET /api/miniprogram/campus`
 - `GET /api/miniprogram/content`
+- `GET /api/miniprogram/content/reservations`
 - `GET /api/miniprogram/content/:id`
 - `POST /api/miniprogram/content/:id/reservations`
 - `GET /api/miniprogram/service-links`

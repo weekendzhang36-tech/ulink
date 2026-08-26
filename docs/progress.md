@@ -164,6 +164,10 @@
   - 后台新增 `instructor-data-use-commitments` 持久化记录，指导员按当前学生账号确认承诺后才可读取学生认证列表。
   - `/api/miniprogram/instructor/verifications` 在未确认承诺时返回前置条件错误，避免先展示学生姓名和手机号再补确认。
   - 新增 `POST /api/miniprogram/instructor/data-use-commitment`，小程序认证管理页会先展示承诺说明，确认后再加载待认证学生。
+- 2026-08-26：补充学生端“我的预约”闭环。
+  - 后台新增 `GET /api/miniprogram/content/reservations`，按当前登录学生读取自己的有效内容预约，并返回对应已发布内容摘要。
+  - 预约列表不会返回其他学生预约、已取消预约、未发布内容或停用分类内容，避免学生端看到不属于自己的记录。
+  - 小程序“我的”页新增“我的预约”入口，预约列表卡片可点击进入内容详情。
 
 ## 学生注册认证需求
 

@@ -357,6 +357,19 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
 
       return doc ? toContentReservation(doc) : undefined
     },
+    async findContentReservationsByStudentId(studentId) {
+      const result = await payload.find({
+        collection: 'content-reservations',
+        depth: 0,
+        limit: 100,
+        sort: '-reservedAt',
+        where: {
+          and: [{ student: { equals: studentId } }, { status: { equals: 'reserved' } }],
+        },
+      })
+
+      return result.docs.map(toContentReservation)
+    },
     async findMembershipByStudentId(studentId) {
       const doc = await first(
         payload,

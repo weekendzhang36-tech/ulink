@@ -345,6 +345,12 @@ function getMembershipOrders() {
   }))
 }
 
+function getContentReservations() {
+  return withDemoFallback(request({ auth: true, path: '/content/reservations' }), () => ({
+    reservations: mockData.reservations || [],
+  }))
+}
+
 function mockConfirmPayment(orderNo) {
   return request({
     data: { orderNo },
@@ -359,6 +365,7 @@ module.exports = {
   createGrowthPlanOrder,
   getArticleById,
   getCampusOptions,
+  getContentReservations,
   getContentsByModule,
   getGrowthPlan,
   getHomeData,
