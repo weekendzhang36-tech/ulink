@@ -32,6 +32,15 @@ function getContentActionState(article = {}) {
     }
   }
 
+  if (article.requiresVerification) {
+    return {
+      disabled: false,
+      hintText: article.verificationMessage || '学生认证通过后再预约成长服务',
+      label: article.actionLabel || '查看认证进度',
+      type: 'view_verification',
+    }
+  }
+
   if (article.status && article.status !== 'open') {
     const label = article.statusText || '暂未开放'
 

@@ -53,6 +53,22 @@ test('shows reserved content as disabled reserved action', () => {
   )
 })
 
+test('routes verification-required content to the verification status page', () => {
+  assert.deepEqual(
+    getContentActionState({
+      actionLabel: '查看认证进度',
+      requiresVerification: true,
+      status: 'open',
+    }),
+    {
+      disabled: false,
+      hintText: '学生认证通过后再预约成长服务',
+      label: '查看认证进度',
+      type: 'view_verification',
+    },
+  )
+})
+
 test('blocks closed content before reservation action', () => {
   assert.deepEqual(
     getContentActionState({

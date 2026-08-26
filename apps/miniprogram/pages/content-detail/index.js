@@ -41,6 +41,11 @@ Page({
       return
     }
 
+    if (actionState.type === 'view_verification') {
+      wx.navigateTo({ url: '/pages/verification/index' })
+      return
+    }
+
     if (actionState.type === 'reserve') {
       if (!getSessionToken()) {
         wx.navigateTo({ url: '/pages/login/index' })

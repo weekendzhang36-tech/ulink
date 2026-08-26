@@ -17,10 +17,12 @@ type ReservationPayloadLike = PayloadLike & {
 
 type ContentViewer = {
   hasActiveMembership?: boolean
+  isVerifiedStudent?: boolean
   reservation?: ContentReservationRecord
 }
 
 const memberOnlyLockMessage = '这是会员专属内容，开通友邻成长计划后可查看完整内容和报名入口。'
+const verificationRequiredMessage = '学生认证通过后再预约成长服务。'
 
 function relationModule(category: unknown) {
   if (category && typeof category === 'object' && 'module' in category) {
@@ -197,6 +199,8 @@ export function toContentDetail(doc: Record<string, unknown>, reservation?: Cont
     isLocked: false,
     publishedAt: doc.publishedAt,
     reservation: reservation ? formatReservation(reservation) : undefined,
+    requiresVerification: false,
+    verificationMessage: undefined,
   }
 }
 
@@ -209,6 +213,28 @@ function lockMemberOnlyDetail(detail: ReturnType<typeof toContentDetail>) {
     isLocked: true,
     lockMessage: memberOnlyLockMessage,
   }
+}
+
+function hasContentAction(detail: ReturnType<typeof toContentDetail>) {
+  return Boolean(detail.actionLabel || detail.actionUrl)
+}
+
+function requireVerificationForDetail(detail: ReturnType<typeof toContentDetail>) {
+  return {
+    ...detail,
+    actionLabel: '查看认证进度',
+    actionUrl: undefined,
+    requiresVerification: true,
+    verificationMessage: verificationRequiredMessage,
+  }
+}
+
+function ensureVerifiedStudent(student: Awaited<ReturnType<typeof findStudentFromSession>>) {
+  if (student.verificationStatus !== 'verified') {
+    throw new MiniProgramError(verificationRequiredMessage, 403)
+  }
+
+  return student
 }
 
 export async function listPublishedContents({
@@ -260,6 +286,9 @@ export async function getPublishedContentDetail({
   if (detail.isMemberOnly && !viewer?.hasActiveMembership) {
     return lockMemberOnlyDetail(detail)
   }
+  if (viewer && viewer.isVerifiedStudent === false && hasContentAction(detail)) {
+    return requireVerificationForDetail(detail)
+  }
 
   return detail
 }
@@ -281,12 +310,12 @@ export async function registerForPublishedContent({
   repository: MiniProgramRepository
   secret: string
 }) {
-  const student = await findStudentFromSession({
+  const student = ensureVerifiedStudent(await findStudentFromSession({
     now,
     repository,
     secret,
     sessionToken: input.sessionToken,
-  })
+  }))
   let doc: Record<string, unknown>
   try {
     doc = await payload.findByID({ collection: 'contents', depth: 1, id })

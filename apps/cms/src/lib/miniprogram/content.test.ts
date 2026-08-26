@@ -80,6 +80,10 @@ function tokenFor(studentId: string) {
   })
 }
 
+async function approveStudent(repository: ReturnType<typeof createMemoryRepository>, studentId = 'student_001') {
+  await repository.updateStudentVerificationStatus(studentId, 'verified')
+}
+
 test('lists only published contents from active categories for the requested module', async () => {
   const contents = await listPublishedContents({
     module: 'practice',
@@ -246,8 +250,76 @@ test('returns current viewer reservation state on content detail', async () => {
   })
 })
 
+test('marks content action as verification required for an unverified signed-in viewer', async () => {
+  const detail = await getPublishedContentDetail({
+    id: 'content_verification_required_001',
+    payload: payloadFor([
+      {
+        _status: 'published',
+        actionLabel: '预约报名',
+        actionUrl: 'https://example.com/apply',
+        category: {
+          isActive: true,
+          module: 'practice',
+          title: '实习实践',
+        },
+        contentType: 'event',
+        id: 'content_verification_required_001',
+        publishedAt: '2026-08-22T08:00:00.000Z',
+        status: 'open',
+        summary: '面向已认证学生的线下实训活动。',
+        title: '金融岗位模拟实训营',
+      },
+    ]),
+    viewer: { hasActiveMembership: true, isVerifiedStudent: false },
+  })
+
+  assert.equal(detail?.requiresVerification, true)
+  assert.equal(detail?.actionLabel, '查看认证进度')
+  assert.equal(detail?.actionUrl, undefined)
+  assert.match(detail?.verificationMessage || '', /学生认证通过后再预约/)
+})
+
+test('requires verified student before reserving open content', async () => {
+  const repository = createMemoryRepository()
+
+  await assert.rejects(
+    () =>
+      registerForPublishedContent({
+        id: 'content_practice_open_001',
+        input: { sessionToken: tokenFor('student_001') },
+        now: new Date('2026-08-26T10:10:00.000Z'),
+        payload: payloadFor([
+          {
+            _status: 'published',
+            capacity: 2,
+            category: {
+              isActive: true,
+              module: 'practice',
+              title: '实习实践',
+            },
+            contentType: 'event',
+            id: 'content_practice_open_001',
+            isMemberOnly: false,
+            publishedAt: '2026-08-22T08:00:00.000Z',
+            reservedCount: 0,
+            status: 'open',
+            summary: '公开活动，但真实预约需要学生认证通过。',
+            title: '公开实训体验',
+          },
+        ]),
+        repository,
+        secret,
+      }),
+    /学生认证通过后再预约/,
+  )
+
+  assert.equal(repository.contentReservations.size, 0)
+})
+
 test('requires active membership before reserving member-only content', async () => {
   const repository = createMemoryRepository()
+  await approveStudent(repository)
 
   await assert.rejects(
     () =>
@@ -283,6 +355,7 @@ test('requires active membership before reserving member-only content', async ()
 
 test('creates one reservation per student and updates reserved count', async () => {
   const repository = createMemoryRepository()
+  await approveStudent(repository)
   await repository.createMembership({
     expiresAt: '2027-02-25T10:03:00.000Z',
     growthPlanId: 'growth_plan_001',
@@ -337,6 +410,7 @@ test('creates one reservation per student and updates reserved count', async () 
 
 test('does not keep a reservation when reserved count update fails', async () => {
   const repository = createMemoryRepository()
+  await approveStudent(repository)
   await repository.createMembership({
     expiresAt: '2027-02-25T10:03:00.000Z',
     growthPlanId: 'growth_plan_001',

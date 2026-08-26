@@ -45,7 +45,11 @@ async function getContentViewer({
       })
     : undefined
 
-  return { hasActiveMembership: hasUsableMembership(membership, now), reservation }
+  return {
+    hasActiveMembership: hasUsableMembership(membership, now),
+    isVerifiedStudent: student ? student.verificationStatus === 'verified' : undefined,
+    reservation,
+  }
 }
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
