@@ -21,9 +21,11 @@
 
 ## 开发原则
 
-- 遵循根目录 `DEVELOPMENT_PRINCIPLES.md` 和 `docs/development-workflow.md`。
+- 遵循根目录 `DEVELOPMENT_PRINCIPLES.md`、`CONTRIBUTING.md`、`docs/development-workflow.md` 和 `docs/development-checklist.md`。
 - 小程序页面不自行伪造会员、订单、支付、认证或内容发布状态，关键状态以后台返回为准。
 - 页面需要真实处理空状态、加载失败、未开放和无权限状态。
+- demo fallback 只能在显式 demo mode 中使用；生产路径接口失败时要展示真实错误或空状态，不能静默切到 mock 数据。
+- 跨页面只传内容 ID、订单号、预约 ID 等稳定引用，目标页面进入后重新读取自己负责的数据。
 - 涉及页面 JS 或 JSON 配置时，提交前运行：
 
 ```bash

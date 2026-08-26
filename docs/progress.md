@@ -6,6 +6,15 @@
 
 `U Link` 已从产品需求确认和第一版原型阶段进入前期开发准备阶段，已初始化后台和小程序两个基础工程。
 
+当前项目默认开发规约：
+
+- 根目录 `DEVELOPMENT_PRINCIPLES.md` 已作为项目级工程原则纳入开发流程，不是可选参考。
+- 开始新需求时，先按 `docs/development-workflow.md` 明确用户流程、数据归属、持久化边界和第三方服务边界。
+- 实现小程序或后台能力时，分别参考 `apps/miniprogram/README.md` 和 `apps/cms/README.md` 中的工程约束。
+- 交付或提交前，按 `docs/development-checklist.md` 自查，并优先运行 `pnpm verify:precommit`。
+- 生产路径不得用 mock、假数据、默认 fallback 或前端遮罩掩盖真实接口、数据库、支付、登录、短信、COS 或第三方服务失败。
+- 生产数据必须能跨重新部署保留，PostgreSQL、PayloadCMS 上传、COS 文件、订单、会员、认证历史、支付事件和密钥不能依赖应用容器本地磁盘。
+
 已完成基础项目文档：
 
 - `AGENTS.md`：项目协作规则、设计方向和工作约束。
