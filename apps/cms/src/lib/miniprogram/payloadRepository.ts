@@ -302,6 +302,12 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
         id,
       })
     },
+    async deleteSmsVerificationChallenge(id) {
+      await payload.delete({
+        collection: 'sms-verification-challenges',
+        id,
+      })
+    },
     async findActiveGrowthPlanById(id) {
       const doc = await first(payload, 'growth-plans', {
         and: [{ id: { equals: id } }, { isActive: { equals: true } }],

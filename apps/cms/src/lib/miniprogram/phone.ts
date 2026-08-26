@@ -143,14 +143,19 @@ export async function requestSmsPhoneVerification(input: {
   const code = (input.generateCode || generateSixDigitCode)()
   const expiresAt = new Date(input.now.getTime() + 10 * 60 * 1000).toISOString()
 
-  await input.repository.createSmsVerificationChallenge({
+  const challenge = await input.repository.createSmsVerificationChallenge({
     attemptCount: 0,
     codeHash: createSmsCodeHash({ code, phone, secret: input.secret }),
     expiresAt,
     phone,
     requestedAt: input.now.toISOString(),
   })
-  await input.smsGateway.sendCode({ code, phone })
+  try {
+    await input.smsGateway.sendCode({ code, phone })
+  } catch (error) {
+    await input.repository.deleteSmsVerificationChallenge(challenge.id)
+    throw error
+  }
 
   return {
     expiresAt,

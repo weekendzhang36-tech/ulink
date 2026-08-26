@@ -119,3 +119,29 @@ test('verifies a phone number through a persisted SMS code challenge', async () 
   )
   assert.equal([...repository.smsVerificationChallenges.values()][0].consumedAt, '2026-08-26T10:02:00.000Z')
 })
+
+test('does not keep an SMS challenge when sending the code fails', async () => {
+  const repository = createMemoryRepository({ seedStudents: false })
+
+  await assert.rejects(
+    () =>
+      requestSmsPhoneVerification({
+        generateCode: () => '246810',
+        input: {
+          phone: '13800000003',
+          sessionToken: sessionToken(),
+        },
+        now,
+        repository,
+        secret,
+        smsGateway: {
+          sendCode: async () => {
+            throw new Error('sms gateway failed')
+          },
+        },
+      }),
+    /sms gateway failed/,
+  )
+
+  assert.equal(repository.smsVerificationChallenges.size, 0)
+})
