@@ -167,6 +167,46 @@ test('locks member-only content details for viewers without active membership', 
   assert.match(detail?.body || '', /开通友邻成长计划/)
 })
 
+test('returns current viewer reservation state on content detail', async () => {
+  const detail = await getPublishedContentDetail({
+    id: 'content_reserved_001',
+    payload: payloadFor([
+      {
+        _status: 'published',
+        category: {
+          isActive: true,
+          module: 'practice',
+          title: '实习实践',
+        },
+        contentType: 'event',
+        id: 'content_reserved_001',
+        publishedAt: '2026-08-22T08:00:00.000Z',
+        reservedCount: 1,
+        status: 'open',
+        summary: '列表可见的活动摘要。',
+        title: '会员专属实训营',
+      },
+    ]),
+    viewer: {
+      hasActiveMembership: true,
+      reservation: {
+        contentId: 'content_reserved_001',
+        id: 'content_reservation_001',
+        reservedAt: '2026-08-26T10:11:00.000Z',
+        status: 'reserved',
+        studentId: 'student_001',
+      },
+    },
+  })
+
+  assert.deepEqual(detail && 'reservation' in detail ? detail.reservation : undefined, {
+    id: 'content_reservation_001',
+    reservedAt: '2026-08-26T10:11:00.000Z',
+    status: 'reserved',
+    statusText: '已预约',
+  })
+})
+
 test('requires active membership before reserving member-only content', async () => {
   const repository = createMemoryRepository()
 

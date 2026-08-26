@@ -17,6 +17,7 @@ type ReservationPayloadLike = PayloadLike & {
 
 type ContentViewer = {
   hasActiveMembership?: boolean
+  reservation?: ContentReservationRecord
 }
 
 const memberOnlyLockMessage = '这是会员专属内容，开通友邻成长计划后可查看完整内容和报名入口。'
@@ -167,12 +168,13 @@ export function toContentSummary(doc: Record<string, unknown>) {
   }
 }
 
-export function toContentDetail(doc: Record<string, unknown>) {
+export function toContentDetail(doc: Record<string, unknown>, reservation?: ContentReservationRecord) {
   return {
     ...toContentSummary(doc),
     body: textFromRichText(doc.body) || String(doc.summary || ''),
     isLocked: false,
     publishedAt: doc.publishedAt,
+    reservation: reservation ? formatReservation(reservation) : undefined,
   }
 }
 
@@ -232,7 +234,7 @@ export async function getPublishedContentDetail({
     return undefined
   }
 
-  const detail = toContentDetail(doc)
+  const detail = toContentDetail(doc, viewer?.reservation)
   if (detail.isMemberOnly && !viewer?.hasActiveMembership) {
     return lockMemberOnlyDetail(detail)
   }
@@ -286,7 +288,7 @@ export async function registerForPublishedContent({
   if (existingReservation) {
     return {
       alreadyReserved: true,
-      content: toContentDetail(doc),
+      content: toContentDetail(doc, existingReservation),
       reservation: formatReservation(existingReservation),
     }
   }
@@ -324,7 +326,7 @@ export async function registerForPublishedContent({
 
   return {
     alreadyReserved: false,
-    content: toContentDetail(updatedDoc),
+    content: toContentDetail(updatedDoc, reservation),
     reservation: formatReservation(reservation),
   }
 }

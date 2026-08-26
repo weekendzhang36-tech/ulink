@@ -18,10 +18,12 @@ function hasUsableMembership(membership: MembershipRecord | undefined, now: Date
 }
 
 async function getContentViewer({
+  contentId,
   now,
   repository,
   request,
 }: {
+  contentId: string
   now: Date
   repository: MiniProgramRepository
   request: Request
@@ -36,8 +38,14 @@ async function getContentViewer({
     ? await repository.findStudentById(session.studentId)
     : await repository.findStudentByOpenId(session.openId)
   const membership = student ? await repository.findMembershipByStudentId(student.id) : undefined
+  const reservation = student
+    ? await repository.findContentReservationByStudentAndContent({
+        contentId,
+        studentId: student.id,
+      })
+    : undefined
 
-  return { hasActiveMembership: hasUsableMembership(membership, now) }
+  return { hasActiveMembership: hasUsableMembership(membership, now), reservation }
 }
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -49,7 +57,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     const content = await getPublishedContentDetail({
       id,
       payload,
-      viewer: await getContentViewer({ now, repository, request }),
+      viewer: await getContentViewer({ contentId: id, now, repository, request }),
     })
     if (!content) {
       throw new MiniProgramError('内容不存在或暂未发布', 404)
