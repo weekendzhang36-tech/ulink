@@ -44,6 +44,7 @@ export async function listInstructorVerificationStudents({
   secret,
 }: {
   input: {
+    classId?: string
     sessionToken: string
     status?: VerificationStatus
   }
@@ -57,8 +58,13 @@ export async function listInstructorVerificationStudents({
     secret,
     sessionToken: input.sessionToken,
   })
+  const targetClassIds = input.classId
+    ? classIds.includes(input.classId)
+      ? [input.classId]
+      : []
+    : classIds
   const [students, pendingStudents] = await Promise.all([
-    repository.findStudentsByClassIds({ classIds, status: input.status }),
+    repository.findStudentsByClassIds({ classIds: targetClassIds, status: input.status }),
     repository.findStudentsByClassIds({ classIds, status: 'pending' }),
   ])
 

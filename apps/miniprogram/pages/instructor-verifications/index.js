@@ -10,15 +10,27 @@ const {
   shouldRecordSubscribeResult,
 } = require('../../utils/notification-subscription')
 const { handleProfileGuardError } = require('../../utils/profile-guard')
+const {
+  createClassFilterOptions,
+  formatInstructorVerificationStudent,
+  statusFilters,
+} = require('../../utils/instructor-verification-filters')
 
 Page({
   data: {
+    activeClassId: '',
+    activeClassLabel: '全部班级',
+    activeStatus: 'pending',
+    activeStatusLabel: '待认证',
+    classFilterIndex: 0,
+    classFilterOptions: [{ label: '全部班级', value: '' }],
     hasStudents: false,
     commitmentRequired: false,
     confirmingCommitment: false,
     loading: false,
     pendingCount: 0,
     subscribing: false,
+    statusFilters,
     students: [],
   },
 
@@ -33,13 +45,28 @@ Page({
 
   loadStudents() {
     this.setData({ loading: true })
-    getInstructorVerifications('pending')
+    getInstructorVerifications({
+      classId: this.data.activeClassId,
+      status: this.data.activeStatus,
+    })
       .then((data) => {
+        const classFilterOptions = createClassFilterOptions(data.classIds || [])
+        const classFilterIndex = Math.max(
+          classFilterOptions.findIndex((option) => option.value === this.data.activeClassId),
+          0,
+        )
+        const activeClass = classFilterOptions[classFilterIndex] || classFilterOptions[0]
+        const students = (data.students || []).map(formatInstructorVerificationStudent)
+
         this.setData({
+          activeClassId: activeClass.value,
+          activeClassLabel: activeClass.label,
+          classFilterIndex,
+          classFilterOptions,
           commitmentRequired: false,
-          hasStudents: Boolean(data.students && data.students.length),
+          hasStudents: Boolean(students.length),
           pendingCount: data.pendingCount || 0,
-          students: data.students || [],
+          students,
         })
       })
       .catch((error) => {
@@ -58,6 +85,35 @@ Page({
       .finally(() => {
         this.setData({ loading: false })
       })
+  },
+
+  changeStatus(event) {
+    const { label, status } = event.currentTarget.dataset
+    const nextStatus = status || ''
+    if (nextStatus === this.data.activeStatus) return
+
+    this.setData({
+      activeStatus: nextStatus,
+      activeStatusLabel: label,
+      hasStudents: false,
+      students: [],
+    })
+    this.loadStudents()
+  },
+
+  changeClassFilter(event) {
+    const classFilterIndex = Number(event.detail.value || 0)
+    const activeClass = this.data.classFilterOptions[classFilterIndex]
+    if (!activeClass || activeClass.value === this.data.activeClassId) return
+
+    this.setData({
+      activeClassId: activeClass.value,
+      activeClassLabel: activeClass.label,
+      classFilterIndex,
+      hasStudents: false,
+      students: [],
+    })
+    this.loadStudents()
   },
 
   confirmDataUseCommitment() {
@@ -82,7 +138,9 @@ Page({
   },
 
   verifyAll() {
-    const studentIds = this.data.students.map((student) => student.id)
+    const studentIds = this.data.students
+      .filter((student) => student.verificationStatus === 'pending')
+      .map((student) => student.id)
     if (studentIds.length === 0) {
       wx.showToast({ icon: 'none', title: '暂无待认证学生' })
       return

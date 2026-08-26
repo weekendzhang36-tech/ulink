@@ -26,9 +26,11 @@ function requireSessionToken(request: Request, bodyToken?: string) {
 export async function GET(request: Request) {
   return handleMiniProgramRoute(async () => {
     const url = new URL(request.url)
+    const classId = url.searchParams.get('classId') || undefined
     const status = (url.searchParams.get('status') || undefined) as VerificationStatus | undefined
     const result = await listInstructorVerificationStudents({
       input: {
+        classId,
         sessionToken: requireSessionToken(request),
         status,
       },

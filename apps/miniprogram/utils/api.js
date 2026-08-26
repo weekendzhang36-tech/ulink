@@ -1,4 +1,5 @@
 const mockData = require('./mock-data')
+const { buildInstructorVerificationQuery } = require('./instructor-verification-filters')
 
 function isDemoMode() {
   const app = getApp()
@@ -196,8 +197,9 @@ function getSubmittedProfile() {
   }))
 }
 
-function getInstructorVerifications(status = 'pending') {
-  const query = status ? `?status=${status}` : ''
+function getInstructorVerifications(filters = { status: 'pending' }) {
+  const normalizedFilters = typeof filters === 'string' ? { status: filters } : filters
+  const query = buildInstructorVerificationQuery(normalizedFilters)
 
   return withDemoFallback(request({ auth: true, path: `/instructor/verifications${query}` }), () =>
     mockData.instructorVerifications,

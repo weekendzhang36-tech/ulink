@@ -24,10 +24,40 @@
   </view>
 
   <block wx:if="{{!commitmentRequired}}">
-    <view class="section-title">待认证 {{pendingCount}}</view>
+    <view class="filter-card">
+      <view class="status-filter">
+        <button
+          wx:for="{{statusFilters}}"
+          wx:key="value"
+          class="filter-chip {{activeStatus === item.value ? 'active' : ''}}"
+          data-label="{{item.label}}"
+          data-status="{{item.value}}"
+          catchtap="changeStatus"
+        >
+          {{item.label}}
+        </button>
+      </view>
+      <picker
+        bindchange="changeClassFilter"
+        mode="selector"
+        range="{{classFilterOptions}}"
+        range-key="label"
+        value="{{classFilterIndex}}"
+      >
+        <view class="class-filter">
+          <text>班级</text>
+          <text>{{activeClassLabel}}</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="section-title">
+      <text>{{activeStatusLabel}} {{students.length}}</text>
+      <text class="section-meta">待认证 {{pendingCount}}</text>
+    </view>
 
     <view class="empty-card" wx:if="{{!hasStudents}}">
-      <view class="subtitle">暂无待认证学生。</view>
+      <view class="subtitle">当前筛选暂无学生。</view>
     </view>
 
     <view class="card student-card" wx:for="{{students}}" wx:key="id">
@@ -36,18 +66,25 @@
           <view class="student-name">{{item.realName}}</view>
           <view class="muted">{{item.phone}}</view>
         </view>
-        <text class="status-pill">待认证</text>
+        <text class="status-pill">{{item.statusLabel}}</text>
       </view>
       <view class="info-line">学校：{{item.schoolId}}</view>
       <view class="info-line">学院：{{item.collegeId}}</view>
       <view class="info-line">专业：{{item.majorId}}</view>
       <view class="info-line">班级：{{item.classId}}</view>
-      <view class="action-row">
+      <view class="action-row" wx:if="{{item.verificationStatus !== 'verified'}}">
         <button class="secondary-button" data-action="needs_review" data-id="{{item.id}}" bindtap="reviewOne">需确认</button>
         <button class="primary-small-button" data-action="verified" data-id="{{item.id}}" bindtap="reviewOne">确认通过</button>
       </view>
     </view>
 
-    <button class="primary-button" loading="{{loading}}" bindtap="verifyAll">全部确认通过</button>
+    <button
+      wx:if="{{activeStatus !== 'verified'}}"
+      class="primary-button"
+      loading="{{loading}}"
+      bindtap="verifyAll"
+    >
+      全部确认通过
+    </button>
   </block>
 </view>

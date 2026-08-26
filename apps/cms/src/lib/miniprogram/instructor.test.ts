@@ -45,6 +45,60 @@ test('lists only pending students from classes assigned to the instructor phone'
   assert.equal(result.pendingCount, 1)
 })
 
+test('filters instructor verification students by an assigned class', async () => {
+  const repository = createMemoryRepository({
+    seedInstructor: true,
+    seedInstructorDataUseCommitment: true,
+    seedStudents: true,
+  })
+  const originalFindInstructorClassIdsByPhone = repository.findInstructorClassIdsByPhone
+  repository.findInstructorClassIdsByPhone = async (phone) => {
+    if (phone === '13900000001') return ['class_001', 'class_999']
+
+    return originalFindInstructorClassIdsByPhone(phone)
+  }
+
+  const result = await listInstructorVerificationStudents({
+    input: {
+      classId: 'class_999',
+      sessionToken: instructorToken(),
+      status: 'pending',
+    },
+    now: new Date('2026-08-26T10:01:00.000Z'),
+    repository,
+    secret,
+  })
+
+  assert.deepEqual(
+    result.students.map((student) => student.id),
+    ['student_other_class'],
+  )
+  assert.deepEqual(result.classIds, ['class_001', 'class_999'])
+  assert.equal(result.pendingCount, 2)
+})
+
+test('returns no students when the class filter is outside instructor assignments', async () => {
+  const repository = createMemoryRepository({
+    seedInstructor: true,
+    seedInstructorDataUseCommitment: true,
+    seedStudents: true,
+  })
+
+  const result = await listInstructorVerificationStudents({
+    input: {
+      classId: 'class_not_assigned',
+      sessionToken: instructorToken(),
+      status: 'pending',
+    },
+    now: new Date('2026-08-26T10:01:00.000Z'),
+    repository,
+    secret,
+  })
+
+  assert.deepEqual(result.students, [])
+  assert.equal(result.pendingCount, 1)
+})
+
 test('requires a data use commitment before listing instructor verification students', async () => {
   const repository = createMemoryRepository({ seedInstructor: true, seedStudents: true })
 
