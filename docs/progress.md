@@ -14,6 +14,7 @@
 - `docs/product.md`：MVP 产品范围、学生认证、指导员审核、会员与内容方向。
 - `docs/product-modules.md`：产品模块图口径，后续首页和内容入口以此为准。
 - `docs/architecture.md`：腾讯云自部署 + PayloadCMS + PostgreSQL + COS 的第一版架构方向。
+- `docs/development-workflow.md` / `docs/development-checklist.md`：开发原则的日常执行流程和提交前检查清单。
 
 已完成基础工程：
 
@@ -151,6 +152,10 @@
   - 待支付会员订单创建超过 30 分钟后，再查询订单状态或订单列表时会被后台持久化更新为 `closed`，小程序订单页展示为“已关闭”。
   - 该规则补齐支付取消之外的超时状态，避免长期待支付订单误导学生继续等待。
   - 支付确认服务也会拦截已超时的待支付订单：迟到回调不会创建支付事件，也不会激活会员。
+- 2026-08-26：把开发原则固定为项目级执行入口。
+  - 新增 `docs/development-checklist.md`，将真实性、产品建模、持久化、密钥、测试和完成标准整理为提交前清单。
+  - README、AGENTS 和开发工作流已补充该清单入口，后续实现登录、支付、会员、认证、内容发布和服务入口时按同一标准自查。
+  - 根目录新增 `pnpm verify:precommit`，统一执行完整验证和 `git diff --check` 空白检查。
 
 ## 学生注册认证需求
 

@@ -13,7 +13,8 @@
     "check:miniprogram:js": "find apps/miniprogram -name '*.js' -exec node --check {} \\;",
     "check:miniprogram:json": "find apps/miniprogram -name '*.json' -exec node -e 'JSON.parse(require(\"fs\").readFileSync(process.argv[1], \"utf8\"))' {} \\;",
     "verify:miniprogram": "pnpm test:miniprogram && pnpm check:miniprogram:js && pnpm check:miniprogram:json",
-    "verify": "pnpm verify:cms && pnpm verify:miniprogram"
+    "verify": "pnpm verify:cms && pnpm verify:miniprogram",
+    "verify:precommit": "pnpm verify && git diff --check"
   },
   "engines": {
     "node": ">=20.9.0"

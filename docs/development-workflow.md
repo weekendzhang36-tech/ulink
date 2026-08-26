@@ -1,6 +1,6 @@
 # U Link 开发工作流
 
-本文件把根目录 `DEVELOPMENT_PRINCIPLES.md` 落到日常开发动作里。后续前端、小程序、PayloadCMS 后台、支付、会员、认证和内容发布相关改动，都按这里执行。
+本文件把根目录 `DEVELOPMENT_PRINCIPLES.md` 落到日常开发动作里。后续前端、小程序、PayloadCMS 后台、支付、会员、认证和内容发布相关改动，都按这里执行。每次提交前可使用 `docs/development-checklist.md` 做快速自查。
 
 ## 开发前
 
@@ -44,6 +44,12 @@ pnpm verify:miniprogram
 ```bash
 pnpm verify
 git diff --check
+```
+
+也可以直接执行根目录脚本：
+
+```bash
+pnpm verify:precommit
 ```
 
 涉及生产构建或发布前，还要执行 PayloadCMS 构建检查，并使用开发环境变量占位，不提交真实密钥：
