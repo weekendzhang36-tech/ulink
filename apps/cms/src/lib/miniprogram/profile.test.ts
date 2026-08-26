@@ -165,3 +165,47 @@ test('rejects profile submission when the phone verification token does not matc
 
   assert.equal(repository.students.size, 0)
 })
+
+test('moves a needs-review student back to pending after resubmitting a complete profile', async () => {
+  const repository = createMemoryRepository({ seedStudents: false })
+  repository.students.set('student_needs_review', {
+    birthday: '2007-09-01',
+    classId: 'class_001',
+    collegeId: 'college_001',
+    gender: 'female',
+    id: 'student_needs_review',
+    majorId: 'major_001',
+    phone: '13800000001',
+    realName: '林一诺',
+    schoolId: 'school_001',
+    submittedAt: '2026-08-26T09:00:00.000Z',
+    verificationStatus: 'needs_review',
+    wechatOpenId: 'openid_001',
+  })
+
+  const result = await submitStudentProfile({
+    input: {
+      agreedToPolicies: true,
+      birthday: '2007-09-01',
+      classId: 'class_001',
+      collegeId: 'college_001',
+      gender: 'female',
+      majorId: 'major_001',
+      phone: '13800000001',
+      phoneVerificationToken: createPhoneVerificationToken({
+        expiresInSeconds: 60 * 10,
+        now: new Date('2026-08-26T10:00:00.000Z'),
+        phone: '13800000001',
+        secret,
+      }),
+      realName: '林一诺',
+      schoolId: 'school_001',
+      sessionToken: tokenFor('openid_001', 'student_needs_review'),
+    },
+    now: new Date('2026-08-26T10:01:00.000Z'),
+    repository,
+    secret,
+  })
+
+  assert.equal(result.student.verificationStatus, 'pending')
+})

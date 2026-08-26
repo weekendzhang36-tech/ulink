@@ -68,9 +68,10 @@ export async function submitStudentProfile({
         realName,
         schoolId,
         submittedAt,
-        verificationStatus: changedVerificationFields(existing, input)
-          ? 'pending'
-          : existing.verificationStatus,
+        verificationStatus:
+          existing.verificationStatus === 'needs_review' || changedVerificationFields(existing, input)
+            ? 'pending'
+            : existing.verificationStatus,
       })
     : await repository.createStudent({
         birthday,
