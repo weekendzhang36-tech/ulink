@@ -20,6 +20,10 @@ function setSessionToken(token) {
   wx.setStorageSync('ulinkSessionToken', token)
 }
 
+function clearSessionToken() {
+  wx.removeStorageSync('ulinkSessionToken')
+}
+
 function formatGrowthPlan(plan) {
   if (!plan) return null
 
@@ -158,6 +162,7 @@ function getStudentState() {
           ? '资料已认证，可以继续查看成长服务。'
           : '资料已提交，等待指导员确认。'),
       name: student.name || student.realName || '未登录',
+      profileCompleted: Boolean(data.profileCompleted),
       school: student.school || student.schoolId || '',
       verificationStatus:
         student.verificationStatus === 'needs_review'
@@ -395,6 +400,7 @@ function mockConfirmPayment(orderNo) {
 module.exports = {
   cancelContentReservation,
   cancelOrder,
+  clearSessionToken,
   confirmInstructorDataUseCommitment,
   createGrowthPlanOrder,
   getArticleById,
