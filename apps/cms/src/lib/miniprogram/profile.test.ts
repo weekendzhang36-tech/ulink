@@ -244,6 +244,86 @@ test('moves a needs-review student back to pending after resubmitting a complete
   assert.equal(result.student.verificationStatus, 'pending')
 })
 
+test('notifies subscribed instructors when a student submits a pending profile', async () => {
+  const repository = createMemoryRepository({
+    seedInstructor: true,
+    seedStudents: false,
+  })
+  await repository.createNotificationSubscription({
+    purpose: 'instructor_pending_verification',
+    status: 'active',
+    studentId: 'student_instructor',
+    subscribedAt: '2026-08-26T09:30:00.000Z',
+    templateId: 'template_instructor_pending',
+  })
+  const deliveries: Array<{
+    instructorId: string
+    pendingCount: number
+    studentId: string
+    subscriptionId: string
+    submittedAt: string
+  }> = []
+
+  const result = await submitStudentProfile({
+    input: {
+      agreedToPolicies: true,
+      birthday: '2007-09-01',
+      classId: 'class_001',
+      collegeId: 'college_001',
+      gender: 'female',
+      majorId: 'major_001',
+      phone: '13800000001',
+      phoneVerificationToken: createPhoneVerificationToken({
+        expiresInSeconds: 60 * 10,
+        now: new Date('2026-08-26T10:00:00.000Z'),
+        phone: '13800000001',
+        secret,
+      }),
+      realName: '林一诺',
+      schoolId: 'school_001',
+      sessionToken: tokenFor('openid_001'),
+    },
+    notificationGateway: {
+      async sendInstructorPendingVerification(input) {
+        deliveries.push({
+          instructorId: input.instructor.id,
+          pendingCount: input.pendingCount,
+          studentId: input.student.id,
+          subscriptionId: input.subscription.id,
+          submittedAt: input.submittedAt,
+        })
+      },
+      async sendStudentVerificationResult() {},
+    },
+    now: new Date('2026-08-26T10:01:00.000Z'),
+    repository,
+    secret,
+  })
+
+  assert.equal(result.student.verificationStatus, 'pending')
+  assert.deepEqual(result.notificationResults, [
+    { status: 'sent', studentId: 'student_instructor' },
+  ])
+  assert.deepEqual(deliveries, [
+    {
+      instructorId: 'student_instructor',
+      pendingCount: 1,
+      studentId: result.student.id,
+      subscriptionId: 'notification_subscription_001',
+      submittedAt: '2026-08-26T10:01:00.000Z',
+    },
+  ])
+  assert.deepEqual(repository.notificationSubscriptions.get('notification_subscription_001'), {
+    deliveredAt: '2026-08-26T10:01:00.000Z',
+    id: 'notification_subscription_001',
+    purpose: 'instructor_pending_verification',
+    status: 'cancelled',
+    studentId: 'student_instructor',
+    subscribedAt: '2026-08-26T09:30:00.000Z',
+    templateId: 'template_instructor_pending',
+  })
+})
+
 test('returns submitted profile fields for the current student without WeChat internals', async () => {
   const repository = createMemoryRepository()
 

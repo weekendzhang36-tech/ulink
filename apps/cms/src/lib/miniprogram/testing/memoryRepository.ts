@@ -264,6 +264,15 @@ export function createMemoryRepository(
     async findInstructorClassIdsByPhone(phone) {
       return instructorClasses.get(phone) || []
     },
+    async findInstructorStudentsByClassId(classId) {
+      const instructorPhones = [...instructorClasses.entries()]
+        .filter(([, classIds]) => classIds.includes(classId))
+        .map(([phone]) => phone)
+
+      return instructorPhones
+        .map((phone) => [...students.values()].find((student) => student.phone === phone))
+        .filter((student): student is StudentRecord => Boolean(student))
+    },
     async findInstructorDataUseCommitmentByStudentId(studentId) {
       return instructorDataUseCommitments.get(studentId)
     },

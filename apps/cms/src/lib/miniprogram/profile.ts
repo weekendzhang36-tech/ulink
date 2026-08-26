@@ -1,7 +1,12 @@
 import { MiniProgramError, requireValue } from './errors.ts'
 import { verifyPhoneVerificationToken } from './phone.ts'
 import { createSessionToken, verifySessionToken } from './session.ts'
-import type { MiniProgramRepository, StudentProfileInput } from './types.ts'
+import type {
+  MiniProgramRepository,
+  NotificationGateway,
+  StudentProfileInput,
+  StudentRecord,
+} from './types.ts'
 
 function changedVerificationFields(existing: {
   classId: string
@@ -19,14 +24,89 @@ function changedVerificationFields(existing: {
   )
 }
 
+async function notifyInstructorPendingVerification({
+  notificationGateway,
+  repository,
+  student,
+  submittedAt,
+}: {
+  notificationGateway?: NotificationGateway
+  repository: MiniProgramRepository
+  student: StudentRecord
+  submittedAt: string
+}) {
+  const notificationResults: Array<{
+    errorMessage?: string
+    reason?: string
+    status: 'failed' | 'sent' | 'skipped'
+    studentId: string
+  }> = []
+  if (student.verificationStatus !== 'pending') {
+    return notificationResults
+  }
+
+  const instructors = await repository.findInstructorStudentsByClassId(student.classId)
+  if (instructors.length === 0) {
+    return notificationResults
+  }
+  const pendingStudents = await repository.findStudentsByClassIds({
+    classIds: [student.classId],
+    status: 'pending',
+  })
+  const pendingCount = pendingStudents.length
+
+  for (const instructor of instructors) {
+    const subscription = await repository.findNotificationSubscriptionByStudentAndPurpose({
+      purpose: 'instructor_pending_verification',
+      studentId: instructor.id,
+    })
+    if (subscription?.status !== 'active') {
+      continue
+    }
+    if (!notificationGateway) {
+      notificationResults.push({
+        reason: 'notification_gateway_not_configured',
+        status: 'skipped',
+        studentId: instructor.id,
+      })
+      continue
+    }
+
+    try {
+      await notificationGateway.sendInstructorPendingVerification({
+        instructor,
+        pendingCount,
+        student,
+        submittedAt,
+        subscription,
+      })
+      await repository.updateNotificationSubscription(subscription.id, {
+        deliveredAt: submittedAt,
+        status: 'cancelled',
+      })
+      notificationResults.push({ status: 'sent', studentId: instructor.id })
+    } catch (error) {
+      notificationResults.push({
+        errorMessage: error instanceof Error ? error.message : '订阅消息发送失败',
+        status: 'failed',
+        studentId: instructor.id,
+      })
+    }
+  }
+
+  return notificationResults
+}
+
 export async function submitStudentProfile({
   input,
   now,
+  notificationGateway,
   repository,
   secret,
 }: {
   input: StudentProfileInput
   now: Date
+  notificationGateway?: NotificationGateway
   repository: MiniProgramRepository
   secret: string
 }) {
@@ -97,8 +177,15 @@ export async function submitStudentProfile({
         wechatOpenId: session.openId,
         wechatUnionId: session.unionId,
       })
+  const notificationResults = await notifyInstructorPendingVerification({
+    notificationGateway,
+    repository,
+    student,
+    submittedAt,
+  })
 
   return {
+    notificationResults,
     sessionToken: createSessionToken({
       expiresInSeconds: 60 * 60 * 24 * 30,
       now,

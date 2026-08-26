@@ -185,6 +185,13 @@ export interface SmsGateway {
 }
 
 export interface NotificationGateway {
+  sendInstructorPendingVerification(input: {
+    instructor: StudentRecord
+    pendingCount: number
+    student: StudentRecord
+    submittedAt: string
+    subscription: NotificationSubscriptionRecord
+  }): Promise<void>
   sendStudentVerificationResult(input: {
     reviewedAt: string
     status: Extract<VerificationStatus, 'needs_review' | 'verified'>
@@ -231,6 +238,7 @@ export interface MiniProgramRepository {
     phone: string,
   ): Promise<SmsVerificationChallengeRecord | undefined>
   findInstructorClassIdsByPhone(phone: string): Promise<string[]>
+  findInstructorStudentsByClassId(classId: string): Promise<StudentRecord[]>
   findInstructorDataUseCommitmentByStudentId(
     studentId: string,
   ): Promise<InstructorDataUseCommitmentRecord | undefined>

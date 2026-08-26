@@ -161,6 +161,7 @@ test('sends a subscribed student their verification review result', async () => 
       studentIds: ['student_001'],
     },
     notificationGateway: {
+      async sendInstructorPendingVerification() {},
       async sendStudentVerificationResult(input) {
         deliveries.push(input)
       },
@@ -236,6 +237,7 @@ test('keeps verification review when student notification delivery fails', async
       studentIds: ['student_001'],
     },
     notificationGateway: {
+      async sendInstructorPendingVerification() {},
       async sendStudentVerificationResult() {
         throw new Error('wechat subscribe message failed')
       },

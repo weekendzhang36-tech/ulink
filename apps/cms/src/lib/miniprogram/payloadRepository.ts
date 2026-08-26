@@ -479,6 +479,34 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
 
       return result.docs.map((doc) => String(doc.id))
     },
+    async findInstructorStudentsByClassId(classId) {
+      let classInfo: Record<string, unknown> | undefined
+      try {
+        classInfo = await payload.findByID({ collection: 'classes', depth: 0, id: classId })
+      } catch {
+        return []
+      }
+
+      const instructorPhones = Array.isArray(classInfo.instructorPhones)
+        ? classInfo.instructorPhones
+            .map((item) =>
+              item && typeof item === 'object' && 'phone' in item
+                ? String((item as { phone: unknown }).phone || '')
+                : '',
+            )
+            .filter(Boolean)
+        : []
+      const uniquePhones = [...new Set(instructorPhones)]
+      const instructors = []
+      for (const phone of uniquePhones) {
+        const doc = await first(payload, 'students', { phone: { equals: phone } })
+        if (doc) {
+          instructors.push(toStudent(doc))
+        }
+      }
+
+      return instructors
+    },
     async findInstructorDataUseCommitmentByStudentId(studentId) {
       const doc = await first(
         payload,

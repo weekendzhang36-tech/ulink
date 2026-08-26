@@ -202,9 +202,13 @@ WECHAT_PAY_PLATFORM_PUBLIC_KEY=
 WECHAT_SUBSCRIBE_MINIPROGRAM_STATE=formal
 WECHAT_SUBSCRIBE_STUDENT_VERIFICATION_RESULT_PAGE=pages/verification/index
 WECHAT_SUBSCRIBE_STUDENT_VERIFICATION_RESULT_FIELDS={"thing1":"serviceName","phrase2":"statusText","time3":"reviewedAtText","name4":"studentName"}
+WECHAT_SUBSCRIBE_INSTRUCTOR_PENDING_VERIFICATION_PAGE=pages/instructor-verifications/index
+WECHAT_SUBSCRIBE_INSTRUCTOR_PENDING_VERIFICATION_FIELDS={"thing1":"serviceName","number2":"pendingCount","time3":"submittedAtText","name4":"studentName"}
 ```
 
 `WECHAT_SUBSCRIBE_STUDENT_VERIFICATION_RESULT_FIELDS` 的 key 必须是微信模板里的关键词字段，value 只能使用 `serviceName`、`statusText`、`reviewedAtText`、`studentName` 或 `remark`。未配置字段映射时，指导员审核仍会更新学生认证状态和审核日志，但订阅消息发送会被标记为未配置，不会用假模板冒充发送成功。
+
+`WECHAT_SUBSCRIBE_INSTRUCTOR_PENDING_VERIFICATION_FIELDS` 用于学生提交资料后的指导员待认证提醒，value 只能使用 `serviceName`、`pendingCount`、`submittedAtText`、`studentName` 或 `remark`。学生资料提交仍以后台持久化为准；订阅消息发送失败不会回滚提交，也不会消耗未发送成功的订阅授权。
 
 ## 下一步
 
