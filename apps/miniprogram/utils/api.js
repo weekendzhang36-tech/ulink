@@ -214,6 +214,13 @@ function createGrowthPlanOrder(growthPlanId) {
   })
 }
 
+function getOrderStatus(orderNo) {
+  return request({
+    auth: true,
+    path: `/orders/${orderNo}`,
+  })
+}
+
 function mockConfirmPayment(orderNo) {
   return request({
     data: { orderNo },
@@ -229,6 +236,7 @@ module.exports = {
   getGrowthPlan,
   getHomeData,
   getInstructorVerifications,
+  getOrderStatus,
   getSessionToken,
   getStudentState,
   loginWithWechatCode,

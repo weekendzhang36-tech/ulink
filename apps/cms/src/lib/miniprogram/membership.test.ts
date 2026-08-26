@@ -33,6 +33,7 @@ test('creates a pending order using the active growth plan amount', async () => 
         orderNo,
         packageValue: `prepay_id=${orderNo}`,
         paySign: 'pay-sign',
+        signType: 'RSA',
         timeStamp: '1787748120',
         totalFee: amountCents,
       }),

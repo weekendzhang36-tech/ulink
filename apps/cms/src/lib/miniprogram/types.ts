@@ -99,6 +99,7 @@ export interface PaymentParams {
   orderNo: string
   packageValue: string
   paySign: string
+  signType: 'RSA'
   timeStamp: string
   totalFee: number
 }

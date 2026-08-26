@@ -74,6 +74,11 @@
   - 后台开始接真实微信登录配置：配置 `WECHAT_MINIPROGRAM_APP_ID` 和 `WECHAT_MINIPROGRAM_APP_SECRET` 后，登录 gateway 会调用微信 `code2Session`；未配置时必须显式开启本地 mock。
   - 后台新增微信手机号授权服务与 `/api/miniprogram/phone/wechat`，资料提交必须带服务端签发的手机号验证 token，不能只靠前端手填手机号。
   - 小程序资料页改为先微信授权手机号，再提交学生资料；本地 demo fallback 仍只在显式 demo mode 下使用。
+- 2026-08-26：补充真实微信支付下单适配器第一步。
+  - 后台支付 gateway 已支持微信支付 V3 JSAPI/小程序下单：服务端按商户号、证书序列号和商户私钥生成请求签名，调用 `/v3/pay/transactions/jsapi` 获取 `prepay_id`，再生成小程序 `wx.requestPayment` 所需参数。
+  - `apps/cms/.env.example` 已补充 `WECHAT_PAY_MCH_ID`、`WECHAT_PAY_CERT_SERIAL_NO`、`WECHAT_PAY_PRIVATE_KEY` 和 `WECHAT_PAY_NOTIFY_URL` 占位配置，不提交真实密钥。
+  - 小程序成长计划页真实支付后不直接伪造“已加入”，而是回查订单和会员状态；本地 mock 支付仍只在显式 mock 开关开启后可用。
+  - 真实微信支付回调验签、回调解密和支付事件落库仍需继续实现，当前只有本地 mock callback 可完成会员激活闭环。
 
 ## 学生注册认证需求
 

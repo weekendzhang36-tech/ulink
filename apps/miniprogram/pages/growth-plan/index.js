@@ -1,4 +1,39 @@
-const { createGrowthPlanOrder, getGrowthPlan, getSessionToken, mockConfirmPayment } = require('../../utils/api')
+const {
+  createGrowthPlanOrder,
+  getGrowthPlan,
+  getOrderStatus,
+  getSessionToken,
+  mockConfirmPayment,
+} = require('../../utils/api')
+
+function requestWechatPayment(paymentParams) {
+  return new Promise((resolve, reject) => {
+    wx.requestPayment({
+      nonceStr: paymentParams.nonceStr,
+      package: paymentParams.packageValue,
+      paySign: paymentParams.paySign,
+      signType: paymentParams.signType || 'RSA',
+      timeStamp: paymentParams.timeStamp,
+      fail: reject,
+      success: resolve,
+    })
+  })
+}
+
+function wait(milliseconds) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, milliseconds)
+  })
+}
+
+function waitForPaidOrder(orderNo, remainingAttempts = 4) {
+  return getOrderStatus(orderNo).then((result) => {
+    if (result.order && result.order.status === 'paid') return result
+    if (remainingAttempts <= 0) return result
+
+    return wait(1000).then(() => waitForPaidOrder(orderNo, remainingAttempts - 1))
+  })
+}
 
 Page({
   data: {
@@ -27,23 +62,18 @@ Page({
     createGrowthPlanOrder(this.data.plan.id)
       .then(({ order, paymentParams }) => {
         if (paymentParams.mock) {
-          return mockConfirmPayment(order.orderNo)
+          return mockConfirmPayment(order.orderNo).then(() => getOrderStatus(order.orderNo))
         }
 
-        return new Promise((resolve, reject) => {
-          wx.requestPayment({
-            nonceStr: paymentParams.nonceStr,
-            package: paymentParams.packageValue,
-            paySign: paymentParams.paySign,
-            signType: 'RSA',
-            timeStamp: paymentParams.timeStamp,
-            fail: reject,
-            success: resolve,
-          })
-        })
+        return requestWechatPayment(paymentParams).then(() => waitForPaidOrder(order.orderNo))
       })
-      .then(() => {
-        wx.showToast({ icon: 'success', title: '已加入' })
+      .then((result) => {
+        if (result.order && result.order.status === 'paid' && result.membership) {
+          wx.showToast({ icon: 'success', title: '已加入' })
+          return
+        }
+
+        wx.showToast({ icon: 'none', title: '支付处理中，请稍后查看' })
       })
       .catch((error) => {
         wx.showToast({ icon: 'none', title: error.message || '支付未完成' })

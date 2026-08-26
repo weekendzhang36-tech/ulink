@@ -142,6 +142,18 @@ MINIPROGRAM_MOCK_PAYMENT=true
 
 这些开关只用于本地开发。生产环境需要接入真实微信登录、微信手机号授权、微信支付商户配置和回调验签，不能用 mock 结果冒充真实成功。
 
+真实微信支付下单需要在服务端配置：
+
+```text
+WECHAT_MINIPROGRAM_APP_ID=
+WECHAT_PAY_MCH_ID=
+WECHAT_PAY_CERT_SERIAL_NO=
+WECHAT_PAY_PRIVATE_KEY=
+WECHAT_PAY_NOTIFY_URL=
+```
+
+`WECHAT_PAY_PRIVATE_KEY` 必须来自服务器环境变量或密钥管理，不要提交到仓库。真实支付链路里，小程序支付窗口返回成功后仍会回查后台订单状态；会员生效以服务端支付回调更新后的订单和会员记录为准。
+
 ## 下一步
 
 建议优先确认：
