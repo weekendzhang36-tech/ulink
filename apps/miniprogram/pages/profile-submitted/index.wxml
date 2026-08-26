@@ -1,0 +1,29 @@
+<view class="page">
+  <view class="card hero">
+    <text class="eyebrow">资料已提交</text>
+    <view class="title">请等待认证完成</view>
+    <view class="subtitle">
+      你的学生资料已经提交，指导员确认后即可开通成长计划和预约活动。
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{!loading}}">
+    <view class="info-row" wx:for="{{summaryRows}}" wx:key="label">
+      <text>{{item.label}}</text>
+      <text class="row-value">{{item.value}}</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">认证结果提醒</view>
+    <view class="subtitle">
+      开启后，指导员确认通过或需要你修改资料时，可以通过小程序服务通知提醒你。
+    </view>
+    <button class="primary-button compact" loading="{{subscribing}}" bindtap="subscribeVerificationResult">
+      接收认证结果通知
+    </button>
+    <button class="secondary-button compact" bindtap="enterHome">
+      进入首页
+    </button>
+  </view>
+</view>

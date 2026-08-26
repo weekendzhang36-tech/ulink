@@ -20,6 +20,7 @@ const {
   updateCampusSelection,
 } = require('../../utils/campus-selection')
 const { handleProfileGuardError } = require('../../utils/profile-guard')
+const { getProfileSubmitSuccessUrl } = require('../../utils/profile-submission-success')
 
 const genderOptions = [
   { label: '男', value: 'male' },
@@ -286,7 +287,7 @@ Page({
     })
       .then(() => {
         clearProfileDraft(wx)
-        wx.switchTab({ url: '/pages/home/index' })
+        wx.redirectTo({ url: getProfileSubmitSuccessUrl(mode) })
       })
       .catch((error) => {
         handleProfileGuardError(error, '提交失败')
