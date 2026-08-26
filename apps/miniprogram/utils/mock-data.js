@@ -117,9 +117,9 @@ const orders = [
 ]
 
 const campus = {
-  classes: [{ id: 'class_001', name: '金融学 2026-1 班' }],
-  colleges: [{ id: 'college_001', name: '金融学院' }],
-  majors: [{ id: 'major_001', name: '金融学' }],
+  classes: [{ id: 'class_001', majorId: 'major_001', name: '金融学 2026-1 班' }],
+  colleges: [{ id: 'college_001', name: '金融学院', schoolId: 'school_001' }],
+  majors: [{ collegeId: 'college_001', id: 'major_001', name: '金融学' }],
   schools: [{ id: 'school_001', name: '广东金融学院' }],
 }
 

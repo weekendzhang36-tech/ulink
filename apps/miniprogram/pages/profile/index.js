@@ -10,27 +10,18 @@ const {
   loadProfileDraft,
   saveProfileDraft,
 } = require('../../utils/profile-draft')
+const {
+  buildCampusSelection,
+  emptyCampus,
+  fallbackLabels,
+  updateCampusSelection,
+} = require('../../utils/campus-selection')
 
 const genderOptions = [
   { label: '男', value: 'male' },
   { label: '女', value: 'female' },
   { label: '不透露', value: 'undisclosed' },
 ]
-
-function selectedLabel(list, index, fallback) {
-  const item = list[index]
-
-  return item ? item.name : fallback
-}
-
-function buildSelectedLabels(campus, indexes) {
-  return {
-    class: selectedLabel(campus.classes, indexes.class, '请选择班级'),
-    college: selectedLabel(campus.colleges, indexes.college, '请选择学院'),
-    major: selectedLabel(campus.majors, indexes.major, '请选择专业'),
-    school: selectedLabel(campus.schools, indexes.school, '请选择学校'),
-  }
-}
 
 function mergeDraft(baseData, draft) {
   if (!draft) return baseData
@@ -51,7 +42,8 @@ Page({
   data: {
     agreedToPolicies: false,
     birthday: '',
-    campus: { classes: [], colleges: [], majors: [], schools: [] },
+    allCampus: emptyCampus,
+    campus: emptyCampus,
     genderIndex: 0,
     genderOptions,
     indexes: {
@@ -66,12 +58,7 @@ Page({
     phoneVerificationToken: '',
     phoneVerified: false,
     realName: '',
-    selectedLabels: {
-      class: '请选择班级',
-      college: '请选择学院',
-      major: '请选择专业',
-      school: '请选择学校',
-    },
+    selectedLabels: fallbackLabels,
     smsCode: '',
     smsCodeSent: false,
     smsPhone: '',
@@ -84,10 +71,11 @@ Page({
     }
 
     getCampusOptions()
-      .then((campus) => {
+      .then((allCampus) => {
+        const selection = buildCampusSelection(allCampus, this.data.indexes)
         this.setData({
-          campus,
-          selectedLabels: buildSelectedLabels(campus, this.data.indexes),
+          allCampus,
+          ...selection,
         })
       })
       .catch((error) => {
@@ -112,13 +100,8 @@ Page({
 
   changePicker(event) {
     const key = event.currentTarget.dataset.key
-    const indexes = {
-      ...this.data.indexes,
-      [key]: Number(event.detail.value),
-    }
     this.setData({
-      indexes,
-      selectedLabels: buildSelectedLabels(this.data.campus, indexes),
+      ...updateCampusSelection(this.data.allCampus, this.data.indexes, key, event.detail.value),
     })
     this.saveDraft()
   },
