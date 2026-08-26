@@ -1,4 +1,15 @@
-function getGrowthPlanActionState({ hasSession, loading = false, membershipState, plan, profileCompleted }) {
+function isVerificationApproved(verificationStatus) {
+  return verificationStatus === 'verified' || verificationStatus === '已认证'
+}
+
+function getGrowthPlanActionState({
+  hasSession,
+  loading = false,
+  membershipState,
+  plan,
+  profileCompleted,
+  verificationStatus,
+}) {
   if (loading) {
     return {
       disabled: true,
@@ -32,6 +43,15 @@ function getGrowthPlanActionState({ hasSession, loading = false, membershipState
       hintText: '完成学生资料后再开通成长计划',
       label: '先完善学生资料',
       type: 'complete_profile',
+    }
+  }
+
+  if (hasSession && profileCompleted === true && !isVerificationApproved(verificationStatus)) {
+    return {
+      disabled: false,
+      hintText: '学生认证通过后再开通成长计划',
+      label: '查看认证进度',
+      type: 'view_verification',
     }
   }
 

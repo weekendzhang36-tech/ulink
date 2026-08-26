@@ -60,6 +60,28 @@ test('asks a logged-in student without a completed profile to finish profile fir
   )
 })
 
+test('asks a pending student to wait for verification before joining the growth plan', () => {
+  assert.deepEqual(
+    getGrowthPlanActionState({
+      hasSession: true,
+      membershipState: {
+        expiresText: '加入后可查看有效期',
+        isActive: false,
+        statusText: '未开通',
+      },
+      plan: { id: 'growth-plan-half-year' },
+      profileCompleted: true,
+      verificationStatus: 'pending',
+    }),
+    {
+      disabled: false,
+      hintText: '学生认证通过后再开通成长计划',
+      label: '查看认证进度',
+      type: 'view_verification',
+    },
+  )
+})
+
 test('disables the action while a payment request is loading', () => {
   assert.deepEqual(
     getGrowthPlanActionState({

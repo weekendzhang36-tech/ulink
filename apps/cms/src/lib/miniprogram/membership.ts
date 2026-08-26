@@ -109,6 +109,20 @@ async function findStudentFromSession({
   return student
 }
 
+function ensureVerifiedStudent(student: Awaited<ReturnType<typeof findStudentFromSession>>) {
+  if (student.verificationStatus !== 'verified') {
+    throw new MiniProgramError('学生认证通过后再开通成长计划', 403)
+  }
+
+  return student
+}
+
+async function findVerifiedStudentFromSession(input: Parameters<typeof findStudentFromSession>[0]) {
+  const student = await findStudentFromSession(input)
+
+  return ensureVerifiedStudent(student)
+}
+
 export function formatMembershipState({
   membership,
   now,
@@ -156,7 +170,7 @@ export async function createMembershipOrder({
   repository: MiniProgramRepository
   secret: string
 }) {
-  const student = await findStudentFromSession({
+  const student = await findVerifiedStudentFromSession({
     now,
     repository,
     secret,
@@ -304,7 +318,7 @@ export async function resumeMembershipOrderPayment({
   repository: MiniProgramRepository
   secret: string
 }) {
-  const student = await findStudentFromSession({
+  const student = await findVerifiedStudentFromSession({
     now,
     repository,
     secret,

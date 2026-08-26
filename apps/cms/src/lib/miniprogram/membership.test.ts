@@ -26,8 +26,13 @@ function tokenFor(studentId: string, openId = 'openid_001') {
   })
 }
 
+async function approveStudent(repository: ReturnType<typeof createMemoryRepository>, studentId = 'student_001') {
+  await repository.updateStudentVerificationStatus(studentId, 'verified')
+}
+
 test('creates a pending order using the active growth plan amount', async () => {
   const repository = createMemoryRepository()
+  await approveStudent(repository)
 
   const result = await createMembershipOrder({
     input: {
@@ -57,8 +62,42 @@ test('creates a pending order using the active growth plan amount', async () => 
   assert.equal(result.paymentParams.orderNo, 'UL20260826100200ABC123')
 })
 
+test('rejects membership purchase before student verification is approved', async () => {
+  const repository = createMemoryRepository()
+
+  await assert.rejects(
+    () =>
+      createMembershipOrder({
+        input: {
+          growthPlanId: 'growth_plan_001',
+          sessionToken: tokenFor('student_001'),
+        },
+        now: new Date('2026-08-26T10:02:00.000Z'),
+        paymentGateway: {
+          createPaymentParams: async ({ amountCents, orderNo }) => ({
+            mock: true,
+            nonceStr: 'nonce_pending_student',
+            orderNo,
+            packageValue: `prepay_id=${orderNo}`,
+            paySign: 'pay-sign',
+            signType: 'RSA',
+            timeStamp: '1787748120',
+            totalFee: amountCents,
+          }),
+        },
+        randomSuffix: () => 'PEND01',
+        repository,
+        secret,
+      }),
+    /学生认证通过后再开通成长计划/,
+  )
+
+  assert.equal(repository.orders.has('UL20260826100200PEND01'), false)
+})
+
 test('marks membership order failed when prepay request fails', async () => {
   const repository = createMemoryRepository()
+  await approveStudent(repository)
 
   await assert.rejects(
     () =>
@@ -343,6 +382,7 @@ test('rejects cancellation after a membership order has been paid', async () => 
 
 test('creates payment params for an existing pending membership order without creating another order', async () => {
   const repository = createMemoryRepository()
+  await approveStudent(repository)
 
   const result = await resumeMembershipOrderPayment({
     input: {
@@ -373,8 +413,36 @@ test('creates payment params for an existing pending membership order without cr
   assert.equal(repository.orders.size, 1)
 })
 
+test('rejects resumed payment before student verification is approved', async () => {
+  const repository = createMemoryRepository()
+  let paymentGatewayCalled = false
+
+  await assert.rejects(
+    () =>
+      resumeMembershipOrderPayment({
+        input: {
+          orderNo: 'order_paid_once',
+          sessionToken: tokenFor('student_001'),
+        },
+        now: new Date('2026-08-26T10:12:00.000Z'),
+        paymentGateway: {
+          createPaymentParams: async () => {
+            paymentGatewayCalled = true
+            throw new Error('payment gateway should not be called')
+          },
+        },
+        repository,
+        secret,
+      }),
+    /学生认证通过后再开通成长计划/,
+  )
+
+  assert.equal(paymentGatewayCalled, false)
+})
+
 test('rejects payment params for membership orders that are no longer pending', async () => {
   const repository = createMemoryRepository()
+  await approveStudent(repository)
   await repository.updateOrder('order_001', {
     paidAt: '2026-08-26T10:07:00.000Z',
     status: 'paid',

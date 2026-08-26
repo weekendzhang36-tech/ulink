@@ -53,6 +53,7 @@ Page({
     membershipState: null,
     plan: null,
     profileCompleted: undefined,
+    verificationStatus: '',
   },
 
   updateActionState(nextData = {}) {
@@ -68,6 +69,7 @@ Page({
         membershipState: data.membershipState,
         plan: data.plan,
         profileCompleted: data.profileCompleted,
+        verificationStatus: data.verificationStatus,
       }),
     })
   },
@@ -84,6 +86,7 @@ Page({
             this.updateActionState({
               membershipState: state.membershipState,
               profileCompleted: state.profileCompleted,
+              verificationStatus: state.verificationStatus,
             })
           })
           .catch((error) => {
@@ -107,6 +110,10 @@ Page({
     }
     if (actionState.type === 'complete_profile') {
       wx.redirectTo({ url: '/pages/profile/index' })
+      return
+    }
+    if (actionState.type === 'view_verification') {
+      wx.navigateTo({ url: '/pages/verification/index' })
       return
     }
     if (actionState.type !== 'join' || !getSessionToken()) {
