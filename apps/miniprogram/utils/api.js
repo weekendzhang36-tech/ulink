@@ -299,6 +299,14 @@ function getOrderStatus(orderNo) {
   })
 }
 
+function cancelOrder(orderNo) {
+  return request({
+    auth: true,
+    method: 'POST',
+    path: `/orders/${orderNo}/cancel`,
+  })
+}
+
 function getMembershipOrders() {
   return withDemoFallback(request({ auth: true, path: '/orders' }), () => ({
     orders: mockData.orders || [],
@@ -314,6 +322,7 @@ function mockConfirmPayment(orderNo) {
 }
 
 module.exports = {
+  cancelOrder,
   createGrowthPlanOrder,
   getArticleById,
   getCampusOptions,

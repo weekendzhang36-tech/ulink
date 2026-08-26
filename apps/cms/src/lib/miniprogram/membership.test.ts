@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 
 import {
+  cancelMembershipOrder,
   createMembershipOrder,
   confirmMembershipPayment,
   formatMembershipState,
@@ -194,4 +195,46 @@ test('lists only membership orders for the current student', async () => {
     status: 'paid',
     statusText: '已支付',
   })
+})
+
+test('cancels a pending membership order owned by the current student', async () => {
+  const repository = createMemoryRepository()
+
+  const result = await cancelMembershipOrder({
+    input: {
+      orderNo: 'order_paid_once',
+      sessionToken: tokenFor('student_001'),
+    },
+    now: new Date('2026-08-26T10:12:00.000Z'),
+    repository,
+    secret,
+  })
+
+  assert.equal(result.order.status, 'cancelled')
+  assert.equal(result.order.statusText, '已取消')
+  assert.equal(repository.orders.get('order_paid_once')?.status, 'cancelled')
+})
+
+test('rejects cancellation after a membership order has been paid', async () => {
+  const repository = createMemoryRepository()
+  await repository.updateOrder('order_001', {
+    paidAt: '2026-08-26T10:07:00.000Z',
+    status: 'paid',
+  })
+
+  await assert.rejects(
+    () =>
+      cancelMembershipOrder({
+        input: {
+          orderNo: 'order_paid_once',
+          sessionToken: tokenFor('student_001'),
+        },
+        now: new Date('2026-08-26T10:12:00.000Z'),
+        repository,
+        secret,
+      }),
+    /已支付订单不能取消/,
+  )
+
+  assert.equal(repository.orders.get('order_paid_once')?.status, 'paid')
 })

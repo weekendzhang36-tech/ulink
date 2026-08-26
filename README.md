@@ -143,6 +143,7 @@ pnpm verify          # 后台检查 + 小程序 JS/JSON 检查
 - `GET /api/miniprogram/orders`
 - `POST /api/miniprogram/orders`
 - `GET /api/miniprogram/orders/:orderNo`
+- `POST /api/miniprogram/orders/:orderNo/cancel`
 - `POST /api/miniprogram/payments/mock-callback`
 
 本地开发可以在 `apps/cms/.env` 中开启：

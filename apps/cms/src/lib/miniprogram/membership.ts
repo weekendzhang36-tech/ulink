@@ -217,6 +217,42 @@ export async function listMembershipOrdersForStudent({
   return { orders: orders.map(formatOrderSummary) }
 }
 
+export async function cancelMembershipOrder({
+  input,
+  now,
+  repository,
+  secret,
+}: {
+  input: {
+    orderNo: string
+    sessionToken: string
+  }
+  now: Date
+  repository: MiniProgramRepository
+  secret: string
+}) {
+  const student = await findStudentFromSession({
+    now,
+    repository,
+    secret,
+    sessionToken: input.sessionToken,
+  })
+  const order = await repository.findOrderByOrderNo(input.orderNo)
+  if (!order || order.studentId !== student.id) {
+    throw new MiniProgramError('订单不存在', 404)
+  }
+  if (order.status === 'paid') {
+    throw new MiniProgramError('已支付订单不能取消', 409)
+  }
+  if (order.status !== 'pending') {
+    return { order: formatOrderSummary(order) }
+  }
+
+  const cancelledOrder = await repository.updateOrder(order.id, { status: 'cancelled' })
+
+  return { order: formatOrderSummary(cancelledOrder) }
+}
+
 export async function confirmMembershipPayment({
   input,
   now,

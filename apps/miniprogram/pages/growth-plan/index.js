@@ -1,4 +1,5 @@
 const {
+  cancelOrder,
   createGrowthPlanOrder,
   getGrowthPlan,
   getOrderStatus,
@@ -35,6 +36,12 @@ function waitForPaidOrder(orderNo, remainingAttempts = 4) {
   })
 }
 
+function cancelPendingOrder(orderNo) {
+  if (!orderNo) return Promise.resolve()
+
+  return cancelOrder(orderNo).catch(() => undefined)
+}
+
 Page({
   data: {
     loading: false,
@@ -59,8 +66,10 @@ Page({
     if (!this.data.plan) return
 
     this.setData({ loading: true })
+    let createdOrderNo = ''
     createGrowthPlanOrder(this.data.plan.id)
       .then(({ order, paymentParams }) => {
+        createdOrderNo = order.orderNo
         if (paymentParams.mock) {
           return mockConfirmPayment(order.orderNo).then(() => getOrderStatus(order.orderNo))
         }
@@ -76,7 +85,9 @@ Page({
         wx.showToast({ icon: 'none', title: '支付处理中，请稍后查看' })
       })
       .catch((error) => {
-        wx.showToast({ icon: 'none', title: error.message || '支付未完成' })
+        cancelPendingOrder(createdOrderNo).then(() => {
+          wx.showToast({ icon: 'none', title: error.message || '支付未完成' })
+        })
       })
       .finally(() => {
         this.setData({ loading: false })
