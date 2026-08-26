@@ -368,6 +368,14 @@ function cancelOrder(orderNo) {
   })
 }
 
+function resumeOrderPayment(orderNo) {
+  return request({
+    auth: true,
+    method: 'POST',
+    path: `/orders/${orderNo}/pay`,
+  })
+}
+
 function getMembershipOrders() {
   return withDemoFallback(request({ auth: true, path: '/orders' }), () => ({
     orders: mockData.orders || [],
@@ -429,6 +437,7 @@ module.exports = {
   mockConfirmPayment,
   recordNotificationSubscription,
   requestSmsPhone,
+  resumeOrderPayment,
   reserveContent,
   reviewInstructorStudents,
   submitProfile,

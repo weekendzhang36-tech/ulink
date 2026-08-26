@@ -1,10 +1,43 @@
 const {
   cancelOrder: cancelMembershipOrder,
   getMembershipOrders,
+  getOrderStatus,
   getSessionToken,
+  mockConfirmPayment,
+  resumeOrderPayment,
 } = require('../../utils/api')
+const { hasActivatedMembership } = require('../../utils/membership-result')
 const { getOrderActionState } = require('../../utils/order-action')
 const { handleProfileGuardError } = require('../../utils/profile-guard')
+
+function requestWechatPayment(paymentParams) {
+  return new Promise((resolve, reject) => {
+    wx.requestPayment({
+      nonceStr: paymentParams.nonceStr,
+      package: paymentParams.packageValue,
+      paySign: paymentParams.paySign,
+      signType: paymentParams.signType || 'RSA',
+      timeStamp: paymentParams.timeStamp,
+      fail: reject,
+      success: resolve,
+    })
+  })
+}
+
+function wait(milliseconds) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, milliseconds)
+  })
+}
+
+function waitForPaidOrder(orderNo, remainingAttempts = 4) {
+  return getOrderStatus(orderNo).then((result) => {
+    if (result.order && result.order.status === 'paid') return result
+    if (remainingAttempts <= 0) return result
+
+    return wait(1000).then(() => waitForPaidOrder(orderNo, remainingAttempts - 1))
+  })
+}
 
 function dateText(value) {
   return value ? value.slice(0, 10) : ''
@@ -24,6 +57,7 @@ Page({
     cancelingOrderNo: '',
     loading: true,
     orders: [],
+    payingOrderNo: '',
   },
 
   onShow() {
@@ -53,7 +87,7 @@ Page({
 
   cancelOrder(event) {
     const orderNo = event.currentTarget.dataset.orderNo
-    if (!orderNo || this.data.cancelingOrderNo) return
+    if (!orderNo || this.data.cancelingOrderNo || this.data.payingOrderNo) return
 
     wx.showModal({
       cancelText: '再想想',
@@ -83,5 +117,42 @@ Page({
           })
       },
     })
+  },
+
+  continuePay(event) {
+    const orderNo = event.currentTarget.dataset.orderNo
+    if (!orderNo || this.data.cancelingOrderNo || this.data.payingOrderNo) return
+
+    this.setData({ payingOrderNo: orderNo })
+    resumeOrderPayment(orderNo)
+      .then(({ paymentParams }) => {
+        if (paymentParams.mock) {
+          return mockConfirmPayment(orderNo).then(() => getOrderStatus(orderNo))
+        }
+
+        return requestWechatPayment(paymentParams).then(() => waitForPaidOrder(orderNo))
+      })
+      .then((result) => {
+        if (result.order) {
+          this.setData({
+            orders: this.data.orders.map((order) =>
+              order.orderNo === orderNo ? normalizeOrder(result.order) : order,
+            ),
+          })
+        }
+
+        if (hasActivatedMembership(result)) {
+          wx.showToast({ icon: 'success', title: '已加入' })
+          return
+        }
+
+        wx.showToast({ icon: 'none', title: '支付处理中，请稍后查看' })
+      })
+      .catch((error) => {
+        handleProfileGuardError(error, '支付未完成')
+      })
+      .finally(() => {
+        this.setData({ payingOrderNo: '' })
+      })
   },
 })

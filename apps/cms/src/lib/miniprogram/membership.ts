@@ -288,6 +288,59 @@ export async function cancelMembershipOrder({
   return { order: formatOrderSummary(cancelledOrder) }
 }
 
+export async function resumeMembershipOrderPayment({
+  input,
+  now,
+  paymentGateway,
+  repository,
+  secret,
+}: {
+  input: {
+    orderNo: string
+    sessionToken: string
+  }
+  now: Date
+  paymentGateway: PaymentGateway
+  repository: MiniProgramRepository
+  secret: string
+}) {
+  const student = await findStudentFromSession({
+    now,
+    repository,
+    secret,
+    sessionToken: input.sessionToken,
+  })
+  const order = await repository.findOrderByOrderNo(input.orderNo)
+  if (!order || order.studentId !== student.id) {
+    throw new MiniProgramError('订单不存在', 404)
+  }
+
+  const currentOrder = await closeExpiredPendingOrder(order, now, repository)
+  if (currentOrder.status !== 'pending') {
+    throw new MiniProgramError('订单状态不可支付', 409)
+  }
+
+  const growthPlan = await repository.findActiveGrowthPlanById(currentOrder.growthPlanId)
+  if (!growthPlan || !growthPlan.isActive) {
+    throw new MiniProgramError('成长计划暂不可用')
+  }
+
+  let paymentParams
+  try {
+    paymentParams = await paymentGateway.createPaymentParams({
+      amountCents: currentOrder.amountCents,
+      body: growthPlan.title,
+      orderNo: currentOrder.orderNo,
+      student,
+    })
+  } catch (error) {
+    await repository.updateOrder(currentOrder.id, { status: 'failed' })
+    throw error
+  }
+
+  return { order: currentOrder, paymentParams }
+}
+
 export async function confirmMembershipPayment({
   input,
   now,

@@ -3,10 +3,18 @@ const TERMINAL_HINT = '该订单已结束，如需加入可重新下单'
 function getOrderActionState(order = {}) {
   if (order.status === 'pending') {
     return {
-      disabled: false,
       hintText: '30 分钟内未支付会自动关闭，也可以现在取消',
-      label: '取消订单',
-      type: 'cancel',
+      primaryAction: {
+        disabled: false,
+        label: '继续支付',
+        type: 'pay',
+      },
+      secondaryAction: {
+        disabled: false,
+        label: '取消订单',
+        type: 'cancel',
+      },
+      type: 'pending',
     }
   }
 

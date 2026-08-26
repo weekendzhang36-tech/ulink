@@ -9,6 +9,7 @@ import {
   formatMembershipState,
   getMembershipOrderStatus,
   listMembershipOrdersForStudent,
+  resumeMembershipOrderPayment,
 } from './membership.ts'
 import { createSessionToken } from './session.ts'
 import { createMemoryRepository } from './testing/memoryRepository.ts'
@@ -338,6 +339,65 @@ test('rejects cancellation after a membership order has been paid', async () => 
   )
 
   assert.equal(repository.orders.get('order_paid_once')?.status, 'paid')
+})
+
+test('creates payment params for an existing pending membership order without creating another order', async () => {
+  const repository = createMemoryRepository()
+
+  const result = await resumeMembershipOrderPayment({
+    input: {
+      orderNo: 'order_paid_once',
+      sessionToken: tokenFor('student_001'),
+    },
+    now: new Date('2026-08-26T10:12:00.000Z'),
+    paymentGateway: {
+      createPaymentParams: async ({ amountCents, body, orderNo }) => ({
+        mock: true,
+        nonceStr: 'nonce_existing',
+        orderNo,
+        packageValue: `prepay_id=${orderNo}`,
+        paySign: `pay-sign-${body}`,
+        signType: 'RSA',
+        timeStamp: '1787748720',
+        totalFee: amountCents,
+      }),
+    },
+    repository,
+    secret,
+  })
+
+  assert.equal(result.order.orderNo, 'order_paid_once')
+  assert.equal(result.order.status, 'pending')
+  assert.equal(result.paymentParams.orderNo, 'order_paid_once')
+  assert.equal(result.paymentParams.totalFee, 500)
+  assert.equal(repository.orders.size, 1)
+})
+
+test('rejects payment params for membership orders that are no longer pending', async () => {
+  const repository = createMemoryRepository()
+  await repository.updateOrder('order_001', {
+    paidAt: '2026-08-26T10:07:00.000Z',
+    status: 'paid',
+  })
+
+  await assert.rejects(
+    () =>
+      resumeMembershipOrderPayment({
+        input: {
+          orderNo: 'order_paid_once',
+          sessionToken: tokenFor('student_001'),
+        },
+        now: new Date('2026-08-26T10:12:00.000Z'),
+        paymentGateway: {
+          createPaymentParams: async () => {
+            throw new Error('payment gateway should not be called')
+          },
+        },
+        repository,
+        secret,
+      }),
+    /订单状态不可支付/,
+  )
 })
 
 test('rejects local mock payment callback in production before activating membership', async () => {

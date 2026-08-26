@@ -171,6 +171,7 @@ pnpm verify:precommit # 完整检查 + git diff 空白检查
 - `POST /api/miniprogram/orders`
 - `GET /api/miniprogram/orders/:orderNo`
 - `POST /api/miniprogram/orders/:orderNo/cancel`
+- `POST /api/miniprogram/orders/:orderNo/pay`
 - `POST /api/miniprogram/payments/mock-callback`
 
 本地开发可以在 `apps/cms/.env` 中开启：

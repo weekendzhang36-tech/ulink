@@ -3,17 +3,25 @@ const test = require('node:test')
 
 const { getOrderActionState } = require('./order-action')
 
-test('allows a pending membership order to be cancelled', () => {
+test('shows pay and cancel actions for a pending membership order', () => {
   assert.deepEqual(
     getOrderActionState({
       status: 'pending',
       statusText: '待支付',
     }),
     {
-      disabled: false,
       hintText: '30 分钟内未支付会自动关闭，也可以现在取消',
-      label: '取消订单',
-      type: 'cancel',
+      primaryAction: {
+        disabled: false,
+        label: '继续支付',
+        type: 'pay',
+      },
+      secondaryAction: {
+        disabled: false,
+        label: '取消订单',
+        type: 'cancel',
+      },
+      type: 'pending',
     },
   )
 })

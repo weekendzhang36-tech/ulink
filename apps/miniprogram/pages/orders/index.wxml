@@ -40,16 +40,26 @@
 
       <view class="order-action-row">
         <view class="action-hint">{{item.actionState.hintText}}</view>
-        <button
-          wx:if="{{item.actionState.type === 'cancel'}}"
-          class="cancel-button"
-          loading="{{cancelingOrderNo === item.orderNo}}"
-          disabled="{{cancelingOrderNo === item.orderNo}}"
-          data-order-no="{{item.orderNo}}"
-          bindtap="cancelOrder"
-        >
-          {{item.actionState.label}}
-        </button>
+        <view wx:if="{{item.actionState.type === 'pending'}}" class="action-buttons">
+          <button
+            class="cancel-button"
+            loading="{{cancelingOrderNo === item.orderNo}}"
+            disabled="{{cancelingOrderNo === item.orderNo || payingOrderNo === item.orderNo}}"
+            data-order-no="{{item.orderNo}}"
+            bindtap="cancelOrder"
+          >
+            {{item.actionState.secondaryAction.label}}
+          </button>
+          <button
+            class="pay-button"
+            loading="{{payingOrderNo === item.orderNo}}"
+            disabled="{{cancelingOrderNo === item.orderNo || payingOrderNo === item.orderNo}}"
+            data-order-no="{{item.orderNo}}"
+            bindtap="continuePay"
+          >
+            {{item.actionState.primaryAction.label}}
+          </button>
+        </view>
       </view>
     </view>
   </view>
