@@ -83,3 +83,24 @@ test('returns home data for a student with completed profile', async () => {
     ['career_planning', 'practice', 'finance_foundation', 'culture_exchange'],
   )
 })
+
+test('returns a needs-review home message that asks the student to update profile', async () => {
+  const repository = createMemoryRepository()
+  const student = repository.students.get('student_001')
+  assert.ok(student)
+  repository.students.set('student_001', {
+    ...student,
+    verificationStatus: 'needs_review',
+  })
+
+  const result = await getMiniProgramHomeData({
+    now: new Date('2026-08-26T10:01:00.000Z'),
+    payload: payloadFor(),
+    repository,
+    secret,
+    sessionToken: tokenFor('openid_001', 'student_001'),
+  })
+
+  assert.equal(result.studentState?.verificationStatus, '需确认')
+  assert.equal(result.studentState?.message, '资料需要确认，请检查姓名、学院、专业和班级后重新提交。')
+})

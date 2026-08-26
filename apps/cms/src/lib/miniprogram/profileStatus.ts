@@ -1,19 +1,11 @@
 import { MiniProgramError } from './errors.ts'
 import { formatMembershipState } from './membership.ts'
 import { verifySessionToken } from './session.ts'
-import type { MiniProgramRepository, StudentRecord } from './types.ts'
-import { formatVerificationStatusForDisplay } from './verificationStatusDisplay.ts'
-
-function verificationMessage(student: StudentRecord) {
-  if (student.verificationStatus === 'verified') {
-    return '资料已认证，可以继续查看成长服务。'
-  }
-  if (student.verificationStatus === 'needs_review') {
-    return '资料需要确认，请检查姓名、学院、专业和班级后重新提交。'
-  }
-
-  return '资料已提交，等待指导员确认。'
-}
+import type { MiniProgramRepository } from './types.ts'
+import {
+  formatVerificationMessageForDisplay,
+  formatVerificationStatusForDisplay,
+} from './verificationStatusDisplay.ts'
 
 export async function getProfileStatus({
   now,
@@ -49,7 +41,7 @@ export async function getProfileStatus({
     student: student
       ? {
           className: student.classId,
-          message: verificationMessage(student),
+          message: formatVerificationMessageForDisplay(student.verificationStatus),
           name: student.realName,
           school: student.schoolId,
           verificationStatus: formatVerificationStatusForDisplay(student.verificationStatus),

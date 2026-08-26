@@ -3,7 +3,10 @@ import { MiniProgramError } from './errors.ts'
 import { formatMembershipState } from './membership.ts'
 import { verifySessionToken } from './session.ts'
 import type { MiniProgramRepository } from './types.ts'
-import { formatVerificationStatusForDisplay } from './verificationStatusDisplay.ts'
+import {
+  formatVerificationMessageForDisplay,
+  formatVerificationStatusForDisplay,
+} from './verificationStatusDisplay.ts'
 
 type PayloadLike = {
   find(input: Record<string, unknown>): Promise<{ docs: Record<string, unknown>[] }>
@@ -71,10 +74,7 @@ export async function getMiniProgramHomeData({
     studentState: {
       className: student.classId,
       membershipState: formatMembershipState({ membership, now }),
-      message:
-        student.verificationStatus === 'verified'
-          ? '资料已认证，可以继续查看成长服务。'
-          : '资料已提交，等待指导员确认。',
+      message: formatVerificationMessageForDisplay(student.verificationStatus),
       name: student.realName,
       school: student.schoolId,
       verificationStatus: formatVerificationStatusForDisplay(student.verificationStatus),
