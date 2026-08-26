@@ -176,12 +176,18 @@ export async function createMembershipOrder({
     status: 'pending',
     studentId: student.id,
   })
-  const paymentParams = await paymentGateway.createPaymentParams({
-    amountCents: order.amountCents,
-    body: growthPlan.title,
-    orderNo,
-    student,
-  })
+  let paymentParams
+  try {
+    paymentParams = await paymentGateway.createPaymentParams({
+      amountCents: order.amountCents,
+      body: growthPlan.title,
+      orderNo,
+      student,
+    })
+  } catch (error) {
+    await repository.updateOrder(order.id, { status: 'failed' })
+    throw error
+  }
 
   return { order, paymentParams }
 }

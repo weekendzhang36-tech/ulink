@@ -55,6 +55,34 @@ test('creates a pending order using the active growth plan amount', async () => 
   assert.equal(result.paymentParams.orderNo, 'UL20260826100200ABC123')
 })
 
+test('marks membership order failed when prepay request fails', async () => {
+  const repository = createMemoryRepository()
+
+  await assert.rejects(
+    () =>
+      createMembershipOrder({
+        input: {
+          growthPlanId: 'growth_plan_001',
+          sessionToken: tokenFor('student_001'),
+        },
+        now: new Date('2026-08-26T10:02:00.000Z'),
+        paymentGateway: {
+          createPaymentParams: async () => {
+            throw new Error('prepay request failed')
+          },
+        },
+        randomSuffix: () => 'FAIL01',
+        repository,
+        secret,
+      }),
+    /prepay request failed/,
+  )
+
+  const order = repository.orders.get('UL20260826100200FAIL01')
+  assert.equal(order?.orderNo, 'UL20260826100200FAIL01')
+  assert.equal(order?.status, 'failed')
+})
+
 test('activates membership once for repeated callbacks from the same transaction', async () => {
   const repository = createMemoryRepository()
 
