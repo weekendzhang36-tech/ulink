@@ -73,6 +73,21 @@ function formatOrderSummary(order: OrderRecord) {
   }
 }
 
+function formatMembershipOrderResult({
+  membership,
+  now,
+  order,
+}: {
+  membership?: MembershipRecord
+  now: Date
+  order: OrderRecord
+}) {
+  return {
+    membershipState: formatMembershipState({ membership, now }),
+    order: formatOrderSummary(order),
+  }
+}
+
 function isExpiredPendingOrder(order: OrderRecord, now: Date) {
   const createdAt = Date.parse(order.createdAt)
 
@@ -215,7 +230,7 @@ export async function createMembershipOrder({
     throw error
   }
 
-  return { order, paymentParams }
+  return { order: formatOrderSummary(order), paymentParams }
 }
 
 export async function getMembershipOrderStatus({
@@ -247,7 +262,7 @@ export async function getMembershipOrderStatus({
   const currentOrder = await closeExpiredPendingOrder(order, now, repository)
   const membership = await repository.findMembershipByStudentId(student.id)
 
-  return { membership, order: currentOrder }
+  return formatMembershipOrderResult({ membership, now, order: currentOrder })
 }
 
 export async function listMembershipOrdersForStudent({
@@ -363,7 +378,7 @@ export async function resumeMembershipOrderPayment({
     throw error
   }
 
-  return { order: currentOrder, paymentParams }
+  return { order: formatOrderSummary(currentOrder), paymentParams }
 }
 
 export async function confirmMembershipPayment({

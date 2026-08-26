@@ -13,6 +13,19 @@ test('treats paid order with membership as activated membership', () => {
   )
 })
 
+test('treats paid order with active membership state as activated membership', () => {
+  assert.equal(
+    hasActivatedMembership({
+      membershipState: {
+        isActive: true,
+        statusText: '生效中',
+      },
+      order: { orderNo: 'order_001', status: 'paid' },
+    }),
+    true,
+  )
+})
+
 test('does not treat paid order without membership as activated membership', () => {
   assert.equal(
     hasActivatedMembership({

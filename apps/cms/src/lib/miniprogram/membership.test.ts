@@ -59,6 +59,9 @@ test('creates a pending order using the active growth plan amount', async () => 
 
   assert.equal(result.order.amountCents, 500)
   assert.equal(result.order.status, 'pending')
+  assert.equal('id' in result.order, false)
+  assert.equal('growthPlanId' in result.order, false)
+  assert.equal('studentId' in result.order, false)
   assert.equal(result.paymentParams.orderNo, 'UL20260826100200ABC123')
 })
 
@@ -263,6 +266,15 @@ test('returns order status only for the student who owns the order', async () =>
   })
 
   assert.equal(ownerResult.order.orderNo, 'order_paid_once')
+  assert.deepEqual(ownerResult.membershipState, {
+    expiresAt: null,
+    expiresText: '加入后可查看有效期',
+    isActive: false,
+    statusText: '未开通',
+  })
+  assert.equal('membership' in ownerResult, false)
+  assert.equal('studentId' in ownerResult.order, false)
+  assert.equal('growthPlanId' in ownerResult.order, false)
 
   await assert.rejects(
     () =>
@@ -446,6 +458,9 @@ test('creates payment params for an existing pending membership order without cr
 
   assert.equal(result.order.orderNo, 'order_paid_once')
   assert.equal(result.order.status, 'pending')
+  assert.equal('id' in result.order, false)
+  assert.equal('studentId' in result.order, false)
+  assert.equal('growthPlanId' in result.order, false)
   assert.equal(result.paymentParams.orderNo, 'order_paid_once')
   assert.equal(result.paymentParams.totalFee, 500)
   assert.equal(repository.orders.size, 1)
