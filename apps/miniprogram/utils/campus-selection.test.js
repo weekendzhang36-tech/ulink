@@ -1,7 +1,11 @@
 const assert = require('node:assert/strict')
 const test = require('node:test')
 
-const { buildCampusSelection, updateCampusSelection } = require('./campus-selection')
+const {
+  buildCampusSelection,
+  findCampusIndexesByIds,
+  updateCampusSelection,
+} = require('./campus-selection')
 
 const campus = {
   classes: [
@@ -78,4 +82,20 @@ test('resets dependent campus picker indexes when parent changes', () => {
     selection.campus.classes.map((item) => item.id),
     ['class_accounting_1'],
   )
+})
+
+test('finds picker indexes by persisted campus ids', () => {
+  const indexes = findCampusIndexesByIds(campus, {
+    classId: 'class_accounting_1',
+    collegeId: 'college_business',
+    majorId: 'major_accounting',
+    schoolId: 'school_other',
+  })
+
+  assert.deepEqual(indexes, {
+    class: 0,
+    college: 0,
+    major: 0,
+    school: 1,
+  })
 })

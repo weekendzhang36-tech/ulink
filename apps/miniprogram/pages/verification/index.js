@@ -65,4 +65,8 @@ Page({
       },
     })
   },
+
+  editProfile() {
+    wx.navigateTo({ url: '/pages/profile/index?edit=1' })
+  },
 })

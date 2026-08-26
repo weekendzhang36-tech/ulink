@@ -130,6 +130,7 @@ pnpm verify:precommit # 完整检查 + git diff 空白检查
 - `POST /api/miniprogram/phone/wechat`
 - `POST /api/miniprogram/phone/sms/request`
 - `POST /api/miniprogram/phone/sms/verify`
+- `GET /api/miniprogram/profile`
 - `POST /api/miniprogram/profile/submit`
 - `GET /api/miniprogram/profile/status`
 - `GET /api/miniprogram/home`

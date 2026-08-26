@@ -1,8 +1,10 @@
 <view class="page">
   <view class="card hero">
     <text class="eyebrow">学生资料</text>
-    <view class="title">完善基础信息</view>
-    <view class="subtitle">资料用于认证确认、活动签到和会员权益核销。</view>
+    <view class="title">{{mode === 'edit' ? '修改基础信息' : '完善基础信息'}}</view>
+    <view class="subtitle">
+      {{mode === 'edit' ? '修改姓名、学校、学院、专业或班级后，需要等待指导员重新确认。' : '资料用于认证确认、活动签到和会员权益核销。'}}
+    </view>
   </view>
 
   <view class="card form-card">

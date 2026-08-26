@@ -1,5 +1,6 @@
 const {
   getCampusOptions,
+  getSubmittedProfile,
   requestSmsPhone,
   submitProfile,
   verifySmsPhone,
@@ -14,6 +15,7 @@ const {
   buildCampusSelection,
   emptyCampus,
   fallbackLabels,
+  findCampusIndexesByIds,
   updateCampusSelection,
 } = require('../../utils/campus-selection')
 
@@ -62,24 +64,50 @@ Page({
     smsCode: '',
     smsCodeSent: false,
     smsPhone: '',
+    mode: 'create',
   },
 
-  onLoad() {
+  onLoad(options = {}) {
+    const mode = options.edit === '1' ? 'edit' : 'create'
+    this.setData({ mode })
     const draft = loadProfileDraft(wx)
-    if (draft) {
+    if (draft && mode !== 'edit') {
       this.setData(mergeDraft(this.data, draft))
     }
 
     getCampusOptions()
       .then((allCampus) => {
+        if (mode === 'edit') {
+          return getSubmittedProfile()
+            .then((data) => {
+              const profile = data.profile || {}
+              const indexes = findCampusIndexesByIds(allCampus, profile)
+              const selection = buildCampusSelection(allCampus, indexes)
+              const genderIndex = Math.max(
+                0,
+                genderOptions.findIndex((option) => option.value === profile.gender),
+              )
+              this.setData({
+                allCampus,
+                agreedToPolicies: true,
+                birthday: profile.birthday || '',
+                genderIndex,
+                phone: profile.phone || '',
+                phoneAuthMethod: 'wechat',
+                phoneVerificationToken: '',
+                phoneVerified: false,
+                realName: profile.realName || '',
+                smsPhone: profile.phone || '',
+                ...selection,
+              })
+            })
+        }
+
         const selection = buildCampusSelection(allCampus, this.data.indexes)
-        this.setData({
-          allCampus,
-          ...selection,
-        })
+        this.setData({ allCampus, ...selection })
       })
       .catch((error) => {
-        wx.showToast({ icon: 'none', title: error.message || '学校数据加载失败' })
+        wx.showToast({ icon: 'none', title: error.message || '资料加载失败' })
       })
   },
 

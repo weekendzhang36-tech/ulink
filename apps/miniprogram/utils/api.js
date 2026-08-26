@@ -167,6 +167,22 @@ function getStudentState() {
   })
 }
 
+function getSubmittedProfile() {
+  return withDemoFallback(request({ auth: true, path: '/profile' }), () => ({
+    profile: {
+      birthday: '2007-09-01',
+      classId: 'class_001',
+      collegeId: 'college_001',
+      gender: 'female',
+      majorId: 'major_001',
+      phone: '13800000001',
+      realName: '林一诺',
+      schoolId: 'school_001',
+      verificationStatus: 'pending',
+    },
+  }))
+}
+
 function getInstructorVerifications(status = 'pending') {
   const query = status ? `?status=${status}` : ''
 
@@ -375,6 +391,7 @@ module.exports = {
   getSessionToken,
   getServiceLinksByModule,
   getStudentState,
+  getSubmittedProfile,
   loginWithWechatCode,
   mockConfirmPayment,
   recordNotificationSubscription,

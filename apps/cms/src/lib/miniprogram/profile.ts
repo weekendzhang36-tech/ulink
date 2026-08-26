@@ -110,3 +110,39 @@ export async function submitStudentProfile({
     student,
   }
 }
+
+export async function getStudentProfileForEdit({
+  input,
+  now,
+  repository,
+  secret,
+}: {
+  input: {
+    sessionToken: string
+  }
+  now: Date
+  repository: MiniProgramRepository
+  secret: string
+}) {
+  const session = verifySessionToken({ now, secret, token: input.sessionToken })
+  const student = session.studentId
+    ? await repository.findStudentById(session.studentId)
+    : await repository.findStudentByOpenId(session.openId)
+  if (!student) {
+    throw new MiniProgramError('请先完成学生资料', 404)
+  }
+
+  return {
+    profile: {
+      birthday: student.birthday,
+      classId: student.classId,
+      collegeId: student.collegeId,
+      gender: student.gender,
+      majorId: student.majorId,
+      phone: student.phone,
+      realName: student.realName,
+      schoolId: student.schoolId,
+      verificationStatus: student.verificationStatus,
+    },
+  }
+}

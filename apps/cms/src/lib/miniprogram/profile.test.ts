@@ -3,7 +3,7 @@ import test from 'node:test'
 
 import { createPhoneVerificationToken } from './phone.ts'
 import { createSessionToken } from './session.ts'
-import { submitStudentProfile } from './profile.ts'
+import { getStudentProfileForEdit, submitStudentProfile } from './profile.ts'
 import { createMemoryRepository } from './testing/memoryRepository.ts'
 
 const secret = 'test-secret'
@@ -242,4 +242,31 @@ test('moves a needs-review student back to pending after resubmitting a complete
   })
 
   assert.equal(result.student.verificationStatus, 'pending')
+})
+
+test('returns submitted profile fields for the current student without WeChat internals', async () => {
+  const repository = createMemoryRepository()
+
+  const result = await getStudentProfileForEdit({
+    input: {
+      sessionToken: tokenFor('openid_001', 'student_001'),
+    },
+    now: new Date('2026-08-26T10:01:00.000Z'),
+    repository,
+    secret,
+  })
+
+  assert.deepEqual(result.profile, {
+    birthday: '2007-09-01',
+    classId: 'class_001',
+    collegeId: 'college_001',
+    gender: 'female',
+    majorId: 'major_001',
+    phone: '13800000001',
+    realName: '林一诺',
+    schoolId: 'school_001',
+    verificationStatus: 'pending',
+  })
+  assert.equal('wechatOpenId' in result.profile, false)
+  assert.equal('wechatUnionId' in result.profile, false)
 })

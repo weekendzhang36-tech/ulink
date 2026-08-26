@@ -111,9 +111,33 @@ function updateCampusSelection(rawCampus, currentIndexes, key, value) {
   return buildCampusSelection(rawCampus, indexes)
 }
 
+function indexById(list, id) {
+  const index = list.findIndex((item) => item && item.id === id)
+
+  return index >= 0 ? index : 0
+}
+
+function findCampusIndexesByIds(rawCampus, ids = {}) {
+  const source = normalizeCampus(rawCampus)
+  const school = source.schools.find((item) => item && item.id === ids.schoolId)
+  const colleges = filterByParent(source.colleges, school, 'schoolId')
+  const college = colleges.find((item) => item && item.id === ids.collegeId)
+  const majors = filterByParent(source.majors, college, 'collegeId')
+  const major = majors.find((item) => item && item.id === ids.majorId)
+  const classes = filterByParent(source.classes, major, 'majorId')
+
+  return {
+    class: indexById(classes, ids.classId),
+    college: indexById(colleges, ids.collegeId),
+    major: indexById(majors, ids.majorId),
+    school: indexById(source.schools, ids.schoolId),
+  }
+}
+
 module.exports = {
   buildCampusSelection,
   emptyCampus,
   fallbackLabels,
+  findCampusIndexesByIds,
   updateCampusSelection,
 }

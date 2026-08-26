@@ -6,6 +6,9 @@
     <button class="primary-button compact" loading="{{subscribing}}" bindtap="subscribeVerificationResult">
       接收认证结果通知
     </button>
+    <button class="secondary-button compact" bindtap="editProfile">
+      修改资料
+    </button>
   </view>
 
   <view class="card">
