@@ -2,10 +2,7 @@ import { MiniProgramError } from './errors.ts'
 import { formatMembershipState } from './membership.ts'
 import { verifySessionToken } from './session.ts'
 import type { MiniProgramRepository, StudentRecord } from './types.ts'
-
-function verificationStatusText(student: StudentRecord) {
-  return student.verificationStatus === 'needs_review' ? '需确认' : student.verificationStatus
-}
+import { formatVerificationStatusForDisplay } from './verificationStatusDisplay.ts'
 
 function verificationMessage(student: StudentRecord) {
   if (student.verificationStatus === 'verified') {
@@ -55,7 +52,7 @@ export async function getProfileStatus({
           message: verificationMessage(student),
           name: student.realName,
           school: student.schoolId,
-          verificationStatus: verificationStatusText(student),
+          verificationStatus: formatVerificationStatusForDisplay(student.verificationStatus),
         }
       : null,
   }

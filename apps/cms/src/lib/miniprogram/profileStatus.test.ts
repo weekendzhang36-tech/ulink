@@ -41,7 +41,7 @@ test('returns only Mini Program display fields from profile status', async () =>
   assert.equal(response.profileCompleted, true)
   assert.equal(response.membership, undefined)
   assert.equal(student.name, '林一诺')
-  assert.equal(student.verificationStatus, 'pending')
+  assert.equal(student.verificationStatus, '待认证')
   assert.equal(student.wechatOpenId, undefined)
   assert.equal(student.wechatUnionId, undefined)
   assert.equal(student.id, undefined)

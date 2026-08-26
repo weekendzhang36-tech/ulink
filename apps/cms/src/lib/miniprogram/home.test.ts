@@ -76,6 +76,7 @@ test('returns home data for a student with completed profile', async () => {
   })
 
   assert.equal(result.studentState?.name, '林一诺')
+  assert.equal(result.studentState?.verificationStatus, '待认证')
   assert.equal(result.growthPlan.title, '友邻成长计划')
   assert.deepEqual(
     result.modules.map((module) => module.key),
