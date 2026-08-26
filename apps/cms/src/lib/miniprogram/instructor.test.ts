@@ -139,6 +139,114 @@ test('updates assigned students to verified in a batch review action', async () 
   assert.equal(repository.students.get('student_001')?.verificationStatus, 'verified')
 })
 
+test('sends a subscribed student their verification review result', async () => {
+  const repository = createMemoryRepository({
+    seedInstructor: true,
+    seedInstructorDataUseCommitment: true,
+    seedStudents: true,
+  })
+  await repository.createNotificationSubscription({
+    purpose: 'student_verification_result',
+    status: 'active',
+    studentId: 'student_001',
+    subscribedAt: '2026-08-26T09:30:00.000Z',
+    templateId: 'template_student_result',
+  })
+  const deliveries: unknown[] = []
+
+  const result = await reviewInstructorStudents({
+    input: {
+      action: 'verified',
+      sessionToken: instructorToken(),
+      studentIds: ['student_001'],
+    },
+    notificationGateway: {
+      async sendStudentVerificationResult(input) {
+        deliveries.push(input)
+      },
+    },
+    now: new Date('2026-08-26T10:01:00.000Z'),
+    repository,
+    secret,
+  })
+
+  assert.deepEqual(deliveries, [
+    {
+      reviewedAt: '2026-08-26T10:01:00.000Z',
+      status: 'verified',
+      student: {
+        birthday: '2007-09-01',
+        classId: 'class_001',
+        collegeId: 'college_001',
+        gender: 'female',
+        id: 'student_001',
+        majorId: 'major_001',
+        phone: '13800000001',
+        realName: '林一诺',
+        schoolId: 'school_001',
+        submittedAt: '2026-08-26T09:00:00.000Z',
+        verificationStatus: 'verified',
+        wechatOpenId: 'openid_001',
+      },
+      subscription: {
+        id: 'notification_subscription_001',
+        purpose: 'student_verification_result',
+        status: 'active',
+        studentId: 'student_001',
+        subscribedAt: '2026-08-26T09:30:00.000Z',
+        templateId: 'template_student_result',
+      },
+    },
+  ])
+  assert.deepEqual(result.notificationResults, [
+    {
+      studentId: 'student_001',
+      status: 'sent',
+    },
+  ])
+})
+
+test('keeps verification review when student notification delivery fails', async () => {
+  const repository = createMemoryRepository({
+    seedInstructor: true,
+    seedInstructorDataUseCommitment: true,
+    seedStudents: true,
+  })
+  await repository.createNotificationSubscription({
+    purpose: 'student_verification_result',
+    status: 'active',
+    studentId: 'student_001',
+    subscribedAt: '2026-08-26T09:30:00.000Z',
+    templateId: 'template_student_result',
+  })
+
+  const result = await reviewInstructorStudents({
+    input: {
+      action: 'needs_review',
+      sessionToken: instructorToken(),
+      studentIds: ['student_001'],
+    },
+    notificationGateway: {
+      async sendStudentVerificationResult() {
+        throw new Error('wechat subscribe message failed')
+      },
+    },
+    now: new Date('2026-08-26T10:01:00.000Z'),
+    repository,
+    secret,
+  })
+
+  assert.equal(repository.students.get('student_001')?.verificationStatus, 'needs_review')
+  assert.equal(repository.studentVerificationLogs.size, 1)
+  assert.deepEqual(result.notificationResults, [
+    {
+      errorMessage: 'wechat subscribe message failed',
+      status: 'failed',
+      studentId: 'student_001',
+    },
+  ])
+})
+
 test('records verification logs when an instructor reviews assigned students', async () => {
   const repository = createMemoryRepository({
     seedInstructor: true,

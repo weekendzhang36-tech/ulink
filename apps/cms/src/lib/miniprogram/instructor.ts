@@ -1,6 +1,6 @@
 import { MiniProgramError } from './errors.ts'
 import { verifySessionToken } from './session.ts'
-import type { MiniProgramRepository, VerificationStatus } from './types.ts'
+import type { MiniProgramRepository, NotificationGateway, VerificationStatus } from './types.ts'
 
 const instructorDataUseCommitmentVersion = 'v1'
 
@@ -104,6 +104,7 @@ export async function confirmInstructorDataUseCommitment({
 export async function reviewInstructorStudents({
   input,
   now,
+  notificationGateway,
   repository,
   secret,
 }: {
@@ -113,6 +114,7 @@ export async function reviewInstructorStudents({
     studentIds: string[]
   }
   now: Date
+  notificationGateway?: NotificationGateway
   repository: MiniProgramRepository
   secret: string
 }) {
@@ -127,6 +129,12 @@ export async function reviewInstructorStudents({
     sessionToken: input.sessionToken,
   })
   const updatedStudents = []
+  const notificationResults: Array<{
+    errorMessage?: string
+    reason?: string
+    status: 'failed' | 'sent' | 'skipped'
+    studentId: string
+  }> = []
 
   for (const studentId of input.studentIds) {
     const student = await repository.findStudentById(studentId)
@@ -142,8 +150,37 @@ export async function reviewInstructorStudents({
       studentId: student.id,
       targetStatus: input.action,
     })
+    const subscription = await repository.findNotificationSubscriptionByStudentAndPurpose({
+      purpose: 'student_verification_result',
+      studentId: student.id,
+    })
+    if (subscription?.status === 'active') {
+      if (!notificationGateway) {
+        notificationResults.push({
+          reason: 'notification_gateway_not_configured',
+          status: 'skipped',
+          studentId: student.id,
+        })
+      } else {
+        try {
+          await notificationGateway.sendStudentVerificationResult({
+            reviewedAt: now.toISOString(),
+            status: input.action,
+            student: updatedStudent,
+            subscription,
+          })
+          notificationResults.push({ status: 'sent', studentId: student.id })
+        } catch (error) {
+          notificationResults.push({
+            errorMessage: error instanceof Error ? error.message : '订阅消息发送失败',
+            status: 'failed',
+            studentId: student.id,
+          })
+        }
+      }
+    }
     updatedStudents.push(updatedStudent)
   }
 
-  return { updatedStudents }
+  return { notificationResults, updatedStudents }
 }

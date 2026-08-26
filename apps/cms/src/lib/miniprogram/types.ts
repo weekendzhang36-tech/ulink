@@ -183,6 +183,15 @@ export interface SmsGateway {
   sendCode(input: { code: string; phone: string }): Promise<void>
 }
 
+export interface NotificationGateway {
+  sendStudentVerificationResult(input: {
+    reviewedAt: string
+    status: Extract<VerificationStatus, 'needs_review' | 'verified'>
+    student: StudentRecord
+    subscription: NotificationSubscriptionRecord
+  }): Promise<void>
+}
+
 export interface MiniProgramRepository {
   createContentReservation(input: Omit<ContentReservationRecord, 'id'>): Promise<ContentReservationRecord>
   createMembership(input: Omit<MembershipRecord, 'id'>): Promise<MembershipRecord>
