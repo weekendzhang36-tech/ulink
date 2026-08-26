@@ -9,11 +9,17 @@ export async function POST(request: Request) {
     }
     const body = await readJson<{ orderNo: string }>(request)
     const now = new Date()
+    const paidAt = now.toISOString()
     const result = await confirmMembershipPayment({
       input: {
         eventKey: `mock:${body.orderNo}`,
         orderNo: body.orderNo,
-        paidAt: now.toISOString(),
+        paidAt,
+        rawPayload: {
+          orderNo: body.orderNo,
+          paidAt,
+          source: 'mock-payment-callback',
+        },
         transactionId: `mock_tx_${body.orderNo}`,
       },
       now,

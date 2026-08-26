@@ -296,6 +296,7 @@ export async function confirmMembershipPayment({
     eventKey: string
     orderNo: string
     paidAt: string
+    rawPayload?: unknown
     transactionId?: string
   }
   now: Date
@@ -331,6 +332,7 @@ export async function confirmMembershipPayment({
     eventKey: input.eventKey,
     orderNo: input.orderNo,
     processedAt: now.toISOString(),
+    rawPayload: input.rawPayload,
     status: 'paid',
     transactionId: input.transactionId,
   })

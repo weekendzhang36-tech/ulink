@@ -114,6 +114,29 @@ test('activates membership from a verified WeChat Pay SUCCESS callback', async (
   assert.equal(result.paymentEvent.eventKey, 'wechat:wx_tx_callback_001')
   assert.equal(result.membership.status, 'active')
   assert.equal(repository.paymentEvents.size, 1)
+  assert.deepEqual(result.paymentEvent.rawPayload, {
+    body: JSON.parse(callback.body),
+    decryptedResource: {
+      amount: {
+        currency: 'CNY',
+        payer_currency: 'CNY',
+        payer_total: 500,
+        total: 500,
+      },
+      appid: 'wx_app_001',
+      mchid: 'mch_001',
+      out_trade_no: 'order_paid_once',
+      payer: {
+        openid: 'openid_001',
+      },
+      success_time: '2026-08-26T10:05:00+08:00',
+      trade_state: 'SUCCESS',
+      trade_type: 'JSAPI',
+      transaction_id: 'wx_tx_callback_001',
+    },
+    headers: callback.headers,
+    rawBody: callback.body,
+  })
 })
 
 test('rejects WeChat Pay SUCCESS callback when paid amount does not match the order', async () => {

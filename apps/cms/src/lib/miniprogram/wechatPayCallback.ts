@@ -176,6 +176,12 @@ export async function handleWechatPayCallback({
       eventKey: `wechat:${payment.transactionId}`,
       orderNo: payment.orderNo,
       paidAt: payment.paidAt,
+      rawPayload: {
+        body,
+        decryptedResource: transaction,
+        headers,
+        rawBody,
+      },
       transactionId: payment.transactionId,
     },
     now,

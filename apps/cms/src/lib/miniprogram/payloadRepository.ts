@@ -110,6 +110,7 @@ function toPaymentEvent(doc: Record<string, unknown>): PaymentEventRecord {
         ? String((doc.order as { orderNo: unknown }).orderNo)
         : idOf(doc.order),
     processedAt: String(doc.processedAt || ''),
+    rawPayload: doc.rawPayload,
     status: doc.status === 'failed' ? 'failed' : 'paid',
     transactionId: optionalString(doc.transactionId),
   }
@@ -295,6 +296,7 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
             eventKey: input.eventKey,
             order: order.id,
             processedAt: input.processedAt,
+            rawPayload: input.rawPayload,
             status: input.status,
             transactionId: input.transactionId,
           },

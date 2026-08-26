@@ -85,12 +85,27 @@ test('marks membership order failed when prepay request fails', async () => {
 
 test('activates membership once for repeated callbacks from the same transaction', async () => {
   const repository = createMemoryRepository()
+  const rawPayload = {
+    body: {
+      id: 'callback_001',
+      resource: {
+        algorithm: 'AEAD_AES_256_GCM',
+        original_type: 'transaction',
+      },
+    },
+    decryptedResource: {
+      out_trade_no: 'order_paid_once',
+      trade_state: 'SUCCESS',
+      transaction_id: 'wx_tx_001',
+    },
+  }
 
   const first = await confirmMembershipPayment({
     input: {
       eventKey: 'wx_event_001',
       orderNo: 'order_paid_once',
       paidAt: '2026-08-26T10:03:00.000Z',
+      rawPayload,
       transactionId: 'wx_tx_001',
     },
     now: new Date('2026-08-26T10:03:00.000Z'),
@@ -112,6 +127,8 @@ test('activates membership once for repeated callbacks from the same transaction
   assert.equal(second.membership.expiresAt, '2027-02-25T10:03:00.000Z')
   assert.equal(repository.paymentEvents.size, 1)
   assert.equal(repository.memberships.size, 1)
+  assert.deepEqual(first.paymentEvent.rawPayload, rawPayload)
+  assert.deepEqual(repository.paymentEvents.get('wx_event_001')?.rawPayload, rawPayload)
 })
 
 test('formats active and expired membership state for Mini Program display', () => {

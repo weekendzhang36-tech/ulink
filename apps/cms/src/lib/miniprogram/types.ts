@@ -94,6 +94,7 @@ export interface PaymentEventRecord {
   id: string
   orderNo: string
   processedAt: string
+  rawPayload?: unknown
   status: PaymentStatus
   transactionId?: string
 }
