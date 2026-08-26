@@ -70,6 +70,11 @@ const studentState = {
   name: '林一诺',
   school: '广东金融学院',
   className: '金融学 2026-1 班',
+  membershipState: {
+    expiresText: '加入后可查看有效期',
+    isActive: false,
+    statusText: '未开通',
+  },
   verificationStatus: '待认证',
   message: '资料已提交，等待指导员确认。',
 }

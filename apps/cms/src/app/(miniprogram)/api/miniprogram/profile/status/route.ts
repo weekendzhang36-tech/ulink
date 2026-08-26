@@ -1,3 +1,4 @@
+import { formatMembershipState } from '@/lib/miniprogram/membership.ts'
 import {
   getMiniProgramRepository,
   getSessionFromRequest,
@@ -7,6 +8,7 @@ import {
 
 export async function GET(request: Request) {
   return handleMiniProgramRoute(async () => {
+    const now = new Date()
     const session = getSessionFromRequest(request)
     const repository = await getMiniProgramRepository()
     const student = session.studentId
@@ -23,6 +25,7 @@ export async function GET(request: Request) {
         classCount: instructorClassIds.length,
       },
       membership,
+      membershipState: formatMembershipState({ membership, now }),
       profileCompleted: Boolean(student),
       student,
     })

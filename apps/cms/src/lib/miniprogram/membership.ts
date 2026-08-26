@@ -1,6 +1,6 @@
 import { MiniProgramError } from './errors.ts'
 import { verifySessionToken } from './session.ts'
-import type { MiniProgramRepository, PaymentGateway } from './types.ts'
+import type { MembershipRecord, MiniProgramRepository, PaymentGateway } from './types.ts'
 
 function formatOrderNo(now: Date, suffix: string) {
   const y = now.getUTCFullYear()
@@ -18,6 +18,39 @@ function addDays(date: Date, days: number) {
   next.setUTCDate(next.getUTCDate() + days)
 
   return next
+}
+
+function dateText(value: string) {
+  return value.slice(0, 10)
+}
+
+export function formatMembershipState({
+  membership,
+  now,
+}: {
+  membership?: MembershipRecord
+  now: Date
+}) {
+  if (!membership) {
+    return {
+      expiresAt: null,
+      expiresText: '加入后可查看有效期',
+      isActive: false,
+      statusText: '未开通',
+    }
+  }
+
+  const expiresAt = Date.parse(membership.expiresAt)
+  const isActive =
+    membership.status === 'active' && Number.isFinite(expiresAt) && expiresAt > now.getTime()
+  const expiresDate = dateText(membership.expiresAt)
+
+  return {
+    expiresAt: membership.expiresAt,
+    expiresText: isActive ? `有效期至 ${expiresDate}` : `已于 ${expiresDate} 到期`,
+    isActive,
+    statusText: isActive ? '生效中' : '已过期',
+  }
 }
 
 export async function createMembershipOrder({

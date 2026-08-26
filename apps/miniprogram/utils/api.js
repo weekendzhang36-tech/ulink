@@ -112,13 +112,20 @@ function getServiceLinksByModule(moduleKey) {
 
 function getStudentState() {
   return withDemoFallback(request({ auth: true, path: '/profile/status' }), () => ({
+    membershipState: mockData.studentState.membershipState,
     student: mockData.studentState,
   })).then((data) => {
     const student = data.student || {}
+    const membershipState = data.membershipState || student.membershipState || {}
 
     return {
       canManageStudents: Boolean(data.instructor && data.instructor.canManageStudents),
       className: student.className || student.classId || '',
+      membershipState: {
+        expiresText: membershipState.expiresText || '加入后可查看有效期',
+        isActive: Boolean(membershipState.isActive),
+        statusText: membershipState.statusText || '未开通',
+      },
       message:
         student.message ||
         (student.verificationStatus === 'verified'

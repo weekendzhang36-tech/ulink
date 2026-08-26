@@ -23,6 +23,63 @@
   font-weight: 900;
 }
 
+.membership-card {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.membership-title {
+  color: #1d1d1f;
+  font-size: 34rpx;
+  font-weight: 900;
+  margin-bottom: 10rpx;
+}
+
+.membership-desc {
+  color: #6e6e73;
+  font-size: 26rpx;
+}
+
+.membership-side {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  gap: 14rpx;
+  margin-left: 24rpx;
+}
+
+.membership-status {
+  background: #f2f2f7;
+  border-radius: 999rpx;
+  color: #6e6e73;
+  font-size: 24rpx;
+  font-weight: 800;
+  line-height: 44rpx;
+  padding: 0 18rpx;
+  white-space: nowrap;
+}
+
+.membership-status.is-active {
+  background: #e8f1ff;
+  color: #007aff;
+}
+
+.membership-button {
+  background: #007aff;
+  border-radius: 999rpx;
+  color: #ffffff;
+  font-size: 24rpx;
+  font-weight: 800;
+  line-height: 52rpx;
+  margin: 0;
+  padding: 0 22rpx;
+}
+
+.membership-button::after {
+  border: 0;
+}
+
 .list-row {
   min-height: 92rpx;
   display: flex;

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 
-import { createMembershipOrder, confirmMembershipPayment } from './membership.ts'
+import { createMembershipOrder, confirmMembershipPayment, formatMembershipState } from './membership.ts'
 import { createSessionToken } from './session.ts'
 import { createMemoryRepository } from './testing/memoryRepository.ts'
 
@@ -77,4 +77,44 @@ test('activates membership once for repeated callbacks from the same transaction
   assert.equal(second.membership.expiresAt, '2027-02-25T10:03:00.000Z')
   assert.equal(repository.paymentEvents.size, 1)
   assert.equal(repository.memberships.size, 1)
+})
+
+test('formats active and expired membership state for Mini Program display', () => {
+  const active = formatMembershipState({
+    membership: {
+      expiresAt: '2027-02-25T10:03:00.000Z',
+      growthPlanId: 'growth_plan_001',
+      id: 'membership_001',
+      sourceOrderNo: 'order_paid_once',
+      startedAt: '2026-08-26T10:03:00.000Z',
+      status: 'active',
+      studentId: 'student_001',
+    },
+    now: new Date('2026-08-27T10:00:00.000Z'),
+  })
+  const expired = formatMembershipState({
+    membership: {
+      expiresAt: '2026-08-25T10:03:00.000Z',
+      growthPlanId: 'growth_plan_001',
+      id: 'membership_002',
+      sourceOrderNo: 'order_expired_once',
+      startedAt: '2026-02-23T10:03:00.000Z',
+      status: 'active',
+      studentId: 'student_001',
+    },
+    now: new Date('2026-08-27T10:00:00.000Z'),
+  })
+
+  assert.deepEqual(active, {
+    expiresAt: '2027-02-25T10:03:00.000Z',
+    expiresText: '有效期至 2027-02-25',
+    isActive: true,
+    statusText: '生效中',
+  })
+  assert.deepEqual(expired, {
+    expiresAt: '2026-08-25T10:03:00.000Z',
+    expiresText: '已于 2026-08-25 到期',
+    isActive: false,
+    statusText: '已过期',
+  })
 })

@@ -7,6 +7,21 @@
     </view>
   </view>
 
+  <view class="card membership-card">
+    <view>
+      <view class="membership-title">友邻成长计划</view>
+      <view class="membership-desc">{{state.membershipState.expiresText}}</view>
+    </view>
+    <view class="membership-side">
+      <text class="membership-status {{state.membershipState.isActive ? 'is-active' : ''}}">
+        {{state.membershipState.statusText}}
+      </text>
+      <button wx:if="{{!state.membershipState.isActive}}" class="membership-button" bindtap="openGrowthPlan">
+        去加入
+      </button>
+    </view>
+  </view>
+
   <view class="card list">
     <view class="list-row" bindtap="openVerification">
       <text>认证状态</text>

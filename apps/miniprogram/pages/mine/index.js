@@ -30,4 +30,8 @@ Page({
   openInstructorVerifications() {
     wx.navigateTo({ url: '/pages/instructor-verifications/index' })
   },
+
+  openGrowthPlan() {
+    wx.navigateTo({ url: '/pages/growth-plan/index' })
+  },
 })

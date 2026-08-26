@@ -1,4 +1,5 @@
 import { listPublishedContents } from '@/lib/miniprogram/content.ts'
+import { formatMembershipState } from '@/lib/miniprogram/membership.ts'
 import {
   getBearerToken,
   getMiniProgramPayload,
@@ -18,6 +19,7 @@ const modules = [
 
 export async function GET(request: Request) {
   return handleMiniProgramRoute(async () => {
+    const now = new Date()
     const payload = await getMiniProgramPayload()
     const repository = await getMiniProgramRepository()
     const growthPlans = await payload.find({
@@ -28,7 +30,7 @@ export async function GET(request: Request) {
     const articles = await listPublishedContents({ featuredOnly: true, payload })
     const token = getBearerToken(request)
     const session = token
-      ? verifySessionToken({ now: new Date(), secret: getServerSecret(), token })
+      ? verifySessionToken({ now, secret: getServerSecret(), token })
       : undefined
     const student = session?.studentId
       ? await repository.findStudentById(session.studentId)
@@ -45,6 +47,7 @@ export async function GET(request: Request) {
             status: 'pending',
           })
         : []
+    const membership = student ? await repository.findMembershipByStudentId(student.id) : undefined
 
     return ok({
       articles,
@@ -65,6 +68,7 @@ export async function GET(request: Request) {
                 : '资料已提交，等待指导员确认。',
             name: student.realName,
             school: student.schoolId,
+            membershipState: formatMembershipState({ membership, now }),
             verificationStatus:
               student.verificationStatus === 'needs_review' ? '需确认' : student.verificationStatus,
           }
