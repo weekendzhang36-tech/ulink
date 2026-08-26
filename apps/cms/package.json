@@ -8,7 +8,8 @@
     "start": "next start",
     "payload": "payload",
     "generate:types": "payload generate:types",
-    "test": "node --test src/lib/miniprogram/*.test.ts",
+    "import:campus": "node src/scripts/import-campus-data.ts",
+    "test": "node --test \"src/lib/**/*.test.ts\"",
     "typecheck": "tsc --noEmit",
     "lint": "tsc --noEmit"
   },

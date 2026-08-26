@@ -15,6 +15,7 @@
 - `docs/product.md`：MVP 产品范围、学生认证、指导员审核、会员与内容方向。
 - `docs/product-modules.md`：产品模块图口径，后续首页和内容入口以此为准。
 - `docs/architecture.md`：腾讯云自部署 + PayloadCMS + PostgreSQL + COS 的第一版架构方向。
+- `docs/campus-import.md`：学校、学院、专业、班级和指导员手机号批量导入说明。
 - `docs/development-workflow.md` / `docs/development-checklist.md`：开发原则的日常执行流程和提交前检查清单。
 
 已完成基础工程：
@@ -209,6 +210,10 @@
   - 支付确认服务现在会把微信支付回调审计包写入 `payment-events.rawPayload`，包括回调请求头、原始 body、解析后的 body 和解密后的交易对象。
   - PayloadCMS 仓储已同步创建和读取 `rawPayload` 字段，后台支付事件详情可用于后续排查订单号、金额、交易号和回调来源。
   - 本地模拟支付也会写入明确标记为 `mock-payment-callback` 的 payload，避免把开发模拟和真实微信回调混在一起。
+- 2026-08-26：补充校园数据导入准备。
+  - 新增校园数据 CSV/TSV 解析和校验，支持学校、城市、学院、专业、班级、入学年份和多个指导员手机号。
+  - 新增 `pnpm import:campus <csv-or-tsv-path>`，通过 Payload 本地 API upsert 学校、学院、专业和班级，已有班级会更新指导员手机号。
+  - 新增 `docs/campus-import.md` 和导入模板，方便上线前准备首批学校班级数据。
 
 ## 学生注册认证需求
 

@@ -118,12 +118,21 @@ http://localhost:3000/admin
 apps/miniprogram
 ```
 
+导入学校、学院、专业、班级和指导员手机号数据：
+
+```bash
+pnpm import:campus docs/templates/campus-import-template.csv
+```
+
+导入格式见 [docs/campus-import.md](./docs/campus-import.md)。生产导入前先确认 `DATABASE_URL` 指向正确持久化 PostgreSQL，并先做数据库备份。
+
 学生资料页会把未提交完成的表单草稿保存在小程序本地缓存中，便于中途退出后恢复。草稿只保存姓名、生日、性别、学校/学院/专业/班级选择、协议勾选和短信手机号；不会保存短信验证码、手机号验证 token 或“已验证”状态。提交成功后会清理本地草稿，服务端仍只保存完整提交后的学生资料。
 
 ## 常用命令
 
 ```bash
 pnpm dev:cms          # 启动 PayloadCMS 后台
+pnpm import:campus <csv-or-tsv-path>
 pnpm --filter @ulink/cms test
 pnpm typecheck       # 后台 TypeScript 检查
 pnpm lint            # 后台 lint
