@@ -96,6 +96,26 @@ const instructorVerifications = {
   ],
 }
 
+const orders = [
+  {
+    amountCents: 500,
+    amountText: '¥5.00',
+    createdAt: '2026-08-26T10:06:00.000Z',
+    orderNo: 'UL20260826100600ABC123',
+    paidAt: '2026-08-26T10:07:00.000Z',
+    status: 'paid',
+    statusText: '已支付',
+  },
+  {
+    amountCents: 500,
+    amountText: '¥5.00',
+    createdAt: '2026-08-26T10:22:00.000Z',
+    orderNo: 'UL20260826102200DEF456',
+    status: 'pending',
+    statusText: '待支付',
+  },
+]
+
 const campus = {
   classes: [{ id: 'class_001', name: '金融学 2026-1 班' }],
   colleges: [{ id: 'college_001', name: '金融学院' }],
@@ -109,6 +129,7 @@ module.exports = {
   growthPlan,
   instructorVerifications,
   modules,
+  orders,
   serviceLinks,
   studentState,
 }

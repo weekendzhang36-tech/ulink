@@ -34,4 +34,8 @@ Page({
   openGrowthPlan() {
     wx.navigateTo({ url: '/pages/growth-plan/index' })
   },
+
+  openOrders() {
+    wx.navigateTo({ url: '/pages/orders/index' })
+  },
 })

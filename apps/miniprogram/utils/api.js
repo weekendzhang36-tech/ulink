@@ -275,6 +275,12 @@ function getOrderStatus(orderNo) {
   })
 }
 
+function getMembershipOrders() {
+  return withDemoFallback(request({ auth: true, path: '/orders' }), () => ({
+    orders: mockData.orders || [],
+  }))
+}
+
 function mockConfirmPayment(orderNo) {
   return request({
     data: { orderNo },
@@ -291,6 +297,7 @@ module.exports = {
   getGrowthPlan,
   getHomeData,
   getInstructorVerifications,
+  getMembershipOrders,
   getOrderStatus,
   getSessionToken,
   getServiceLinksByModule,

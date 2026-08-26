@@ -6,6 +6,7 @@ import {
   confirmMembershipPayment,
   formatMembershipState,
   getMembershipOrderStatus,
+  listMembershipOrdersForStudent,
 } from './membership.ts'
 import { createSessionToken } from './session.ts'
 import { createMemoryRepository } from './testing/memoryRepository.ts'
@@ -151,4 +152,46 @@ test('returns order status only for the student who owns the order', async () =>
       }),
     /订单不存在/,
   )
+})
+
+test('lists only membership orders for the current student', async () => {
+  const repository = createMemoryRepository()
+  await repository.createOrder({
+    amountCents: 500,
+    createdAt: '2026-08-26T10:06:00.000Z',
+    growthPlanId: 'growth_plan_001',
+    orderNo: 'order_student_own_new',
+    paidAt: '2026-08-26T10:07:00.000Z',
+    status: 'paid',
+    studentId: 'student_001',
+  })
+  await repository.createOrder({
+    amountCents: 500,
+    createdAt: '2026-08-26T10:08:00.000Z',
+    growthPlanId: 'growth_plan_001',
+    orderNo: 'order_other_student',
+    status: 'paid',
+    studentId: 'student_other_class',
+  })
+
+  const result = await listMembershipOrdersForStudent({
+    input: { sessionToken: tokenFor('student_001') },
+    now: new Date('2026-08-26T10:10:00.000Z'),
+    repository,
+    secret,
+  })
+
+  assert.deepEqual(
+    result.orders.map((order) => order.orderNo),
+    ['order_student_own_new', 'order_paid_once'],
+  )
+  assert.deepEqual(result.orders[0], {
+    amountCents: 500,
+    amountText: '¥5.00',
+    createdAt: '2026-08-26T10:06:00.000Z',
+    orderNo: 'order_student_own_new',
+    paidAt: '2026-08-26T10:07:00.000Z',
+    status: 'paid',
+    statusText: '已支付',
+  })
 })

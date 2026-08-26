@@ -6,6 +6,7 @@
     "pages/home/index",
     "pages/content-list/index",
     "pages/growth-plan/index",
+    "pages/orders/index",
     "pages/content-detail/index",
     "pages/verification/index",
     "pages/mine/index"

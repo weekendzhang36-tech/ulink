@@ -1,0 +1,90 @@
+.header-card {
+  margin-top: 0;
+}
+
+.empty-card {
+  color: #6e6e73;
+  font-size: 30rpx;
+  line-height: 1.5;
+}
+
+.empty-title {
+  color: #1d1d1f;
+  font-size: 34rpx;
+  font-weight: 900;
+  margin-bottom: 10rpx;
+}
+
+.order-list {
+  padding-bottom: 24rpx;
+}
+
+.order-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.order-head {
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+  gap: 20rpx;
+  padding: 30rpx;
+}
+
+.order-label {
+  color: #1d1d1f;
+  font-size: 32rpx;
+  font-weight: 900;
+  margin-bottom: 8rpx;
+}
+
+.order-no {
+  color: #6e6e73;
+  font-size: 24rpx;
+  line-height: 1.35;
+  word-break: break-all;
+}
+
+.status {
+  border-radius: 999rpx;
+  flex-shrink: 0;
+  font-size: 24rpx;
+  font-weight: 800;
+  line-height: 44rpx;
+  padding: 0 18rpx;
+}
+
+.status-pending {
+  background: #fff3d8;
+  color: #b46b00;
+}
+
+.status-paid {
+  background: #e8f1ff;
+  color: #007aff;
+}
+
+.status-cancelled,
+.status-closed,
+.status-failed {
+  background: #f2f2f7;
+  color: #6e6e73;
+}
+
+.amount-row,
+.info-row {
+  align-items: center;
+  border-top: 1rpx solid rgba(60, 60, 67, 0.16);
+  display: flex;
+  font-size: 30rpx;
+  justify-content: space-between;
+  min-height: 88rpx;
+  padding: 0 30rpx;
+}
+
+.amount-row {
+  color: #1d1d1f;
+  font-size: 34rpx;
+  font-weight: 900;
+}

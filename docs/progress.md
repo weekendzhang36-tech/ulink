@@ -117,6 +117,10 @@
   - 新增 `docs/development-workflow.md`，把真实性、产品建模、持久化、测试、调试、API 合同和完成定义整理成日常开发清单。
   - 根目录新增 `verify:cms`、`verify:miniprogram` 和小程序 JS/JSON 检查脚本，`pnpm verify` 现在会同时检查后台和小程序基础语法。
   - `apps/miniprogram/README.md` 已更新为真实 API + 显式 demo fallback 的口径，避免继续把小程序描述成纯 mock 骨架。
+- 2026-08-26：补充会员订单列表。
+  - 后台新增学生自己的会员订单列表服务和 `GET /api/miniprogram/orders`，按当前登录学生过滤订单，避免订单串号或越权查看。
+  - 订单列表返回订单号、金额、创建时间、支付时间、状态和小程序展示文案，不暴露学生 ID、成长计划 ID 等内部关系字段。
+  - 小程序“我的”页新增“会员订单”入口，列表页展示真实订单支付状态；无订单时展示空状态，只有显式 demo mode 才使用演示订单。
 
 ## 学生注册认证需求
 

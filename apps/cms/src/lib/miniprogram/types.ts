@@ -153,6 +153,7 @@ export interface MiniProgramRepository {
   findActiveGrowthPlanById(id: string): Promise<GrowthPlanRecord | undefined>
   findMembershipByStudentId(studentId: string): Promise<MembershipRecord | undefined>
   findOrderByOrderNo(orderNo: string): Promise<OrderRecord | undefined>
+  findOrdersByStudentId(studentId: string): Promise<OrderRecord[]>
   findPaymentEventByKey(eventKey: string): Promise<PaymentEventRecord | undefined>
   findLatestSmsVerificationChallengeByPhone(
     phone: string,

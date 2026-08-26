@@ -266,6 +266,17 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
 
       return doc ? toOrder(doc) : undefined
     },
+    async findOrdersByStudentId(studentId) {
+      const result = await payload.find({
+        collection: 'orders',
+        depth: 1,
+        limit: 100,
+        sort: '-createdAt',
+        where: { student: { equals: studentId } },
+      })
+
+      return result.docs.map(toOrder)
+    },
     async findPaymentEventByKey(eventKey) {
       const doc = await first(payload, 'payment-events', { eventKey: { equals: eventKey } }, 1)
 

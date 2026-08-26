@@ -31,6 +31,10 @@
       <text>学生认证管理</text>
       <text class="muted">›</text>
     </view>
+    <view class="list-row" bindtap="openOrders">
+      <text>会员订单</text>
+      <text class="muted">›</text>
+    </view>
     <view class="list-row">
       <text>协议与隐私</text>
       <text class="muted">›</text>

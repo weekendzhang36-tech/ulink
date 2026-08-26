@@ -158,6 +158,11 @@ export function createMemoryRepository(
     async findOrderByOrderNo(orderNo) {
       return orders.get(orderNo)
     },
+    async findOrdersByStudentId(studentId) {
+      return [...orders.values()]
+        .filter((order) => order.studentId === studentId)
+        .sort((left, right) => right.createdAt.localeCompare(left.createdAt))
+    },
     async findPaymentEventByKey(eventKey) {
       return paymentEvents.get(eventKey)
     },

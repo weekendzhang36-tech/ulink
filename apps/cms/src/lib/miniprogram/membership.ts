@@ -1,6 +1,12 @@
 import { MiniProgramError } from './errors.ts'
 import { verifySessionToken } from './session.ts'
-import type { MembershipRecord, MiniProgramRepository, PaymentGateway } from './types.ts'
+import type {
+  MembershipRecord,
+  MiniProgramRepository,
+  OrderRecord,
+  OrderStatus,
+  PaymentGateway,
+} from './types.ts'
 
 function formatOrderNo(now: Date, suffix: string) {
   const y = now.getUTCFullYear()
@@ -22,6 +28,60 @@ function addDays(date: Date, days: number) {
 
 function dateText(value: string) {
   return value.slice(0, 10)
+}
+
+function formatAmountText(amountCents: number) {
+  return `¥${(amountCents / 100).toFixed(2)}`
+}
+
+function formatOrderStatusText(status: OrderStatus) {
+  switch (status) {
+    case 'paid':
+      return '已支付'
+    case 'cancelled':
+      return '已取消'
+    case 'closed':
+      return '已关闭'
+    case 'failed':
+      return '支付失败'
+    case 'pending':
+    default:
+      return '待支付'
+  }
+}
+
+function formatOrderSummary(order: OrderRecord) {
+  return {
+    amountCents: order.amountCents,
+    amountText: formatAmountText(order.amountCents),
+    createdAt: order.createdAt,
+    orderNo: order.orderNo,
+    paidAt: order.paidAt,
+    status: order.status,
+    statusText: formatOrderStatusText(order.status),
+  }
+}
+
+async function findStudentFromSession({
+  now,
+  repository,
+  secret,
+  sessionToken,
+}: {
+  now: Date
+  repository: MiniProgramRepository
+  secret: string
+  sessionToken: string
+}) {
+  const session = verifySessionToken({ now, secret, token: sessionToken })
+  const student = session.studentId
+    ? await repository.findStudentById(session.studentId)
+    : await repository.findStudentByOpenId(session.openId)
+  if (!student) {
+    throw new MiniProgramError('请先完成学生资料')
+  }
+
+  return student
 }
 
 export function formatMembershipState({
@@ -71,13 +131,12 @@ export async function createMembershipOrder({
   repository: MiniProgramRepository
   secret: string
 }) {
-  const session = verifySessionToken({ now, secret, token: input.sessionToken })
-  const student = session.studentId
-    ? await repository.findStudentById(session.studentId)
-    : await repository.findStudentByOpenId(session.openId)
-  if (!student) {
-    throw new MiniProgramError('请先完成学生资料')
-  }
+  const student = await findStudentFromSession({
+    now,
+    repository,
+    secret,
+    sessionToken: input.sessionToken,
+  })
 
   const growthPlan = await repository.findActiveGrowthPlanById(input.growthPlanId)
   if (!growthPlan || !growthPlan.isActive) {
@@ -117,13 +176,12 @@ export async function getMembershipOrderStatus({
   repository: MiniProgramRepository
   secret: string
 }) {
-  const session = verifySessionToken({ now, secret, token: input.sessionToken })
-  const student = session.studentId
-    ? await repository.findStudentById(session.studentId)
-    : await repository.findStudentByOpenId(session.openId)
-  if (!student) {
-    throw new MiniProgramError('请先完成学生资料')
-  }
+  const student = await findStudentFromSession({
+    now,
+    repository,
+    secret,
+    sessionToken: input.sessionToken,
+  })
 
   const order = await repository.findOrderByOrderNo(input.orderNo)
   if (!order || order.studentId !== student.id) {
@@ -133,6 +191,30 @@ export async function getMembershipOrderStatus({
   const membership = await repository.findMembershipByStudentId(student.id)
 
   return { membership, order }
+}
+
+export async function listMembershipOrdersForStudent({
+  input,
+  now,
+  repository,
+  secret,
+}: {
+  input: {
+    sessionToken: string
+  }
+  now: Date
+  repository: MiniProgramRepository
+  secret: string
+}) {
+  const student = await findStudentFromSession({
+    now,
+    repository,
+    secret,
+    sessionToken: input.sessionToken,
+  })
+  const orders = await repository.findOrdersByStudentId(student.id)
+
+  return { orders: orders.map(formatOrderSummary) }
 }
 
 export async function confirmMembershipPayment({
