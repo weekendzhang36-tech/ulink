@@ -1,4 +1,5 @@
 const { getArticleById, getSessionToken, reserveContent } = require('../../utils/api')
+const { handleProfileGuardError } = require('../../utils/profile-guard')
 
 Page({
   data: {
@@ -12,7 +13,7 @@ Page({
         this.setData({ article })
       })
       .catch((error) => {
-        wx.showToast({ icon: 'none', title: error.message || '内容加载失败' })
+        handleProfileGuardError(error, '内容加载失败')
       })
   },
 
@@ -46,7 +47,7 @@ Page({
           wx.showToast({ icon: 'success', title: result.alreadyReserved ? '已预约' : '预约成功' })
         })
         .catch((error) => {
-          wx.showToast({ icon: 'none', title: error.message || '预约失败' })
+          handleProfileGuardError(error, '预约失败')
         })
         .finally(() => {
           this.setData({ actionLoading: false })

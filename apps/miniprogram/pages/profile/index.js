@@ -18,6 +18,7 @@ const {
   findCampusIndexesByIds,
   updateCampusSelection,
 } = require('../../utils/campus-selection')
+const { handleProfileGuardError } = require('../../utils/profile-guard')
 
 const genderOptions = [
   { label: '男', value: 'male' },
@@ -107,7 +108,7 @@ Page({
         this.setData({ allCampus, ...selection })
       })
       .catch((error) => {
-        wx.showToast({ icon: 'none', title: error.message || '资料加载失败' })
+        handleProfileGuardError(error, '资料加载失败')
       })
   },
 
@@ -175,7 +176,7 @@ Page({
         wx.showToast({ title: '手机号已授权' })
       })
       .catch((error) => {
-        wx.showToast({ icon: 'none', title: error.message || '手机号授权失败' })
+        handleProfileGuardError(error, '手机号授权失败')
       })
       .finally(() => {
         this.setData({ loading: false })
@@ -197,7 +198,7 @@ Page({
         wx.showToast({ title: '验证码已发送' })
       })
       .catch((error) => {
-        wx.showToast({ icon: 'none', title: error.message || '验证码发送失败' })
+        handleProfileGuardError(error, '验证码发送失败')
       })
       .finally(() => {
         this.setData({ loading: false })
@@ -224,7 +225,7 @@ Page({
         wx.showToast({ title: '手机号已验证' })
       })
       .catch((error) => {
-        wx.showToast({ icon: 'none', title: error.message || '手机号验证失败' })
+        handleProfileGuardError(error, '手机号验证失败')
       })
       .finally(() => {
         this.setData({ loading: false })
@@ -275,7 +276,7 @@ Page({
         wx.switchTab({ url: '/pages/home/index' })
       })
       .catch((error) => {
-        wx.showToast({ icon: 'none', title: error.message || '提交失败' })
+        handleProfileGuardError(error, '提交失败')
       })
       .finally(() => {
         this.setData({ loading: false })

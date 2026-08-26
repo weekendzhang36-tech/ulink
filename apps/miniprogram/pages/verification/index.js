@@ -7,6 +7,7 @@ const {
   getTemplateIdForPurpose,
   shouldRecordSubscribeResult,
 } = require('../../utils/notification-subscription')
+const { handleProfileGuardError } = require('../../utils/profile-guard')
 
 Page({
   data: {
@@ -25,7 +26,7 @@ Page({
         this.setData({ state })
       })
       .catch((error) => {
-        wx.showToast({ icon: 'none', title: error.message || '认证状态加载失败' })
+        handleProfileGuardError(error, '认证状态加载失败')
       })
   },
 
@@ -51,7 +52,7 @@ Page({
             wx.showToast({ title: '提醒已开启' })
           })
           .catch((error) => {
-            wx.showToast({ icon: 'none', title: error.message || '开启提醒失败' })
+            handleProfileGuardError(error, '开启提醒失败')
           })
           .finally(() => {
             this.setData({ subscribing: false })

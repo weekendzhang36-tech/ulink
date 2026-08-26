@@ -9,6 +9,7 @@ const {
   getTemplateIdForPurpose,
   shouldRecordSubscribeResult,
 } = require('../../utils/notification-subscription')
+const { handleProfileGuardError } = require('../../utils/profile-guard')
 
 Page({
   data: {
@@ -52,7 +53,7 @@ Page({
           return
         }
 
-        wx.showToast({ icon: 'none', title: error.message || '暂无管理权限' })
+        handleProfileGuardError(error, '暂无管理权限')
       })
       .finally(() => {
         this.setData({ loading: false })
@@ -68,7 +69,7 @@ Page({
         this.loadStudents()
       })
       .catch((error) => {
-        wx.showToast({ icon: 'none', title: error.message || '确认失败' })
+        handleProfileGuardError(error, '确认失败')
       })
       .finally(() => {
         this.setData({ confirmingCommitment: false })
@@ -117,7 +118,7 @@ Page({
             wx.showToast({ title: '提醒已开启' })
           })
           .catch((error) => {
-            wx.showToast({ icon: 'none', title: error.message || '开启提醒失败' })
+            handleProfileGuardError(error, '开启提醒失败')
           })
           .finally(() => {
             this.setData({ subscribing: false })
@@ -145,7 +146,7 @@ Page({
         this.loadStudents()
       })
       .catch((error) => {
-        wx.showToast({ icon: 'none', title: error.message || '处理失败' })
+        handleProfileGuardError(error, '处理失败')
       })
       .finally(() => {
         this.setData({ loading: false })

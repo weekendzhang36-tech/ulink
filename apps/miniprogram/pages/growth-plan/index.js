@@ -7,6 +7,7 @@ const {
   mockConfirmPayment,
 } = require('../../utils/api')
 const { hasActivatedMembership } = require('../../utils/membership-result')
+const { handleProfileGuardError } = require('../../utils/profile-guard')
 
 function requestWechatPayment(paymentParams) {
   return new Promise((resolve, reject) => {
@@ -55,7 +56,7 @@ Page({
         this.setData({ plan })
       })
       .catch((error) => {
-        wx.showToast({ icon: 'none', title: error.message || '成长计划加载失败' })
+        handleProfileGuardError(error, '成长计划加载失败')
       })
   },
 
@@ -88,7 +89,7 @@ Page({
       })
       .catch((error) => {
         cancelPendingOrder(createdOrderNo).then(() => {
-          wx.showToast({ icon: 'none', title: error.message || '支付未完成' })
+          handleProfileGuardError(error, '支付未完成')
         })
       })
       .finally(() => {

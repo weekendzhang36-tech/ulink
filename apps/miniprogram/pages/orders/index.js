@@ -1,4 +1,5 @@
 const { getMembershipOrders, getSessionToken } = require('../../utils/api')
+const { handleProfileGuardError } = require('../../utils/profile-guard')
 
 function dateText(value) {
   return value ? value.slice(0, 10) : ''
@@ -36,7 +37,7 @@ Page({
         })
       })
       .catch((error) => {
-        wx.showToast({ icon: 'none', title: error.message || '订单加载失败' })
+        handleProfileGuardError(error, '订单加载失败')
       })
       .finally(() => {
         this.setData({ loading: false })

@@ -1,4 +1,5 @@
 const { getSessionToken, getStudentState } = require('../../utils/api')
+const { handleProfileGuardError } = require('../../utils/profile-guard')
 
 Page({
   data: {
@@ -19,7 +20,7 @@ Page({
         })
       })
       .catch((error) => {
-        wx.showToast({ icon: 'none', title: error.message || '个人信息加载失败' })
+        handleProfileGuardError(error, '个人信息加载失败')
       })
   },
 

@@ -3,6 +3,7 @@ const {
   getContentReservations,
   getSessionToken,
 } = require('../../utils/api')
+const { handleProfileGuardError } = require('../../utils/profile-guard')
 
 function dateText(value) {
   return value ? value.slice(0, 10) : ''
@@ -44,7 +45,7 @@ Page({
         })
       })
       .catch((error) => {
-        wx.showToast({ icon: 'none', title: error.message || '预约加载失败' })
+        handleProfileGuardError(error, '预约加载失败')
       })
       .finally(() => {
         this.setData({ loading: false })
@@ -80,7 +81,7 @@ Page({
             wx.showToast({ icon: 'success', title: '已取消' })
           })
           .catch((error) => {
-            wx.showToast({ icon: 'none', title: error.message || '取消失败' })
+            handleProfileGuardError(error, '取消失败')
           })
           .finally(() => {
             this.setData({ cancelingId: '' })
