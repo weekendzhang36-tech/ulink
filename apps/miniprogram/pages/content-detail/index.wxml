@@ -26,12 +26,15 @@
   </view>
 
   <button
-    wx:if="{{article.actionLabel}}"
+    wx:if="{{article.actionState}}"
     class="primary-button action-button"
     bindtap="useAction"
-    disabled="{{actionLoading || article.reservation}}"
+    disabled="{{actionLoading || article.actionState.disabled}}"
     loading="{{actionLoading}}"
   >
-    {{article.reservation ? article.reservation.statusText : article.actionLabel}}
+    {{article.actionState.label}}
   </button>
+  <view wx:if="{{article.actionState && article.actionState.hintText}}" class="action-hint">
+    {{article.actionState.hintText}}
+  </view>
 </view>

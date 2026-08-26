@@ -77,3 +77,12 @@
   background: rgba(0, 122, 255, 0.1);
   color: #007aff;
 }
+
+.action-hint {
+  color: #8e8e93;
+  font-size: 24rpx;
+  line-height: 1.5;
+  margin-top: 14rpx;
+  padding: 0 12rpx 32rpx;
+  text-align: center;
+}
