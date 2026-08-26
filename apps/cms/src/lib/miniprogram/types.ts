@@ -176,6 +176,7 @@ export interface MiniProgramRepository {
     input: Omit<SmsVerificationChallengeRecord, 'id'>,
   ): Promise<SmsVerificationChallengeRecord>
   createStudent(input: Omit<StudentRecord, 'id'>): Promise<StudentRecord>
+  deleteContentReservation(id: string): Promise<void>
   findActiveGrowthPlanById(id: string): Promise<GrowthPlanRecord | undefined>
   findContentReservationByStudentAndContent(input: {
     contentId: string

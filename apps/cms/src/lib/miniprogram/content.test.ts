@@ -255,3 +255,54 @@ test('creates one reservation per student and updates reserved count', async () 
   assert.equal(second.alreadyReserved, true)
   assert.equal(repository.contentReservations.size, 1)
 })
+
+test('does not keep a reservation when reserved count update fails', async () => {
+  const repository = createMemoryRepository()
+  await repository.createMembership({
+    expiresAt: '2027-02-25T10:03:00.000Z',
+    growthPlanId: 'growth_plan_001',
+    sourceOrderNo: 'order_paid_once',
+    startedAt: '2026-08-26T10:03:00.000Z',
+    status: 'active',
+    studentId: 'student_001',
+  })
+  const payload = {
+    ...payloadFor([
+      {
+        _status: 'published',
+        capacity: 2,
+        category: {
+          isActive: true,
+          module: 'practice',
+          title: '实习实践',
+        },
+        contentType: 'event',
+        id: 'content_practice_001',
+        isMemberOnly: true,
+        publishedAt: '2026-08-22T08:00:00.000Z',
+        reservedCount: 1,
+        status: 'open',
+        summary: '2 小时体验客户资料整理和风险提示任务。',
+        title: '金融岗位模拟实训营开放报名',
+      },
+    ]),
+    update: async () => {
+      throw new Error('reserved count write failed')
+    },
+  }
+
+  await assert.rejects(
+    () =>
+      registerForPublishedContent({
+        id: 'content_practice_001',
+        input: { sessionToken: tokenFor('student_001') },
+        now: new Date('2026-08-26T10:11:00.000Z'),
+        payload,
+        repository,
+        secret,
+      }),
+    /reserved count write failed/,
+  )
+
+  assert.equal(repository.contentReservations.size, 0)
+})

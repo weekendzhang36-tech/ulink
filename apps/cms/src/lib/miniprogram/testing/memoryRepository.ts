@@ -170,6 +170,9 @@ export function createMemoryRepository(
 
       return student
     },
+    async deleteContentReservation(id) {
+      contentReservations.delete(id)
+    },
     async findActiveGrowthPlanById(id) {
       const growthPlan = growthPlans.get(id)
 

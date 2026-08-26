@@ -310,11 +310,17 @@ export async function registerForPublishedContent({
     status: 'reserved',
     studentId: student.id,
   })
-  const updatedDoc = await payload.update({
-    collection: 'contents',
-    data: { reservedCount: currentReservedCount + 1 },
-    id: String(doc.id),
-  })
+  let updatedDoc: Record<string, unknown>
+  try {
+    updatedDoc = await payload.update({
+      collection: 'contents',
+      data: { reservedCount: currentReservedCount + 1 },
+      id: String(doc.id),
+    })
+  } catch (error) {
+    await repository.deleteContentReservation(reservation.id)
+    throw error
+  }
 
   return {
     alreadyReserved: false,

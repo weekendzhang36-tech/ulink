@@ -14,6 +14,7 @@ import type {
 
 type PayloadLike = {
   create(input: Record<string, unknown>): Promise<Record<string, unknown>>
+  delete(input: Record<string, unknown>): Promise<Record<string, unknown>>
   find(input: Record<string, unknown>): Promise<{ docs: Record<string, unknown>[] }>
   findByID(input: Record<string, unknown>): Promise<Record<string, unknown>>
   update(input: Record<string, unknown>): Promise<Record<string, unknown>>
@@ -294,6 +295,12 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
           },
         }),
       )
+    },
+    async deleteContentReservation(id) {
+      await payload.delete({
+        collection: 'content-reservations',
+        id,
+      })
     },
     async findActiveGrowthPlanById(id) {
       const doc = await first(payload, 'growth-plans', {
