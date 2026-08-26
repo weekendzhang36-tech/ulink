@@ -85,6 +85,11 @@
       <text>我已阅读并同意用户协议和隐私政策</text>
     </label>
   </checkbox-group>
+  <view class="legal-links">
+    <text bindtap="openUserAgreement">用户协议</text>
+    <text class="separator">|</text>
+    <text bindtap="openPrivacyPolicy">隐私政策</text>
+  </view>
 
   <button class="primary-button" loading="{{loading}}" bindtap="submit">提交资料</button>
 </view>

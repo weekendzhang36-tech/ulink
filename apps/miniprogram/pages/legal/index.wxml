@@ -1,0 +1,26 @@
+<view class="page">
+  <view class="card header-card">
+    <view class="eyebrow">U Link</view>
+    <view class="title">协议与隐私</view>
+    <view class="subtitle">注册、认证、会员、预约和服务入口相关的基础说明。</view>
+  </view>
+
+  <view wx:if="{{showList}}" class="card list">
+    <view
+      wx:for="{{documents}}"
+      wx:key="type"
+      class="list-row"
+      data-type="{{item.type}}"
+      bindtap="openDocument"
+    >
+      <text>{{item.title}}</text>
+      <text class="muted">›</text>
+    </view>
+  </view>
+
+  <view wx:else class="card legal-card">
+    <view class="legal-title">{{document.title}}</view>
+    <view class="legal-note">开发版基础文本，正式上线前需按实际运营主体与合规要求确认。</view>
+    <view wx:for="{{document.paragraphs}}" wx:key="*this" class="paragraph">{{item}}</view>
+  </view>
+</view>

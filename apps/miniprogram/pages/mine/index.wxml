@@ -39,7 +39,7 @@
       <text>我的预约</text>
       <text class="muted">›</text>
     </view>
-    <view class="list-row">
+    <view class="list-row" bindtap="openLegal">
       <text>协议与隐私</text>
       <text class="muted">›</text>
     </view>

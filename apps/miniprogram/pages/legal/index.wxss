@@ -1,0 +1,44 @@
+.header-card {
+  margin-top: 0;
+}
+
+.list-row {
+  align-items: center;
+  border-top: 1rpx solid rgba(60, 60, 67, 0.16);
+  display: flex;
+  font-size: 30rpx;
+  justify-content: space-between;
+  min-height: 92rpx;
+}
+
+.list-row:first-child {
+  border-top: 0;
+}
+
+.legal-card {
+  padding: 34rpx;
+}
+
+.legal-title {
+  color: #1d1d1f;
+  font-size: 40rpx;
+  font-weight: 900;
+  margin-bottom: 16rpx;
+}
+
+.legal-note {
+  background: #fff3d8;
+  border-radius: 18rpx;
+  color: #8a5a00;
+  font-size: 26rpx;
+  line-height: 1.45;
+  margin-bottom: 28rpx;
+  padding: 18rpx 20rpx;
+}
+
+.paragraph {
+  color: #3a3a3c;
+  font-size: 30rpx;
+  line-height: 1.7;
+  margin-top: 24rpx;
+}

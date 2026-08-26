@@ -254,6 +254,14 @@ Page({
       })
   },
 
+  openUserAgreement() {
+    wx.navigateTo({ url: '/pages/legal/index?type=user-agreement' })
+  },
+
+  openPrivacyPolicy() {
+    wx.navigateTo({ url: '/pages/legal/index?type=privacy-policy' })
+  },
+
   saveDraft() {
     saveProfileDraft(wx, this.data)
   },

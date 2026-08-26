@@ -42,4 +42,8 @@ Page({
   openReservations() {
     wx.navigateTo({ url: '/pages/reservations/index' })
   },
+
+  openLegal() {
+    wx.navigateTo({ url: '/pages/legal/index' })
+  },
 })
