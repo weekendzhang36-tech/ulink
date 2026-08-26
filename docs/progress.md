@@ -83,6 +83,11 @@
   - 回调解密使用 `WECHAT_PAY_API_V3_KEY` 对 `resource` 做 AES-256-GCM 解密，并校验 AppID、商户号、订单号和金额后再写入支付事件、更新订单、激活会员。
   - `apps/cms/.env.example` 已补充 `WECHAT_PAY_API_V3_KEY`、`WECHAT_PAY_PLATFORM_SERIAL_NO` 和 `WECHAT_PAY_PLATFORM_PUBLIC_KEY` 占位配置，不提交真实密钥。
   - 真实生产支付仍需要微信商户平台证书/公钥配置、回调域名配置和微信支付联调验证。
+- 2026-08-26：补充信息发布到小程序模块页的第一批闭环。
+  - 后台内容读取会过滤未发布内容和已停用分类，避免后台关闭的栏目继续出现在学生端。
+  - PayloadCMS richText 正文会转换成小程序可直接展示的文本，避免详情页出现对象内容。
+  - 小程序首页四个成长模块已可点击，进入对应模块内容列表，列表内容来自 `/api/miniprogram/content?module=...`。
+  - 模块列表和内容详情页会展示分类、时间/类型、摘要、标签和正文；暂无内容时展示真实空状态，不用假内容掩盖后台未发布。
 
 ## 学生注册认证需求
 

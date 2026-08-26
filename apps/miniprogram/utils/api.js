@@ -98,6 +98,12 @@ function getArticleById(id) {
   }))
 }
 
+function getContentsByModule(moduleKey) {
+  return withDemoFallback(request({ path: `/content?module=${moduleKey}` }), () =>
+    mockData.articles.filter((article) => article.module === moduleKey),
+  )
+}
+
 function getStudentState() {
   return withDemoFallback(request({ auth: true, path: '/profile/status' }), () => ({
     student: mockData.studentState,
@@ -233,6 +239,7 @@ module.exports = {
   createGrowthPlanOrder,
   getArticleById,
   getCampusOptions,
+  getContentsByModule,
   getGrowthPlan,
   getHomeData,
   getInstructorVerifications,

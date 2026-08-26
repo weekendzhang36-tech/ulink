@@ -1,9 +1,12 @@
 <view class="page">
   <view class="card hero">
-    <text class="eyebrow">成长内容</text>
+    <text class="eyebrow">{{article.categoryTitle || '成长内容'}}</text>
     <view class="title">{{article.title}}</view>
     <view class="muted">{{article.meta}}</view>
     <view class="subtitle">{{article.summary}}</view>
+    <view class="tag-row" wx:if="{{article.tags && article.tags.length}}">
+      <text class="tag" wx:for="{{article.tags}}" wx:for-item="tag" wx:key="*this">{{tag}}</text>
+    </view>
   </view>
 
   <view class="card">

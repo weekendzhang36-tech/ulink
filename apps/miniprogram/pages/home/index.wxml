@@ -20,7 +20,7 @@
 
   <view class="section-title">成长模块</view>
   <view class="module-grid">
-    <view class="module-card" wx:for="{{modules}}" wx:key="key">
+    <view class="module-card" wx:for="{{modules}}" wx:key="key" data-key="{{item.key}}" data-title="{{item.title}}" bindtap="openModule">
       <view class="module-title">{{item.title}}</view>
       <view class="muted">{{item.summary}}</view>
     </view>

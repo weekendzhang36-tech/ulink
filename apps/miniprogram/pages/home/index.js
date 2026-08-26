@@ -28,6 +28,13 @@ Page({
     wx.navigateTo({ url: '/pages/growth-plan/index' })
   },
 
+  openModule(event) {
+    const { key, title } = event.currentTarget.dataset
+    wx.navigateTo({
+      url: `/pages/content-list/index?module=${key}&title=${encodeURIComponent(title)}`,
+    })
+  },
+
   openArticle(event) {
     const { id } = event.currentTarget.dataset
     wx.navigateTo({ url: `/pages/content-detail/index?id=${id}` })

@@ -1,0 +1,27 @@
+<view class="page">
+  <view class="card hero">
+    <text class="eyebrow">成长模块</text>
+    <view class="title">{{title}}</view>
+    <view class="subtitle">这里展示后台已发布的活动、文章、机会和服务入口。</view>
+  </view>
+
+  <view wx:if="{{loading}}" class="card empty-card">
+    <view class="subtitle">正在加载内容...</view>
+  </view>
+
+  <view wx:elif="{{contentEmpty}}" class="card empty-card">
+    <view class="section-title">暂无已发布内容</view>
+    <view class="subtitle">后台发布并启用分类后，会自动显示在这里。</view>
+  </view>
+
+  <view wx:else>
+    <view class="card content-card" wx:for="{{contents}}" wx:key="id" data-id="{{item.id}}" bindtap="openContent">
+      <view class="content-meta">{{item.categoryTitle}} · {{item.meta}}</view>
+      <view class="content-title">{{item.title}}</view>
+      <view class="subtitle">{{item.summary}}</view>
+      <view class="tag-row" wx:if="{{item.tags && item.tags.length}}">
+        <text class="tag" wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this">{{tag}}</text>
+      </view>
+    </view>
+  </view>
+</view>
