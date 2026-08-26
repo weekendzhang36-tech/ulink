@@ -1,6 +1,7 @@
 import { createHmac, randomInt, timingSafeEqual } from 'node:crypto'
 
 import { MiniProgramError, requireValue } from './errors.ts'
+import { ensureLocalMockAllowed } from './localMock.ts'
 import { verifySessionToken } from './session.ts'
 import type { MiniProgramRepository, SmsGateway, WechatPhoneGateway } from './types.ts'
 
@@ -248,6 +249,8 @@ async function getAccessToken(env: NodeJS.ProcessEnv) {
 
 export function createWechatPhoneGateway(env: NodeJS.ProcessEnv): WechatPhoneGateway {
   if (env.MINIPROGRAM_MOCK_WECHAT_PHONE === 'true') {
+    ensureLocalMockAllowed(env, '本地 mock 微信手机号')
+
     return {
       async getPhoneNumber(code) {
         return {
@@ -292,6 +295,8 @@ export function createWechatPhoneGateway(env: NodeJS.ProcessEnv): WechatPhoneGat
 
 export function createSmsGateway(env: NodeJS.ProcessEnv): SmsGateway {
   if (env.MINIPROGRAM_MOCK_SMS === 'true') {
+    ensureLocalMockAllowed(env, '本地 mock 短信')
+
     return {
       async sendCode() {
         return undefined

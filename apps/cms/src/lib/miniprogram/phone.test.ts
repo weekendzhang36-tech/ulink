@@ -3,6 +3,8 @@ import test from 'node:test'
 
 import {
   createPhoneVerificationToken,
+  createSmsGateway,
+  createWechatPhoneGateway,
   requestSmsPhoneVerification,
   verifyPhoneNumberWithSmsCode,
   verifyPhoneNumberWithWechatCode,
@@ -144,4 +146,26 @@ test('does not keep an SMS challenge when sending the code fails', async () => {
   )
 
   assert.equal(repository.smsVerificationChallenges.size, 0)
+})
+
+test('rejects mock WeChat phone when production environment enables the mock flag', () => {
+  assert.throws(
+    () =>
+      createWechatPhoneGateway({
+        MINIPROGRAM_MOCK_WECHAT_PHONE: 'true',
+        NODE_ENV: 'production',
+      }),
+    /本地 mock 微信手机号不能在生产环境启用/,
+  )
+})
+
+test('rejects mock SMS when production environment enables the mock flag', () => {
+  assert.throws(
+    () =>
+      createSmsGateway({
+        MINIPROGRAM_MOCK_SMS: 'true',
+        NODE_ENV: 'production',
+      }),
+    /本地 mock 短信不能在生产环境启用/,
+  )
 })

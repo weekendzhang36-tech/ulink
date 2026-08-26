@@ -1,6 +1,7 @@
 import { createSign, randomBytes } from 'node:crypto'
 
 import { MiniProgramError } from './errors.ts'
+import { ensureLocalMockAllowed } from './localMock.ts'
 import type { PaymentGateway } from './types.ts'
 
 type FetchJson = <T>(url: string, init?: RequestInit) => Promise<T>
@@ -146,6 +147,8 @@ export function createWechatPayGateway({
 
 export function createPaymentGateway(env: NodeJS.ProcessEnv): PaymentGateway {
   if (env.MINIPROGRAM_MOCK_PAYMENT === 'true') {
+    ensureLocalMockAllowed(env, '本地 mock 支付')
+
     return {
       async createPaymentParams({ amountCents, orderNo }) {
         return {

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { createVerify, generateKeyPairSync } from 'node:crypto'
 import test from 'node:test'
 
-import { createWechatPayGateway } from './payment.ts'
+import { createPaymentGateway, createWechatPayGateway } from './payment.ts'
 import type { StudentRecord } from './types.ts'
 
 const student: StudentRecord = {
@@ -101,4 +101,15 @@ test('creates WeChat Pay JSAPI order and signs Mini Program payment params', asy
   verifier.update(`wx_app_001\n${result.timeStamp}\nnonce_001\nprepay_id=wx_prepay_001\n`)
   verifier.end()
   assert.equal(verifier.verify(publicKey, result.paySign, 'base64'), true)
+})
+
+test('rejects mock payment when production environment enables the mock flag', () => {
+  assert.throws(
+    () =>
+      createPaymentGateway({
+        MINIPROGRAM_MOCK_PAYMENT: 'true',
+        NODE_ENV: 'production',
+      }),
+    /本地 mock 支付不能在生产环境启用/,
+  )
 })

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 
-import { loginWithWechatCode } from './auth.ts'
+import { createWechatLoginGateway, loginWithWechatCode } from './auth.ts'
 import { verifySessionToken } from './session.ts'
 import { createMemoryRepository } from './testing/memoryRepository.ts'
 
@@ -51,4 +51,15 @@ test('includes student identity when the WeChat user already submitted a profile
 
   assert.equal(session.studentId, 'student_001')
   assert.equal(result.profileCompleted, true)
+})
+
+test('rejects mock WeChat login when production environment enables the mock flag', () => {
+  assert.throws(
+    () =>
+      createWechatLoginGateway({
+        MINIPROGRAM_MOCK_WECHAT_LOGIN: 'true',
+        NODE_ENV: 'production',
+      }),
+    /本地 mock 登录不能在生产环境启用/,
+  )
 })

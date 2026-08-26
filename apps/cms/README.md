@@ -7,6 +7,7 @@
 - 后台开发必须遵循根目录 `DEVELOPMENT_PRINCIPLES.md`、`CONTRIBUTING.md`、`docs/development-workflow.md` 和 `docs/development-checklist.md`。
 - 服务层先表达业务规则，Next route handler 只负责 HTTP 请求、鉴权入口和响应适配。
 - 生产路径不能用 mock、默认值、假 fallback 或测试数据掩盖数据库、微信、短信、支付、COS、订阅消息或第三方服务失败。
+- `NODE_ENV=production` 时，本地 mock 登录、手机号、短信和支付开关会被后台拒绝，不能作为生产绕过方式。
 - 订单、会员、支付事件、学生认证、审核日志、内容预约和导入数据必须以后端持久化状态为准。
 - 新增持久化业务对象前，先确认它对应真实用户动作或真实业务事件，并明确来源、归属和生命周期。
 - 支付、导入、迁移、批量更新和生产发布前，先确认数据库备份、文件持久化和回滚边界。

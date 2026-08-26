@@ -1,4 +1,5 @@
 import { MiniProgramError, requireValue } from './errors.ts'
+import { ensureLocalMockAllowed } from './localMock.ts'
 import { createSessionToken } from './session.ts'
 import type { MiniProgramRepository, WechatLoginGateway } from './types.ts'
 
@@ -49,6 +50,8 @@ export async function loginWithWechatCode({
 
 export function createWechatLoginGateway(env: NodeJS.ProcessEnv): WechatLoginGateway {
   if (env.MINIPROGRAM_MOCK_WECHAT_LOGIN === 'true') {
+    ensureLocalMockAllowed(env, '本地 mock 登录')
+
     return {
       async exchangeCode(code) {
         return {
