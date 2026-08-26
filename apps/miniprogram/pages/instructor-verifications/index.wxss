@@ -50,6 +50,11 @@
   color: #6e6e73;
 }
 
+.secondary-button.full {
+  margin-top: 28rpx;
+  width: 100%;
+}
+
 .primary-small-button {
   background: #007aff;
   color: #ffffff;

@@ -10,3 +10,7 @@
 .info-row:first-child {
   border-top: 0;
 }
+
+.compact {
+  margin-top: 28rpx;
+}

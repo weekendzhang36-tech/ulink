@@ -4,6 +4,7 @@ import type {
   InstructorStudentSummary,
   MembershipRecord,
   MiniProgramRepository,
+  NotificationSubscriptionRecord,
   OrderRecord,
   PaymentEventRecord,
   SmsVerificationChallengeRecord,
@@ -101,6 +102,7 @@ export function createMemoryRepository(
     ],
   ])
   const memberships = new Map<string, MembershipRecord>()
+  const notificationSubscriptions = new Map<string, NotificationSubscriptionRecord>()
   const contentReservations = new Map<string, ContentReservationRecord>()
   const paymentEvents = new Map<string, PaymentEventRecord>()
   const smsVerificationChallenges = new Map<string, SmsVerificationChallengeRecord>()
@@ -109,6 +111,7 @@ export function createMemoryRepository(
     contentReservations: Map<string, ContentReservationRecord>
     growthPlans: Map<string, GrowthPlanRecord>
     memberships: Map<string, MembershipRecord>
+    notificationSubscriptions: Map<string, NotificationSubscriptionRecord>
     orders: Map<string, OrderRecord>
     paymentEvents: Map<string, PaymentEventRecord>
     smsVerificationChallenges: Map<string, SmsVerificationChallengeRecord>
@@ -117,6 +120,7 @@ export function createMemoryRepository(
     contentReservations,
     growthPlans,
     memberships,
+    notificationSubscriptions,
     orders,
     paymentEvents,
     smsVerificationChallenges,
@@ -132,6 +136,15 @@ export function createMemoryRepository(
       memberships.set(membership.id, membership)
 
       return membership
+    },
+    async createNotificationSubscription(input) {
+      const subscription = {
+        ...input,
+        id: nextId('notification_subscription', notificationSubscriptions.size),
+      }
+      notificationSubscriptions.set(subscription.id, subscription)
+
+      return subscription
     },
     async createOrder(input) {
       const order = { ...input, id: nextId('order', orders.size) }
@@ -172,6 +185,12 @@ export function createMemoryRepository(
     },
     async findMembershipByStudentId(studentId) {
       return [...memberships.values()].find((membership) => membership.studentId === studentId)
+    },
+    async findNotificationSubscriptionByStudentAndPurpose(input) {
+      return [...notificationSubscriptions.values()].find(
+        (subscription) =>
+          subscription.studentId === input.studentId && subscription.purpose === input.purpose,
+      )
     },
     async findOrderByOrderNo(orderNo) {
       return orders.get(orderNo)
@@ -234,6 +253,16 @@ export function createMemoryRepository(
       }
       const next = { ...current, ...input }
       orders.set(next.orderNo, next)
+
+      return next
+    },
+    async updateNotificationSubscription(id, input) {
+      const current = notificationSubscriptions.get(id)
+      if (!current) {
+        throw new Error(`Notification subscription not found: ${id}`)
+      }
+      const next = { ...current, ...input }
+      notificationSubscriptions.set(id, next)
 
       return next
     },

@@ -140,6 +140,7 @@ pnpm verify          # 后台检查 + 小程序 JS/JSON 检查
 - `GET /api/miniprogram/growth-plan`
 - `GET /api/miniprogram/instructor/verifications`
 - `POST /api/miniprogram/instructor/verifications`
+- `POST /api/miniprogram/notification-subscriptions`
 - `GET /api/miniprogram/orders`
 - `POST /api/miniprogram/orders`
 - `GET /api/miniprogram/orders/:orderNo`

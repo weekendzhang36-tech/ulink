@@ -68,3 +68,42 @@ export const SmsVerificationChallenges: CollectionConfig = {
     { name: 'attemptCount', type: 'number', label: '尝试次数', required: true, defaultValue: 0 },
   ],
 }
+
+export const NotificationSubscriptions: CollectionConfig = {
+  slug: 'notification-subscriptions',
+  admin: {
+    defaultColumns: ['student', 'purpose', 'status', 'subscribedAt'],
+    group: '学生与认证',
+    useAsTitle: 'purpose',
+  },
+  labels: {
+    singular: '订阅消息授权',
+    plural: '订阅消息授权',
+  },
+  fields: [
+    { name: 'student', type: 'relationship', label: '学生', relationTo: 'students', required: true },
+    {
+      name: 'purpose',
+      type: 'select',
+      label: '提醒用途',
+      required: true,
+      options: [
+        { label: '学生认证结果提醒', value: 'student_verification_result' },
+        { label: '指导员待认证提醒', value: 'instructor_pending_verification' },
+      ],
+    },
+    { name: 'templateId', type: 'text', label: '小程序订阅消息模板 ID', required: true },
+    {
+      name: 'status',
+      type: 'select',
+      label: '状态',
+      defaultValue: 'active',
+      required: true,
+      options: [
+        { label: '有效', value: 'active' },
+        { label: '已取消', value: 'cancelled' },
+      ],
+    },
+    { name: 'subscribedAt', type: 'date', label: '授权时间', required: true },
+  ],
+}

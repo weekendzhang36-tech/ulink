@@ -187,6 +187,18 @@ function reviewInstructorStudents({ action, studentIds }) {
   })
 }
 
+function recordNotificationSubscription({ purpose, templateId }) {
+  return request({
+    auth: true,
+    data: {
+      purpose,
+      templateId,
+    },
+    method: 'POST',
+    path: '/notification-subscriptions',
+  })
+}
+
 function getCampusOptions() {
   return withDemoFallback(request({ path: '/campus' }), () => mockData.campus)
 }
@@ -339,6 +351,7 @@ module.exports = {
   getStudentState,
   loginWithWechatCode,
   mockConfirmPayment,
+  recordNotificationSubscription,
   requestSmsPhone,
   reserveContent,
   reviewInstructorStudents,

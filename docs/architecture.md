@@ -131,7 +131,7 @@ PayloadCMS 管理：
 - classes：班级数据。
 - instructor_assignments：指导员与班级绑定关系，可由 classes 中的指导员手机号配置生成。
 - student_verification_logs：学生认证状态变更记录。
-- notification_subscriptions：小程序订阅消息授权/可用次数记录。
+- notification-subscriptions：小程序订阅消息授权/可用次数记录。
 - membership_plans：会员套餐。
 - membership_orders：会员订单。
 - memberships：会员状态。

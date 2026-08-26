@@ -3,6 +3,9 @@
     <text class="eyebrow">指导员入口</text>
     <view class="title">学生认证管理</view>
     <view class="subtitle">只展示当前手机号负责班级的学生资料。</view>
+    <button class="secondary-button full" loading="{{subscribing}}" bindtap="subscribePendingVerification">
+      接收待认证提醒
+    </button>
   </view>
 
   <view class="section-title">待认证 {{pendingCount}}</view>

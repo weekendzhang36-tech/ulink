@@ -3,6 +3,9 @@
     <text class="eyebrow">{{state.verificationStatus}}</text>
     <view class="title">学生认证状态</view>
     <view class="subtitle">{{state.message}}</view>
+    <button class="primary-button compact" loading="{{subscribing}}" bindtap="subscribeVerificationResult">
+      接收认证结果通知
+    </button>
   </view>
 
   <view class="card">

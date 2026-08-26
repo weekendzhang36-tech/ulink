@@ -5,6 +5,7 @@ import type {
   InstructorStudentSummary,
   MembershipRecord,
   MiniProgramRepository,
+  NotificationSubscriptionRecord,
   OrderRecord,
   PaymentEventRecord,
   SmsVerificationChallengeRecord,
@@ -133,6 +134,20 @@ function toContentReservation(doc: Record<string, unknown>): ContentReservationR
   }
 }
 
+function toNotificationSubscription(doc: Record<string, unknown>): NotificationSubscriptionRecord {
+  return {
+    id: String(doc.id),
+    purpose:
+      doc.purpose === 'instructor_pending_verification'
+        ? 'instructor_pending_verification'
+        : 'student_verification_result',
+    status: doc.status === 'cancelled' ? 'cancelled' : 'active',
+    studentId: idOf(doc.student),
+    subscribedAt: String(doc.subscribedAt || doc.updatedAt || ''),
+    templateId: String(doc.templateId || ''),
+  }
+}
+
 function toInstructorStudentSummary(doc: Record<string, unknown>): InstructorStudentSummary {
   return {
     classId: idOf(doc.class),
@@ -192,6 +207,20 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
             startedAt: input.startedAt,
             status: input.status,
             student: input.studentId,
+          },
+        }),
+      )
+    },
+    async createNotificationSubscription(input) {
+      return toNotificationSubscription(
+        await payload.create({
+          collection: 'notification-subscriptions',
+          data: {
+            purpose: input.purpose,
+            status: input.status,
+            student: input.studentId,
+            subscribedAt: input.subscribedAt,
+            templateId: input.templateId,
           },
         }),
       )
@@ -300,6 +329,21 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
       )
 
       return doc ? toMembership(doc) : undefined
+    },
+    async findNotificationSubscriptionByStudentAndPurpose(input) {
+      const doc = await first(
+        payload,
+        'notification-subscriptions',
+        {
+          and: [
+            { student: { equals: input.studentId } },
+            { purpose: { equals: input.purpose } },
+          ],
+        },
+        0,
+      )
+
+      return doc ? toNotificationSubscription(doc) : undefined
     },
     async findOrderByOrderNo(orderNo) {
       const doc = await first(payload, 'orders', { orderNo: { equals: orderNo } }, 1)
@@ -414,6 +458,19 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
             paidAt: input.paidAt,
             status: input.status,
             wechatTransactionId: input.wechatTransactionId,
+          },
+          id,
+        }),
+      )
+    },
+    async updateNotificationSubscription(id, input) {
+      return toNotificationSubscription(
+        await payload.update({
+          collection: 'notification-subscriptions',
+          data: {
+            status: input.status,
+            subscribedAt: input.subscribedAt,
+            templateId: input.templateId,
           },
           id,
         }),

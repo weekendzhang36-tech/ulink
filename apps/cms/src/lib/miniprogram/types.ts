@@ -4,6 +4,10 @@ export type OrderStatus = 'pending' | 'paid' | 'cancelled' | 'closed' | 'failed'
 export type MembershipStatus = 'active' | 'expired' | 'cancelled'
 export type PaymentStatus = 'paid' | 'failed'
 export type ContentReservationStatus = 'reserved' | 'cancelled'
+export type NotificationSubscriptionPurpose =
+  | 'student_verification_result'
+  | 'instructor_pending_verification'
+export type NotificationSubscriptionStatus = 'active' | 'cancelled'
 
 export interface MiniProgramSession {
   exp: number
@@ -112,6 +116,15 @@ export interface SmsVerificationChallengeRecord {
   requestedAt: string
 }
 
+export interface NotificationSubscriptionRecord {
+  id: string
+  purpose: NotificationSubscriptionPurpose
+  status: NotificationSubscriptionStatus
+  studentId: string
+  subscribedAt: string
+  templateId: string
+}
+
 export interface PaymentParams {
   mock?: boolean
   nonceStr: string
@@ -154,6 +167,9 @@ export interface SmsGateway {
 export interface MiniProgramRepository {
   createContentReservation(input: Omit<ContentReservationRecord, 'id'>): Promise<ContentReservationRecord>
   createMembership(input: Omit<MembershipRecord, 'id'>): Promise<MembershipRecord>
+  createNotificationSubscription(
+    input: Omit<NotificationSubscriptionRecord, 'id'>,
+  ): Promise<NotificationSubscriptionRecord>
   createOrder(input: Omit<OrderRecord, 'id'>): Promise<OrderRecord>
   createPaymentEvent(input: Omit<PaymentEventRecord, 'id'>): Promise<PaymentEventRecord>
   createSmsVerificationChallenge(
@@ -166,6 +182,10 @@ export interface MiniProgramRepository {
     studentId: string
   }): Promise<ContentReservationRecord | undefined>
   findMembershipByStudentId(studentId: string): Promise<MembershipRecord | undefined>
+  findNotificationSubscriptionByStudentAndPurpose(input: {
+    purpose: NotificationSubscriptionPurpose
+    studentId: string
+  }): Promise<NotificationSubscriptionRecord | undefined>
   findOrderByOrderNo(orderNo: string): Promise<OrderRecord | undefined>
   findOrdersByStudentId(studentId: string): Promise<OrderRecord[]>
   findPaymentEventByKey(eventKey: string): Promise<PaymentEventRecord | undefined>
@@ -183,6 +203,10 @@ export interface MiniProgramRepository {
   updateStudentVerificationStatus(id: string, status: VerificationStatus): Promise<StudentRecord>
   updateMembership(id: string, input: Partial<Omit<MembershipRecord, 'id'>>): Promise<MembershipRecord>
   updateOrder(id: string, input: Partial<Omit<OrderRecord, 'id'>>): Promise<OrderRecord>
+  updateNotificationSubscription(
+    id: string,
+    input: Partial<Omit<NotificationSubscriptionRecord, 'id'>>,
+  ): Promise<NotificationSubscriptionRecord>
   updateSmsVerificationChallenge(
     id: string,
     input: Partial<Omit<SmsVerificationChallengeRecord, 'id'>>,
