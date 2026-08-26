@@ -4,8 +4,10 @@ const {
   getGrowthPlan,
   getOrderStatus,
   getSessionToken,
+  getStudentState,
   mockConfirmPayment,
 } = require('../../utils/api')
+const { getGrowthPlanActionState } = require('../../utils/growth-plan-action')
 const { hasActivatedMembership } = require('../../utils/membership-result')
 const { handleProfileGuardError } = require('../../utils/profile-guard')
 
@@ -46,14 +48,47 @@ function cancelPendingOrder(orderNo) {
 
 Page({
   data: {
+    actionState: getGrowthPlanActionState({ hasSession: false, plan: null }),
     loading: false,
+    membershipState: null,
     plan: null,
+    profileCompleted: undefined,
+  },
+
+  updateActionState(nextData = {}) {
+    const data = {
+      ...this.data,
+      ...nextData,
+    }
+    this.setData({
+      ...nextData,
+      actionState: getGrowthPlanActionState({
+        hasSession: Boolean(getSessionToken()),
+        loading: data.loading,
+        membershipState: data.membershipState,
+        plan: data.plan,
+        profileCompleted: data.profileCompleted,
+      }),
+    })
   },
 
   onLoad() {
     getGrowthPlan()
       .then((plan) => {
-        this.setData({ plan })
+        this.updateActionState({ plan })
+
+        if (!getSessionToken()) return
+
+        getStudentState()
+          .then((state) => {
+            this.updateActionState({
+              membershipState: state.membershipState,
+              profileCompleted: state.profileCompleted,
+            })
+          })
+          .catch((error) => {
+            handleProfileGuardError(error, '会员状态加载失败')
+          })
       })
       .catch((error) => {
         handleProfileGuardError(error, '成长计划加载失败')
@@ -61,13 +96,26 @@ Page({
   },
 
   joinPlan() {
-    if (!getSessionToken()) {
+    const actionState = this.data.actionState || getGrowthPlanActionState({ plan: this.data.plan })
+    if (actionState.disabled) {
+      wx.showToast({ icon: 'none', title: actionState.hintText || actionState.label })
+      return
+    }
+    if (actionState.type === 'view_membership') {
+      wx.switchTab({ url: '/pages/mine/index' })
+      return
+    }
+    if (actionState.type === 'complete_profile') {
+      wx.redirectTo({ url: '/pages/profile/index' })
+      return
+    }
+    if (actionState.type !== 'join' || !getSessionToken()) {
       wx.navigateTo({ url: '/pages/login/index' })
       return
     }
     if (!this.data.plan) return
 
-    this.setData({ loading: true })
+    this.updateActionState({ loading: true })
     let createdOrderNo = ''
     createGrowthPlanOrder(this.data.plan.id)
       .then(({ order, paymentParams }) => {
@@ -93,7 +141,7 @@ Page({
         })
       })
       .finally(() => {
-        this.setData({ loading: false })
+        this.updateActionState({ loading: false })
       })
   },
 })

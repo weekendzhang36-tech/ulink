@@ -28,6 +28,52 @@
   border-top: 0;
 }
 
+.membership-card {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.membership-card .section-title {
+  margin-bottom: 8rpx;
+}
+
+.membership-desc {
+  color: #6e6e73;
+  font-size: 26rpx;
+  line-height: 1.45;
+}
+
+.membership-status {
+  background: #f2f2f7;
+  border-radius: 999rpx;
+  color: #6e6e73;
+  flex-shrink: 0;
+  font-size: 24rpx;
+  font-weight: 800;
+  line-height: 48rpx;
+  padding: 0 20rpx;
+}
+
+.membership-status.is-active {
+  background: #e8f1ff;
+  color: #007aff;
+}
+
 .join-button {
   margin-top: 30rpx;
+}
+
+.join-button[disabled] {
+  background: rgba(0, 122, 255, 0.1);
+  color: #007aff;
+}
+
+.action-hint {
+  color: #8e8e93;
+  font-size: 24rpx;
+  line-height: 1.5;
+  margin-top: 14rpx;
+  padding: 0 12rpx 32rpx;
+  text-align: center;
 }

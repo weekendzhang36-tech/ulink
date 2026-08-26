@@ -11,5 +11,23 @@
     <view class="benefit" wx:for="{{plan.benefits}}" wx:key="*this">{{item}}</view>
   </view>
 
-  <button class="primary-button join-button" loading="{{loading}}" bindtap="joinPlan">加入成长计划</button>
+  <view wx:if="{{membershipState}}" class="card membership-card">
+    <view>
+      <view class="section-title">当前状态</view>
+      <view class="membership-desc">{{membershipState.expiresText}}</view>
+    </view>
+    <text class="membership-status {{membershipState.isActive ? 'is-active' : ''}}">
+      {{membershipState.statusText}}
+    </text>
+  </view>
+
+  <button
+    class="primary-button join-button"
+    disabled="{{actionState.disabled}}"
+    loading="{{loading}}"
+    bindtap="joinPlan"
+  >
+    {{actionState.label}}
+  </button>
+  <view class="action-hint">{{actionState.hintText}}</view>
 </view>
