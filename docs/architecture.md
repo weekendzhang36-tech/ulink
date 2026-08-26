@@ -135,6 +135,7 @@ PayloadCMS 管理：
 - membership_plans：会员套餐。
 - membership_orders：会员订单。
 - memberships：会员状态。
+- media：内容封面、文章图片、附件和运营素材。
 - finance_categories：金融内容分类。
 - finance_contents：金融内容。
 - service_links：第三方服务入口。
@@ -146,6 +147,8 @@ PayloadCMS 管理：
 图片和附件使用腾讯云 COS，不存放在应用服务器本地磁盘。
 
 生产环境不允许把用户上传图片、内容封面、附件或运营素材存到应用容器本地目录。应用本地目录可以用于临时缓存，但缓存内容必须可以随时删除，不能作为唯一数据来源。
+
+PayloadCMS 使用 `media` 上传集合管理文件。生产环境通过官方 `@payloadcms/storage-s3` 插件连接腾讯云 COS 的 S3 兼容接口；未配置 `COS_BUCKET` 时只能作为本地开发上传，不能用于线上运营。
 
 适合放入 COS 的资源包括：
 

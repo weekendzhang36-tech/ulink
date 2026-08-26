@@ -31,6 +31,7 @@
       <view class="section-heading">最新内容</view>
     </view>
     <view class="card content-card" wx:for="{{contents}}" wx:key="id" data-id="{{item.id}}" bindtap="openContent">
+      <image wx:if="{{item.coverImageUrl}}" class="content-cover" src="{{item.coverImageUrl}}" mode="aspectFill" />
       <view class="content-meta">{{item.categoryTitle}} · {{item.meta}}</view>
       <view class="content-title">{{item.title}}</view>
       <view class="subtitle">{{item.summary}}</view>

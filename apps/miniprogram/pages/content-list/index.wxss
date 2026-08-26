@@ -69,6 +69,15 @@
   padding: 32rpx;
 }
 
+.content-cover {
+  background: #f2f2f7;
+  border-radius: 20rpx;
+  display: block;
+  height: 300rpx;
+  margin-bottom: 24rpx;
+  width: 100%;
+}
+
 .content-meta {
   color: #8e8e93;
   font-size: 24rpx;

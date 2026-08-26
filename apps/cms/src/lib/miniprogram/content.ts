@@ -58,6 +58,27 @@ function optionalString(value: unknown) {
   return typeof value === 'string' && value.trim() ? value : undefined
 }
 
+function mediaUrl(media: unknown) {
+  if (typeof media === 'string') return undefined
+  if (!media || typeof media !== 'object') return undefined
+
+  const directUrl = 'url' in media ? optionalString((media as { url: unknown }).url) : undefined
+  if (directUrl) return directUrl
+
+  const sizes = 'sizes' in media ? (media as { sizes: unknown }).sizes : undefined
+  if (!sizes || typeof sizes !== 'object') return undefined
+  const preferredSize =
+    'card' in sizes
+      ? (sizes as { card: unknown }).card
+      : 'large' in sizes
+        ? (sizes as { large: unknown }).large
+        : undefined
+
+  return preferredSize && typeof preferredSize === 'object' && 'url' in preferredSize
+    ? optionalString((preferredSize as { url: unknown }).url)
+    : undefined
+}
+
 function positiveNumber(value: unknown) {
   const number = Number(value || 0)
 
@@ -154,6 +175,7 @@ export function toContentSummary(doc: Record<string, unknown>) {
     capacityText: capacityText(doc),
     categoryTitle: relationTitle(doc.category),
     contentType: String(doc.contentType || 'article'),
+    coverImageUrl: mediaUrl(doc.coverImage),
     id: String(doc.id),
     isMemberOnly: Boolean(doc.isMemberOnly),
     meta: [doc.publishedAt ? String(doc.publishedAt).slice(5, 10) : '', String(doc.contentType || '')]

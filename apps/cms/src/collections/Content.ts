@@ -47,6 +47,7 @@ export const Contents: CollectionConfig = {
   fields: [
     { name: 'title', type: 'text', label: '标题', required: true },
     { name: 'coverTitle', type: 'text', label: '卡片主标题' },
+    { name: 'coverImage', type: 'relationship', label: '封面图', relationTo: 'media' },
     { name: 'category', type: 'relationship', label: '分类', relationTo: 'content-categories', required: true },
     {
       name: 'contentType',

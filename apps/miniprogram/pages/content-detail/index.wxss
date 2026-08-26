@@ -2,6 +2,15 @@
   margin-top: 0;
 }
 
+.hero-cover {
+  background: #f2f2f7;
+  border-radius: 24rpx;
+  display: block;
+  height: 360rpx;
+  margin-bottom: 28rpx;
+  width: 100%;
+}
+
 .body-text {
   color: #333333;
   font-size: 30rpx;

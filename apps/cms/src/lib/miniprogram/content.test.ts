@@ -133,6 +133,39 @@ test('returns readable text for Payload richText content detail', async () => {
   assert.equal(detail?.body, '第一段：介绍活动背景。\n\n第二段：说明适合人群。')
 })
 
+test('returns configured cover image urls for content list and detail', async () => {
+  const payload = payloadFor([
+    {
+      _status: 'published',
+      category: {
+        isActive: true,
+        module: 'finance_foundation',
+        title: '金融底色',
+      },
+      contentType: 'event',
+      coverImage: {
+        url: 'https://cos.example.com/ulink/content/finance-salon.jpg',
+      },
+      id: 'content_with_cover_001',
+      publishedAt: '2026-08-22T08:00:00.000Z',
+      summary: '线下金融沙龙报名中。',
+      title: '青年金融沙龙',
+    },
+  ])
+
+  const list = await listPublishedContents({
+    module: 'finance_foundation',
+    payload,
+  })
+  const detail = await getPublishedContentDetail({
+    id: 'content_with_cover_001',
+    payload,
+  })
+
+  assert.equal(list[0].coverImageUrl, 'https://cos.example.com/ulink/content/finance-salon.jpg')
+  assert.equal(detail?.coverImageUrl, 'https://cos.example.com/ulink/content/finance-salon.jpg')
+})
+
 test('locks member-only content details for viewers without active membership', async () => {
   const detail = await getPublishedContentDetail({
     id: 'content_member_only_001',

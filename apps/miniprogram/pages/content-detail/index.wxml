@@ -1,5 +1,6 @@
 <view class="page">
   <view class="card hero">
+    <image wx:if="{{article.coverImageUrl}}" class="hero-cover" src="{{article.coverImageUrl}}" mode="aspectFill" />
     <text class="eyebrow">{{article.categoryTitle || '成长内容'}}</text>
     <view class="title">{{article.title}}</view>
     <view class="muted">{{article.meta}}</view>

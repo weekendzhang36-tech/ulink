@@ -82,6 +82,8 @@ docker compose up -d postgres
 
 本地 `docker-compose.yml` 使用 named volume `ulink_postgres_data` 保存开发数据，普通重启容器不会清空数据。生产环境不能依赖应用容器本地磁盘，数据库需要使用独立持久化 PostgreSQL，上传文件需要接入 COS，避免重新部署时丢失业务数据。
 
+PayloadCMS 已配置 `media` 上传集合。生产环境需要在 `apps/cms/.env` 或服务器密钥管理中配置 `COS_BUCKET`、`COS_REGION`、`COS_ENDPOINT`、`COS_SECRET_ID` 和 `COS_SECRET_KEY`，内容封面、附件和运营素材才会写入腾讯云 COS。`COS_PUBLIC_BASE_URL` 可用于指定自定义 CDN 或公开访问域名。未配置 `COS_BUCKET` 时只适合作为本地开发模式，不能用于生产上传。
+
 复制后台环境变量示例：
 
 ```bash
