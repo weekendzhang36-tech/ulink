@@ -35,6 +35,33 @@ function tagsOf(tags: unknown) {
     : []
 }
 
+function optionalString(value: unknown) {
+  return typeof value === 'string' && value.trim() ? value : undefined
+}
+
+function positiveNumber(value: unknown) {
+  const number = Number(value || 0)
+
+  return Number.isFinite(number) && number > 0 ? number : undefined
+}
+
+function statusText(status: unknown) {
+  if (status === 'upcoming') return '即将开放'
+  if (status === 'closed') return '已结束'
+
+  return '报名中'
+}
+
+function capacityText(doc: Record<string, unknown>) {
+  const capacity = positiveNumber(doc.capacity)
+  const reservedCount = Math.max(0, Number(doc.reservedCount || 0))
+  if (!capacity) {
+    return reservedCount > 0 ? `${reservedCount} 人已预约` : undefined
+  }
+
+  return `${reservedCount} 人已预约 · 剩余 ${Math.max(0, capacity - reservedCount)} 个名额`
+}
+
 function textFromRichText(value: unknown): string | null {
   if (typeof value === 'string') return value
   if (!value || typeof value !== 'object') return null
@@ -62,13 +89,19 @@ function textFromRichText(value: unknown): string | null {
 
 export function toContentSummary(doc: Record<string, unknown>) {
   return {
+    actionLabel: optionalString(doc.actionLabel),
+    actionUrl: optionalString(doc.actionUrl),
+    capacityText: capacityText(doc),
     categoryTitle: relationTitle(doc.category),
     contentType: String(doc.contentType || 'article'),
     id: String(doc.id),
+    isMemberOnly: Boolean(doc.isMemberOnly),
     meta: [doc.publishedAt ? String(doc.publishedAt).slice(5, 10) : '', String(doc.contentType || '')]
       .filter(Boolean)
       .join(' · '),
     module: relationModule(doc.category),
+    status: String(doc.status || 'open'),
+    statusText: statusText(doc.status),
     summary: String(doc.summary || ''),
     tags: tagsOf(doc.tags),
     title: String(doc.coverTitle || doc.title || ''),

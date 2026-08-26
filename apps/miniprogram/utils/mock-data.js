@@ -15,16 +15,26 @@ const modules = [
 
 const articles = [
   {
+    actionLabel: '预约报名',
+    actionUrl: 'https://example.com/finance-salon',
+    capacityText: '28 人已预约 · 剩余 12 个名额',
     id: 'finance-salon',
+    isMemberOnly: false,
     module: 'finance_foundation',
+    statusText: '报名中',
     title: '青年金融沙龙：从校园到银行网点',
     meta: '8月22日 · 线下活动',
     summary: '邀请在职学长聊一线岗位、客户沟通和新人适应。',
     body: '沙龙会围绕银行网点、客户经理和运营岗位展开，适合想先听真实经历，再决定是否深入了解的同学。',
   },
   {
+    actionLabel: '预约报名',
+    actionUrl: 'https://example.com/practice-camp',
+    capacityText: '36 人已预约 · 剩余 14 个名额',
     id: 'practice-camp',
+    isMemberOnly: true,
     module: 'practice',
+    statusText: '报名中',
     title: '金融岗位模拟实训营开放报名',
     meta: '8月22日 · 活动报名',
     summary: '2 小时体验一次客户资料整理与风险提示任务。',

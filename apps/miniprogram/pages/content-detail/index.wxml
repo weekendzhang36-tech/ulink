@@ -4,6 +4,11 @@
     <view class="title">{{article.title}}</view>
     <view class="muted">{{article.meta}}</view>
     <view class="subtitle">{{article.summary}}</view>
+    <view class="content-flags">
+      <text class="flag primary">{{article.statusText}}</text>
+      <text class="flag" wx:if="{{article.isMemberOnly}}">会员专属</text>
+      <text class="flag" wx:if="{{article.capacityText}}">{{article.capacityText}}</text>
+    </view>
     <view class="tag-row" wx:if="{{article.tags && article.tags.length}}">
       <text class="tag" wx:for="{{article.tags}}" wx:for-item="tag" wx:key="*this">{{tag}}</text>
     </view>
@@ -12,4 +17,8 @@
   <view class="card">
     <view class="body-text">{{article.body}}</view>
   </view>
+
+  <button wx:if="{{article.actionLabel}}" class="primary-button action-button" bindtap="useAction">
+    {{article.actionLabel}}
+  </button>
 </view>

@@ -19,6 +19,11 @@
       <view class="content-meta">{{item.categoryTitle}} · {{item.meta}}</view>
       <view class="content-title">{{item.title}}</view>
       <view class="subtitle">{{item.summary}}</view>
+      <view class="content-flags">
+        <text class="flag primary">{{item.statusText}}</text>
+        <text class="flag" wx:if="{{item.isMemberOnly}}">会员专属</text>
+        <text class="flag" wx:if="{{item.capacityText}}">{{item.capacityText}}</text>
+      </view>
       <view class="tag-row" wx:if="{{item.tags && item.tags.length}}">
         <text class="tag" wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this">{{tag}}</text>
       </view>

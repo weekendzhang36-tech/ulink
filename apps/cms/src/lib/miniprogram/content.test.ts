@@ -11,10 +11,16 @@ const docs = [
       module: 'practice',
       title: '实习实践',
     },
+    actionLabel: '预约报名',
+    actionUrl: 'https://example.com/practice-camp',
+    capacity: 50,
     contentType: 'event',
     id: 'content_practice_001',
     isFeatured: true,
+    isMemberOnly: true,
     publishedAt: '2026-08-22T08:00:00.000Z',
+    reservedCount: 36,
+    status: 'open',
     summary: '2 小时体验客户资料整理和风险提示任务。',
     tags: [{ label: '实训营' }, { label: '真实任务' }],
     title: '金融岗位模拟实训营开放报名',
@@ -59,6 +65,11 @@ test('lists only published contents from active categories for the requested mod
   )
   assert.deepEqual(contents[0].tags, ['实训营', '真实任务'])
   assert.equal(contents[0].categoryTitle, '实习实践')
+  assert.equal(contents[0].actionLabel, '预约报名')
+  assert.equal(contents[0].actionUrl, 'https://example.com/practice-camp')
+  assert.equal(contents[0].capacityText, '36 人已预约 · 剩余 14 个名额')
+  assert.equal(contents[0].isMemberOnly, true)
+  assert.equal(contents[0].statusText, '报名中')
 })
 
 test('returns readable text for Payload richText content detail', async () => {

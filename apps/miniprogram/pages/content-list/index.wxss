@@ -25,6 +25,28 @@
   margin-bottom: 14rpx;
 }
 
+.content-flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 18rpx;
+}
+
+.flag {
+  background: #f2f2f7;
+  border-radius: 999rpx;
+  color: #6e6e73;
+  font-size: 24rpx;
+  font-weight: 700;
+  line-height: 44rpx;
+  padding: 0 18rpx;
+}
+
+.flag.primary {
+  background: #e8f1ff;
+  color: #007aff;
+}
+
 .tag-row {
   display: flex;
   flex-wrap: wrap;
