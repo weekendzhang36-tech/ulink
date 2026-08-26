@@ -8,11 +8,19 @@ const {
   getExistingSessionDestination,
   getLoginResultDestination,
 } = require('../../utils/login-destination')
+const {
+  createLocalDevLoginCode,
+  shouldUseLocalDevLoginFallback,
+} = require('../../utils/wechat-login-code')
 
 function navigateToDestination(destination) {
   if (!destination) return
 
   wx[destination.method]({ url: destination.url })
+}
+
+function showLoginError(error) {
+  wx.showToast({ icon: 'none', title: (error && error.message) || '登录失败' })
 }
 
 Page({
@@ -43,22 +51,29 @@ Page({
 
   startLogin() {
     this.setData({ loading: true })
+    const loginWithCode = (code) =>
+      loginWithWechatCode(code)
+        .then((data) => {
+          navigateToDestination(getLoginResultDestination(data))
+        })
+        .catch(showLoginError)
+        .finally(() => {
+          this.setData({ loading: false })
+        })
+
     wx.login({
       fail: () => {
+        const app = getApp()
+        if (shouldUseLocalDevLoginFallback(app.globalData)) {
+          loginWithCode(createLocalDevLoginCode())
+          return
+        }
+
+        showLoginError(new Error('微信登录失败'))
         this.setData({ loading: false })
-        wx.showToast({ icon: 'none', title: '微信登录失败' })
       },
       success: ({ code }) => {
-        loginWithWechatCode(code)
-          .then((data) => {
-            navigateToDestination(getLoginResultDestination(data))
-          })
-          .catch((error) => {
-            wx.showToast({ icon: 'none', title: error.message || '登录失败' })
-          })
-          .finally(() => {
-            this.setData({ loading: false })
-          })
+        loginWithCode(code)
       },
     })
   },

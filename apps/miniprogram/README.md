@@ -21,6 +21,7 @@ http://localhost:3001/api/miniprogram
 
 - 页面通过 `utils/api.js` 调用 PayloadCMS 后台的 `/api/miniprogram/*` 接口。
 - `utils/mock-data.js` 只作为显式本地 demo fallback 使用，不能进入生产路径，也不能用来掩盖真实接口失败。
+- 本地开发可开启 `app.js` 里的 `localDevWechatLoginFallback`，当微信开发者工具测试 AppID 无法完成 `wx.login` 时，使用明确标记的本地 code 调用后台 mock 登录。
 - 已接入登录、资料提交、认证状态、内容、成长计划、订单和本地模拟支付的第一批接口形状。
 - 登录页会用后台认证状态确认本地 session 是否仍有效，再进入首页或资料页；过期 session 会被清理并留在登录页。
 - “我的”页支持主动退出登录，退出会清理本地 session token 并回到登录页。
