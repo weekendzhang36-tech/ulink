@@ -103,6 +103,38 @@ export async function createMembershipOrder({
   return { order, paymentParams }
 }
 
+export async function getMembershipOrderStatus({
+  input,
+  now,
+  repository,
+  secret,
+}: {
+  input: {
+    orderNo: string
+    sessionToken: string
+  }
+  now: Date
+  repository: MiniProgramRepository
+  secret: string
+}) {
+  const session = verifySessionToken({ now, secret, token: input.sessionToken })
+  const student = session.studentId
+    ? await repository.findStudentById(session.studentId)
+    : await repository.findStudentByOpenId(session.openId)
+  if (!student) {
+    throw new MiniProgramError('请先完成学生资料')
+  }
+
+  const order = await repository.findOrderByOrderNo(input.orderNo)
+  if (!order || order.studentId !== student.id) {
+    throw new MiniProgramError('订单不存在', 404)
+  }
+
+  const membership = await repository.findMembershipByStudentId(student.id)
+
+  return { membership, order }
+}
+
 export async function confirmMembershipPayment({
   input,
   now,

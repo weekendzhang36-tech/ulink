@@ -1,7 +1,12 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 
-import { createMembershipOrder, confirmMembershipPayment, formatMembershipState } from './membership.ts'
+import {
+  createMembershipOrder,
+  confirmMembershipPayment,
+  formatMembershipState,
+  getMembershipOrderStatus,
+} from './membership.ts'
 import { createSessionToken } from './session.ts'
 import { createMemoryRepository } from './testing/memoryRepository.ts'
 
@@ -117,4 +122,33 @@ test('formats active and expired membership state for Mini Program display', () 
     isActive: false,
     statusText: '已过期',
   })
+})
+
+test('returns order status only for the student who owns the order', async () => {
+  const repository = createMemoryRepository()
+  const ownerResult = await getMembershipOrderStatus({
+    input: {
+      orderNo: 'order_paid_once',
+      sessionToken: tokenFor('student_001'),
+    },
+    now: new Date('2026-08-26T10:05:00.000Z'),
+    repository,
+    secret,
+  })
+
+  assert.equal(ownerResult.order.orderNo, 'order_paid_once')
+
+  await assert.rejects(
+    () =>
+      getMembershipOrderStatus({
+        input: {
+          orderNo: 'order_paid_once',
+          sessionToken: tokenFor('student_other_class', 'openid_other_class'),
+        },
+        now: new Date('2026-08-26T10:05:00.000Z'),
+        repository,
+        secret,
+      }),
+    /订单不存在/,
+  )
 })

@@ -1,16 +1,27 @@
 import { MiniProgramError } from '@/lib/miniprogram/errors.ts'
-import { getMiniProgramRepository, handleMiniProgramRoute, ok } from '@/lib/miniprogram/routeHelpers.ts'
+import { getMembershipOrderStatus } from '@/lib/miniprogram/membership.ts'
+import {
+  getBearerToken,
+  getMiniProgramRepository,
+  getServerSecret,
+  handleMiniProgramRoute,
+  ok,
+} from '@/lib/miniprogram/routeHelpers.ts'
 
-export async function GET(_request: Request, { params }: { params: Promise<{ orderNo: string }> }) {
+export async function GET(request: Request, { params }: { params: Promise<{ orderNo: string }> }) {
   return handleMiniProgramRoute(async () => {
     const { orderNo } = await params
-    const repository = await getMiniProgramRepository()
-    const order = await repository.findOrderByOrderNo(orderNo)
-    if (!order) {
-      throw new MiniProgramError('订单不存在', 404)
+    const sessionToken = getBearerToken(request)
+    if (!sessionToken) {
+      throw new MiniProgramError('请先登录', 401)
     }
-    const membership = await repository.findMembershipByStudentId(order.studentId)
+    const result = await getMembershipOrderStatus({
+      input: { orderNo, sessionToken },
+      now: new Date(),
+      repository: await getMiniProgramRepository(),
+      secret: getServerSecret(),
+    })
 
-    return ok({ membership, order })
+    return ok(result)
   })
 }
