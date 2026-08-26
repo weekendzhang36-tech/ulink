@@ -3,7 +3,7 @@ import type { CollectionConfig } from 'payload'
 export const ServiceLinks: CollectionConfig = {
   slug: 'service-links',
   admin: {
-    defaultColumns: ['title', 'serviceType', 'isActive'],
+    defaultColumns: ['title', 'module', 'serviceType', 'isActive'],
     group: '服务入口',
     useAsTitle: 'title',
   },
@@ -13,6 +13,19 @@ export const ServiceLinks: CollectionConfig = {
   },
   fields: [
     { name: 'title', type: 'text', label: '名称', required: true },
+    {
+      name: 'module',
+      type: 'select',
+      label: '所属模块',
+      required: true,
+      defaultValue: 'career_planning',
+      options: [
+        { label: '职业规划', value: 'career_planning' },
+        { label: '实习实践', value: 'practice' },
+        { label: '金融底色', value: 'finance_foundation' },
+        { label: '文化交流', value: 'culture_exchange' },
+      ],
+    },
     {
       name: 'serviceType',
       type: 'select',

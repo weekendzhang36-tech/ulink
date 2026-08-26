@@ -2,8 +2,6 @@ type PayloadLike = {
   find(input: Record<string, unknown>): Promise<{ docs: Record<string, unknown>[] }>
 }
 
-const careerPlanningServiceTypes = new Set(['assessment', 'resume', 'consulting'])
-
 function optionalString(value: unknown) {
   return typeof value === 'string' && value.trim() ? value : undefined
 }
@@ -26,13 +24,6 @@ function actionLabel(serviceType: string) {
   return '查看详情'
 }
 
-function isServiceLinkVisibleInModule(serviceType: string, module?: string) {
-  if (!module) return true
-  if (module === 'career_planning') return careerPlanningServiceTypes.has(serviceType)
-
-  return false
-}
-
 export function toServiceLinkSummary(doc: Record<string, unknown>) {
   const serviceType = String(doc.serviceType || '')
 
@@ -40,6 +31,7 @@ export function toServiceLinkSummary(doc: Record<string, unknown>) {
     actionLabel: actionLabel(serviceType),
     description: String(doc.description || ''),
     id: String(doc.id),
+    module: optionalString(doc.module),
     serviceType,
     title: String(doc.title || ''),
     typeLabel: serviceTypeLabel(serviceType),
@@ -65,5 +57,5 @@ export async function listActiveServiceLinks({
   return result.docs
     .filter((doc) => Boolean(doc.isActive))
     .map(toServiceLinkSummary)
-    .filter((link) => isServiceLinkVisibleInModule(link.serviceType, module))
+    .filter((link) => !module || link.module === module)
 }
