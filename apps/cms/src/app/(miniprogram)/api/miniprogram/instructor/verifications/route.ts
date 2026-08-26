@@ -3,6 +3,7 @@ import {
   reviewInstructorStudents,
 } from '@/lib/miniprogram/instructor.ts'
 import { MiniProgramError } from '@/lib/miniprogram/errors.ts'
+import { createNotificationGateway } from '@/lib/miniprogram/notificationDelivery.ts'
 import {
   getBearerToken,
   getMiniProgramRepository,
@@ -53,6 +54,7 @@ export async function POST(request: Request) {
         sessionToken: requireSessionToken(request, body.sessionToken),
         studentIds: body.studentIds,
       },
+      notificationGateway: createNotificationGateway(process.env),
       now: new Date(),
       repository: await getMiniProgramRepository(),
       secret: getServerSecret(),

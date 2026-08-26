@@ -186,6 +186,16 @@ WECHAT_PAY_PLATFORM_PUBLIC_KEY=
 
 回调处理会先使用微信支付平台公钥验签，再用 APIv3 密钥解密 `resource`，并校验 AppID、商户号、订单号和金额后激活会员。本地开发仍可使用 `POST /api/miniprogram/payments/mock-callback`，但必须显式开启 `MINIPROGRAM_MOCK_PAYMENT=true`。
 
+小程序订阅消息用于认证结果提醒。小程序端订阅时会把模板 ID 记录到后台；后台发送时还需要按微信后台已审核模板配置关键词字段映射。例如：
+
+```text
+WECHAT_SUBSCRIBE_MINIPROGRAM_STATE=formal
+WECHAT_SUBSCRIBE_STUDENT_VERIFICATION_RESULT_PAGE=pages/verification/index
+WECHAT_SUBSCRIBE_STUDENT_VERIFICATION_RESULT_FIELDS={"thing1":"serviceName","phrase2":"statusText","time3":"reviewedAtText","name4":"studentName"}
+```
+
+`WECHAT_SUBSCRIBE_STUDENT_VERIFICATION_RESULT_FIELDS` 的 key 必须是微信模板里的关键词字段，value 只能使用 `serviceName`、`statusText`、`reviewedAtText`、`studentName` 或 `remark`。未配置字段映射时，指导员审核仍会更新学生认证状态和审核日志，但订阅消息发送会被标记为未配置，不会用假模板冒充发送成功。
+
 ## 下一步
 
 建议优先确认：
