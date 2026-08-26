@@ -113,6 +113,10 @@
 - 2026-08-26：收紧订单状态查询权限。
   - 后台新增会员订单状态服务，查询订单状态时必须校验登录态和学生身份。
   - `/api/miniprogram/orders/:orderNo` 只返回当前学生自己的订单；其他学生即使拿到订单号也按“订单不存在”处理。
+- 2026-08-26：把开发原则进一步纳入项目工作流。
+  - 新增 `docs/development-workflow.md`，把真实性、产品建模、持久化、测试、调试、API 合同和完成定义整理成日常开发清单。
+  - 根目录新增 `verify:cms`、`verify:miniprogram` 和小程序 JS/JSON 检查脚本，`pnpm verify` 现在会同时检查后台和小程序基础语法。
+  - `apps/miniprogram/README.md` 已更新为真实 API + 显式 demo fallback 的口径，避免继续把小程序描述成纯 mock 骨架。
 
 ## 学生注册认证需求
 

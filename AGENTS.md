@@ -67,7 +67,7 @@ The following ecosystem modules are future expansion areas and should not domina
 
 ## Development Guidelines
 
-- Follow `DEVELOPMENT_PRINCIPLES.md` for truthfulness, data integrity, product modeling, persistence, testing, debugging, frontend UX, API contracts, branch discipline, and verification.
+- Follow `DEVELOPMENT_PRINCIPLES.md` and `docs/development-workflow.md` for truthfulness, data integrity, product modeling, persistence, testing, debugging, frontend UX, API contracts, branch discipline, and verification.
 - Prefer small, reversible changes while the project shape is still emerging.
 - Keep project documentation updated when foundational decisions are made.
 - Avoid introducing large abstractions or cross-platform frameworks before the product requirements are clear.

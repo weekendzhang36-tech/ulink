@@ -44,10 +44,13 @@
 - 生产数据必须持久化，PostgreSQL、PayloadCMS 上传、COS 文件、订单、会员、认证历史和密钥不能依赖应用容器本地磁盘。
 - 涉及登录、手机号、支付、会员、认证和数据迁移的改动，完成前要跑对应测试、类型检查或构建检查。
 
+日常开发工作流见 [docs/development-workflow.md](./docs/development-workflow.md)。它把上述原则落到开发前确认、实现边界、持久化要求和提交前检查。
+
 ## 当前状态
 
 - 已创建项目协作说明：`AGENTS.md`
 - 已纳入开发原则：`DEVELOPMENT_PRINCIPLES.md`
+- 已补充开发工作流：`docs/development-workflow.md`
 - 已补充产品说明：`docs/product.md`
 - 已补充架构说明：`docs/architecture.md`
 - 初步技术方向：原生微信小程序 + 腾讯云自部署 PayloadCMS + PostgreSQL + COS
@@ -110,7 +113,9 @@ pnpm dev:cms          # 启动 PayloadCMS 后台
 pnpm --filter @ulink/cms test
 pnpm typecheck       # 后台 TypeScript 检查
 pnpm lint            # 后台 lint
-pnpm verify          # 后台测试 + 类型检查 + lint
+pnpm verify:cms      # 后台测试 + 类型检查 + lint
+pnpm verify:miniprogram
+pnpm verify          # 后台检查 + 小程序 JS/JSON 检查
 ```
 
 ## 小程序 API

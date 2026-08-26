@@ -11,6 +11,18 @@
 
 ## 当前状态
 
-- 页面使用 `utils/mock-data.js` 中的演示数据。
-- `utils/api.js` 保留未来接入 PayloadCMS REST API 的入口。
-- 暂未接入微信登录、手机号授权、支付和订阅消息。
+- 页面通过 `utils/api.js` 调用 PayloadCMS 后台的 `/api/miniprogram/*` 接口。
+- `utils/mock-data.js` 只作为显式本地 demo fallback 使用，不能进入生产路径，也不能用来掩盖真实接口失败。
+- 已接入登录、资料提交、认证状态、内容、成长计划、订单和本地模拟支付的第一批接口形状。
+- 真实微信 AppID、手机号授权、微信支付、短信服务和订阅消息仍需要生产配置与联调。
+
+## 开发原则
+
+- 遵循根目录 `DEVELOPMENT_PRINCIPLES.md` 和 `docs/development-workflow.md`。
+- 小程序页面不自行伪造会员、订单、支付、认证或内容发布状态，关键状态以后台返回为准。
+- 页面需要真实处理空状态、加载失败、未开放和无权限状态。
+- 涉及页面 JS 或 JSON 配置时，提交前运行：
+
+```bash
+pnpm verify:miniprogram
+```
