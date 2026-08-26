@@ -194,6 +194,12 @@ export interface MiniProgramRepository {
     phone: string,
   ): Promise<SmsVerificationChallengeRecord | undefined>
   findInstructorClassIdsByPhone(phone: string): Promise<string[]>
+  isActiveCampusSelection(input: {
+    classId: string
+    collegeId: string
+    majorId: string
+    schoolId: string
+  }): Promise<boolean>
   findStudentsByClassIds(input: {
     classIds: string[]
     status?: VerificationStatus

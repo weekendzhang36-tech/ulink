@@ -54,6 +54,16 @@ export async function submitStudentProfile({
     throw new MiniProgramError('手机号已绑定其他学生账号')
   }
 
+  const campusSelectionIsActive = await repository.isActiveCampusSelection({
+    classId,
+    collegeId,
+    majorId,
+    schoolId,
+  })
+  if (!campusSelectionIsActive) {
+    throw new MiniProgramError('学校、学院、专业或班级不可用，请重新选择')
+  }
+
   const existing = await repository.findStudentByOpenId(session.openId)
   const submittedAt = now.toISOString()
 

@@ -399,6 +399,40 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
 
       return result.docs.map((doc) => String(doc.id))
     },
+    async isActiveCampusSelection(input) {
+      const school = await first(payload, 'schools', {
+        and: [{ id: { equals: input.schoolId } }, { isActive: { equals: true } }],
+      })
+      if (!school) return false
+
+      const college = await first(payload, 'colleges', {
+        and: [
+          { id: { equals: input.collegeId } },
+          { school: { equals: input.schoolId } },
+          { isActive: { equals: true } },
+        ],
+      })
+      if (!college) return false
+
+      const major = await first(payload, 'majors', {
+        and: [
+          { id: { equals: input.majorId } },
+          { college: { equals: input.collegeId } },
+          { isActive: { equals: true } },
+        ],
+      })
+      if (!major) return false
+
+      const classInfo = await first(payload, 'classes', {
+        and: [
+          { id: { equals: input.classId } },
+          { major: { equals: input.majorId } },
+          { isActive: { equals: true } },
+        ],
+      })
+
+      return Boolean(classInfo)
+    },
     async findStudentsByClassIds(input) {
       if (input.classIds.length === 0) {
         return []

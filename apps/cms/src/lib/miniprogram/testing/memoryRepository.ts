@@ -106,6 +106,11 @@ export function createMemoryRepository(
   const contentReservations = new Map<string, ContentReservationRecord>()
   const paymentEvents = new Map<string, PaymentEventRecord>()
   const smsVerificationChallenges = new Map<string, SmsVerificationChallengeRecord>()
+  const campusSelections = new Set([
+    'school_001/college_001/major_001/class_001',
+    'school_001/college_001/major_001/class_999',
+    'school_001/college_staff/major_staff/class_staff',
+  ])
 
   const repository: MiniProgramRepository & {
     contentReservations: Map<string, ContentReservationRecord>
@@ -213,6 +218,11 @@ export function createMemoryRepository(
     },
     async findInstructorClassIdsByPhone(phone) {
       return instructorClasses.get(phone) || []
+    },
+    async isActiveCampusSelection(input) {
+      return campusSelections.has(
+        `${input.schoolId}/${input.collegeId}/${input.majorId}/${input.classId}`,
+      )
     },
     async findStudentsByClassIds(input) {
       return [...students.values()]
