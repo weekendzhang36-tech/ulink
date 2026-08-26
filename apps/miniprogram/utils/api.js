@@ -53,7 +53,9 @@ function request({ auth = false, data, method = 'GET', path }) {
       success(response) {
         const responseData = response.data || {}
         if (response.statusCode >= 400 || responseData.error) {
-          reject(new Error((responseData.error && responseData.error.message) || '请求失败'))
+          const error = new Error((responseData.error && responseData.error.message) || '请求失败')
+          error.statusCode = response.statusCode
+          reject(error)
           return
         }
 

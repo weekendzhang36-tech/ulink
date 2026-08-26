@@ -1,4 +1,5 @@
 const { getHomeData, getSessionToken } = require('../../utils/api')
+const { getProfileGuardRedirect } = require('../../utils/profile-guard')
 
 Page({
   data: {
@@ -20,6 +21,12 @@ Page({
         this.setData(data)
       })
       .catch((error) => {
+        const redirectUrl = getProfileGuardRedirect(error)
+        if (redirectUrl) {
+          wx.navigateTo({ url: redirectUrl })
+          return
+        }
+
         wx.showToast({ icon: 'none', title: error.message || '首页加载失败' })
       })
   },
