@@ -1,0 +1,43 @@
+# U Link 开发规约
+
+本项目的开发以根目录 [DEVELOPMENT_PRINCIPLES.md](./DEVELOPMENT_PRINCIPLES.md) 为总原则。任何涉及小程序、PayloadCMS 后台、支付、会员、认证、内容发布、服务入口、数据导入或部署的改动，都应先按这些原则判断边界，再进入实现。
+
+## 开发前必须确认
+
+- 本次改动属于原型、demo、fixture、本地开发，还是生产路径。
+- 用户从哪里进入、看到什么、点击什么、会创建或更新什么数据。
+- 业务对象的来源和归属是什么，例如学生、手机号、认证记录、会员、订单、支付事件、内容、预约、学校或班级。
+- 是否会产生持久化记录；如果会，该记录必须对应真实用户动作或真实业务事件。
+- 是否涉及第三方服务；如果涉及，小程序只能展示清晰入口、说明、跳转或咨询承接，不能把外部能力伪装成 U Link 已自研完成。
+
+## 实现时必须遵守
+
+- 不用假数据、默认值、前端 fallback 或空壳文案掩盖接口、数据库、支付、登录、上传或第三方服务失败。
+- mock 只能出现在明确标记的原型、本地 demo、fixture 或本地开发路径中。
+- 后台服务层先表达业务规则，路由层只适配 HTTP 请求和响应。
+- 小程序页面通过统一 API wrapper 调用后台，不在页面中散落请求细节。
+- 页面跨流程传递内容 ID、订单号、预约 ID 等稳定引用，由目标页面重新读取自己拥有的数据。
+- 支付、会员、认证、预约名额、内容发布状态都以后端持久化结果为准。
+
+## 持久化与密钥
+
+- 生产 PostgreSQL 必须是独立持久化资源，不能随应用容器、镜像或部署重建而清空。
+- PayloadCMS 上传、内容封面、附件、学校素材和合作方资料必须接入 COS 或明确对象存储。
+- `PAYLOAD_SECRET`、数据库密码、微信 AppSecret、微信支付密钥、COS 密钥和短信密钥只能来自环境变量或密钥管理。
+- 数据迁移、批量导入、支付相关改动和生产发布前，先确认备份和回滚方案。
+
+## 提交前检查
+
+优先按 [docs/development-checklist.md](./docs/development-checklist.md) 自查。常用命令：
+
+```bash
+pnpm verify:precommit
+```
+
+涉及生产构建或发布前，还需要执行 PayloadCMS 构建检查：
+
+```bash
+PAYLOAD_SECRET=dev-local-build-secret DATABASE_URL=postgres://ulink:ulink_dev_password@localhost:5432/ulink pnpm --filter @ulink/cms build
+```
+
+如果某个检查暂时无法执行，需要在交付说明中明确说明原因、影响范围和剩余风险。

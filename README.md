@@ -36,7 +36,16 @@
 
 ## 开发原则
 
-项目开发必须遵循 [DEVELOPMENT_PRINCIPLES.md](./DEVELOPMENT_PRINCIPLES.md)，重点落在这些第一版底线：
+项目开发必须遵循 [DEVELOPMENT_PRINCIPLES.md](./DEVELOPMENT_PRINCIPLES.md)。这份文件是项目级开发规约，不只是参考资料；后续做小程序、PayloadCMS 后台、支付、会员、认证、内容发布、服务入口、数据导入或部署时，都要先按它确认边界。
+
+日常执行顺序：
+
+1. 先读总原则：[DEVELOPMENT_PRINCIPLES.md](./DEVELOPMENT_PRINCIPLES.md)。
+2. 开始需求时按 [docs/development-workflow.md](./docs/development-workflow.md) 梳理用户流程、数据归属和持久化边界。
+3. 提交或交付前按 [docs/development-checklist.md](./docs/development-checklist.md) 自查，并运行对应验证命令。
+4. 新参与开发时先看 [CONTRIBUTING.md](./CONTRIBUTING.md)，按同一规约进入项目。
+
+第一版重点底线：
 
 - 不用假数据、假 fallback 或前端默认值掩盖真实接口、数据库、支付、登录或文件上传失败。
 - mock 只允许出现在明确标记的原型、本地 demo、fixture 或本地开发路径里。
@@ -44,12 +53,13 @@
 - 生产数据必须持久化，PostgreSQL、PayloadCMS 上传、COS 文件、订单、会员、认证历史和密钥不能依赖应用容器本地磁盘。
 - 涉及登录、手机号、支付、会员、认证和数据迁移的改动，完成前要跑对应测试、类型检查或构建检查。
 
-日常开发工作流见 [docs/development-workflow.md](./docs/development-workflow.md)，提交前快速自查见 [docs/development-checklist.md](./docs/development-checklist.md)。这两份文档把上述原则落到开发前确认、实现边界、持久化要求和提交前检查。
+`CONTRIBUTING.md`、日常开发工作流和提交前检查清单会把上述原则落到开发前确认、实现边界、持久化要求和提交前检查。
 
 ## 当前状态
 
 - 已创建项目协作说明：`AGENTS.md`
 - 已纳入开发原则：`DEVELOPMENT_PRINCIPLES.md`
+- 已补充开发规约入口：`CONTRIBUTING.md`
 - 已补充开发工作流：`docs/development-workflow.md`
 - 已补充产品说明：`docs/product.md`
 - 已补充架构说明：`docs/architecture.md`

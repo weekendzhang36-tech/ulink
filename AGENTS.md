@@ -67,8 +67,9 @@ The following ecosystem modules are future expansion areas and should not domina
 
 ## Development Guidelines
 
-- Follow `DEVELOPMENT_PRINCIPLES.md` and `docs/development-workflow.md` for truthfulness, data integrity, product modeling, persistence, testing, debugging, frontend UX, API contracts, branch discipline, and verification.
-- Use `docs/development-checklist.md` as the quick self-review before committing or handing off implementation work.
+- Treat `DEVELOPMENT_PRINCIPLES.md` as the project-level engineering contract, not optional reference material.
+- Follow `CONTRIBUTING.md`, `docs/development-workflow.md`, and `docs/development-checklist.md` when starting requirements, implementing changes, committing, or handing off work.
+- Use these documents for truthfulness, data integrity, product modeling, persistence, testing, debugging, frontend UX, API contracts, branch discipline, and verification.
 - Prefer small, reversible changes while the project shape is still emerging.
 - Keep project documentation updated when foundational decisions are made.
 - Avoid introducing large abstractions or cross-platform frameworks before the product requirements are clear.
