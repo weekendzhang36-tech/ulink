@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 
-import { seedMvpStarterData } from './mvpSeed.ts'
+import { assertMvpSeedAllowed, seedMvpStarterData } from './mvpSeed.ts'
 
 type CollectionName = 'content-categories' | 'contents' | 'growth-plans' | 'service-links'
 type FakeDoc = Record<string, unknown> & { id: string }
@@ -72,6 +72,18 @@ test('does not duplicate or overwrite existing MVP starter data', async () => {
   assert.equal(payload.docs['content-categories'].length, 4)
   assert.equal(payload.docs.contents.length, 4)
   assert.equal(payload.docs['service-links'].length, 6)
+})
+
+test('rejects MVP starter data seed in production without explicit confirmation', () => {
+  assert.throws(
+    () => assertMvpSeedAllowed({ MVP_SEED_ALLOW_PRODUCTION: '', NODE_ENV: 'production' }),
+    /生产环境/,
+  )
+
+  assert.doesNotThrow(() =>
+    assertMvpSeedAllowed({ MVP_SEED_ALLOW_PRODUCTION: 'true', NODE_ENV: 'production' }),
+  )
+  assert.doesNotThrow(() => assertMvpSeedAllowed({ NODE_ENV: 'development' }))
 })
 
 function createFakeSeedPayload(seed: Partial<Record<CollectionName, FakeDoc[]>> = {}) {

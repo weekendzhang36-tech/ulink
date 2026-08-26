@@ -17,6 +17,14 @@ export interface MvpSeedResult {
   serviceLinksCreated: number
 }
 
+export function assertMvpSeedAllowed(
+  env: Partial<Record<'MVP_SEED_ALLOW_PRODUCTION' | 'NODE_ENV', string>>,
+) {
+  if (env.NODE_ENV === 'production' && env.MVP_SEED_ALLOW_PRODUCTION !== 'true') {
+    throw new Error('生产环境执行 seed:mvp 前必须设置 MVP_SEED_ALLOW_PRODUCTION=true')
+  }
+}
+
 const modules = [
   { module: 'career_planning', sortOrder: 10, title: '职业规划' },
   { module: 'practice', sortOrder: 20, title: '实习实践' },

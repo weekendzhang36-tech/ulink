@@ -1,8 +1,10 @@
 import { getPayload } from 'payload'
 
-import { seedMvpStarterData, type MvpSeedPayload } from '../lib/mvpSeed.ts'
+import { assertMvpSeedAllowed, seedMvpStarterData, type MvpSeedPayload } from '../lib/mvpSeed.ts'
 
 async function main() {
+  assertMvpSeedAllowed(process.env)
+
   const { default: config } = await import('../../payload.config.ts')
   const payload = await getPayload({ config })
   const result = await seedMvpStarterData({
