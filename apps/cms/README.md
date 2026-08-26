@@ -30,7 +30,10 @@ pnpm --filter @ulink/cms dev
 pnpm --filter @ulink/cms test
 pnpm --filter @ulink/cms typecheck
 pnpm --filter @ulink/cms build
+pnpm --filter @ulink/cms seed:mvp
 ```
+
+`seed:mvp` 用于本地开发或客户演示时补齐首批内容分类、成长计划、服务入口和示例内容。命令只创建缺失数据，不覆盖已有运营数据，也不会随应用启动自动执行。
 
 根目录提交前完整检查：
 

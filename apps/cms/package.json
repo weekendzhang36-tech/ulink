@@ -9,6 +9,7 @@
     "payload": "payload",
     "generate:types": "payload generate:types",
     "import:campus": "node src/scripts/import-campus-data.ts",
+    "seed:mvp": "node src/scripts/seed-mvp-starter-data.ts",
     "test": "node --test \"src/lib/**/*.test.ts\"",
     "typecheck": "tsc --noEmit",
     "lint": "tsc --noEmit"
