@@ -3,10 +3,13 @@ import test from 'node:test'
 
 import {
   createPhoneVerificationToken,
+  requestSmsPhoneVerification,
+  verifyPhoneNumberWithSmsCode,
   verifyPhoneNumberWithWechatCode,
   verifyPhoneVerificationToken,
 } from './phone.ts'
 import { createSessionToken } from './session.ts'
+import { createMemoryRepository } from './testing/memoryRepository.ts'
 
 const secret = 'test-secret'
 const now = new Date('2026-08-26T10:00:00.000Z')
@@ -68,4 +71,51 @@ test('rejects a phone verification token for a different phone number', () => {
       }),
     /手机号验证不匹配/,
   )
+})
+
+test('verifies a phone number through a persisted SMS code challenge', async () => {
+  const repository = createMemoryRepository({ seedStudents: false })
+  const sentMessages: { code: string; phone: string }[] = []
+
+  const requestResult = await requestSmsPhoneVerification({
+    generateCode: () => '246810',
+    input: {
+      phone: '13800000003',
+      sessionToken: sessionToken(),
+    },
+    now,
+    repository,
+    secret,
+    smsGateway: {
+      sendCode: async ({ code, phone }) => {
+        sentMessages.push({ code, phone })
+      },
+    },
+  })
+
+  assert.equal(requestResult.phone, '13800000003')
+  assert.deepEqual(sentMessages, [{ code: '246810', phone: '13800000003' }])
+
+  const verifyResult = await verifyPhoneNumberWithSmsCode({
+    input: {
+      phone: '13800000003',
+      sessionToken: sessionToken(),
+      smsCode: '246810',
+    },
+    now: new Date('2026-08-26T10:02:00.000Z'),
+    repository,
+    secret,
+  })
+
+  assert.equal(verifyResult.phone, '13800000003')
+  assert.equal(
+    verifyPhoneVerificationToken({
+      expectedPhone: '13800000003',
+      now: new Date('2026-08-26T10:03:00.000Z'),
+      secret,
+      token: verifyResult.phoneVerificationToken,
+    }).phone,
+    '13800000003',
+  )
+  assert.equal([...repository.smsVerificationChallenges.values()][0].consumedAt, '2026-08-26T10:02:00.000Z')
 })

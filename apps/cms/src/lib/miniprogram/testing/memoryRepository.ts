@@ -5,6 +5,7 @@ import type {
   MiniProgramRepository,
   OrderRecord,
   PaymentEventRecord,
+  SmsVerificationChallengeRecord,
   StudentRecord,
 } from '../types.ts'
 
@@ -100,18 +101,21 @@ export function createMemoryRepository(
   ])
   const memberships = new Map<string, MembershipRecord>()
   const paymentEvents = new Map<string, PaymentEventRecord>()
+  const smsVerificationChallenges = new Map<string, SmsVerificationChallengeRecord>()
 
   const repository: MiniProgramRepository & {
     growthPlans: Map<string, GrowthPlanRecord>
     memberships: Map<string, MembershipRecord>
     orders: Map<string, OrderRecord>
     paymentEvents: Map<string, PaymentEventRecord>
+    smsVerificationChallenges: Map<string, SmsVerificationChallengeRecord>
     students: Map<string, StudentRecord>
   } = {
     growthPlans,
     memberships,
     orders,
     paymentEvents,
+    smsVerificationChallenges,
     students,
     async createMembership(input) {
       const membership = { ...input, id: nextId('membership', memberships.size) }
@@ -130,6 +134,12 @@ export function createMemoryRepository(
       paymentEvents.set(paymentEvent.eventKey, paymentEvent)
 
       return paymentEvent
+    },
+    async createSmsVerificationChallenge(input) {
+      const challenge = { ...input, id: nextId('sms_challenge', smsVerificationChallenges.size) }
+      smsVerificationChallenges.set(challenge.id, challenge)
+
+      return challenge
     },
     async createStudent(input) {
       const student = { ...input, id: nextId('student', students.size) }
@@ -150,6 +160,11 @@ export function createMemoryRepository(
     },
     async findPaymentEventByKey(eventKey) {
       return paymentEvents.get(eventKey)
+    },
+    async findLatestSmsVerificationChallengeByPhone(phone) {
+      return [...smsVerificationChallenges.values()]
+        .filter((challenge) => challenge.phone === phone)
+        .sort((left, right) => right.requestedAt.localeCompare(left.requestedAt))[0]
     },
     async findInstructorClassIdsByPhone(phone) {
       return instructorClasses.get(phone) || []
@@ -196,6 +211,16 @@ export function createMemoryRepository(
       }
       const next = { ...current, ...input }
       orders.set(next.orderNo, next)
+
+      return next
+    },
+    async updateSmsVerificationChallenge(id, input) {
+      const current = smsVerificationChallenges.get(id)
+      if (!current) {
+        throw new Error(`SMS verification challenge not found: ${id}`)
+      }
+      const next = { ...current, ...input }
+      smsVerificationChallenges.set(id, next)
 
       return next
     },

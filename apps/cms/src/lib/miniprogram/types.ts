@@ -93,6 +93,16 @@ export interface PaymentEventRecord {
   transactionId?: string
 }
 
+export interface SmsVerificationChallengeRecord {
+  attemptCount: number
+  codeHash: string
+  consumedAt?: string
+  expiresAt: string
+  id: string
+  phone: string
+  requestedAt: string
+}
+
 export interface PaymentParams {
   mock?: boolean
   nonceStr: string
@@ -128,15 +138,25 @@ export interface WechatPhoneGateway {
   }>
 }
 
+export interface SmsGateway {
+  sendCode(input: { code: string; phone: string }): Promise<void>
+}
+
 export interface MiniProgramRepository {
   createMembership(input: Omit<MembershipRecord, 'id'>): Promise<MembershipRecord>
   createOrder(input: Omit<OrderRecord, 'id'>): Promise<OrderRecord>
   createPaymentEvent(input: Omit<PaymentEventRecord, 'id'>): Promise<PaymentEventRecord>
+  createSmsVerificationChallenge(
+    input: Omit<SmsVerificationChallengeRecord, 'id'>,
+  ): Promise<SmsVerificationChallengeRecord>
   createStudent(input: Omit<StudentRecord, 'id'>): Promise<StudentRecord>
   findActiveGrowthPlanById(id: string): Promise<GrowthPlanRecord | undefined>
   findMembershipByStudentId(studentId: string): Promise<MembershipRecord | undefined>
   findOrderByOrderNo(orderNo: string): Promise<OrderRecord | undefined>
   findPaymentEventByKey(eventKey: string): Promise<PaymentEventRecord | undefined>
+  findLatestSmsVerificationChallengeByPhone(
+    phone: string,
+  ): Promise<SmsVerificationChallengeRecord | undefined>
   findInstructorClassIdsByPhone(phone: string): Promise<string[]>
   findStudentsByClassIds(input: {
     classIds: string[]
@@ -148,5 +168,9 @@ export interface MiniProgramRepository {
   updateStudentVerificationStatus(id: string, status: VerificationStatus): Promise<StudentRecord>
   updateMembership(id: string, input: Partial<Omit<MembershipRecord, 'id'>>): Promise<MembershipRecord>
   updateOrder(id: string, input: Partial<Omit<OrderRecord, 'id'>>): Promise<OrderRecord>
+  updateSmsVerificationChallenge(
+    id: string,
+    input: Partial<Omit<SmsVerificationChallengeRecord, 'id'>>,
+  ): Promise<SmsVerificationChallengeRecord>
   updateStudent(id: string, input: Partial<Omit<StudentRecord, 'id'>>): Promise<StudentRecord>
 }

@@ -119,6 +119,8 @@ pnpm verify          # 后台测试 + 类型检查 + lint
 
 - `POST /api/miniprogram/auth/login`
 - `POST /api/miniprogram/phone/wechat`
+- `POST /api/miniprogram/phone/sms/request`
+- `POST /api/miniprogram/phone/sms/verify`
 - `POST /api/miniprogram/profile/submit`
 - `GET /api/miniprogram/profile/status`
 - `GET /api/miniprogram/home`
@@ -137,10 +139,12 @@ pnpm verify          # 后台测试 + 类型检查 + lint
 ```text
 MINIPROGRAM_MOCK_WECHAT_LOGIN=true
 MINIPROGRAM_MOCK_WECHAT_PHONE=true
+MINIPROGRAM_MOCK_SMS=true
+MINIPROGRAM_MOCK_SMS_CODE=123456
 MINIPROGRAM_MOCK_PAYMENT=true
 ```
 
-这些开关只用于本地开发。生产环境需要接入真实微信登录、微信手机号授权、微信支付商户配置和回调验签，不能用 mock 结果冒充真实成功。
+这些开关只用于本地开发。生产环境需要接入真实微信登录、微信手机号授权、短信服务、微信支付商户配置和回调验签，不能用 mock 结果冒充真实成功。
 
 真实微信支付下单需要在服务端配置：
 

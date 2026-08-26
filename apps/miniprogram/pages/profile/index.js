@@ -1,4 +1,10 @@
-const { getCampusOptions, submitProfile, verifyWechatPhone } = require('../../utils/api')
+const {
+  getCampusOptions,
+  requestSmsPhone,
+  submitProfile,
+  verifySmsPhone,
+  verifyWechatPhone,
+} = require('../../utils/api')
 
 const genderOptions = [
   { label: '男', value: 'male' },
@@ -36,6 +42,7 @@ Page({
     },
     loading: false,
     phone: '',
+    phoneAuthMethod: 'wechat',
     phoneVerificationToken: '',
     phoneVerified: false,
     realName: '',
@@ -45,6 +52,9 @@ Page({
       major: '请选择专业',
       school: '请选择学校',
     },
+    smsCode: '',
+    smsCodeSent: false,
+    smsPhone: '',
   },
 
   onLoad() {
@@ -89,6 +99,21 @@ Page({
     this.setData({ [key]: event.detail.value })
   },
 
+  changePhoneAuthMethod(event) {
+    const method = event.currentTarget.dataset.method
+    if (method === this.data.phoneAuthMethod) return
+
+    this.setData({
+      phone: '',
+      phoneAuthMethod: method,
+      phoneVerificationToken: '',
+      phoneVerified: false,
+      smsCode: '',
+      smsCodeSent: false,
+      smsPhone: '',
+    })
+  },
+
   getWechatPhone(event) {
     const phoneCode = event.detail && event.detail.code
     if (!phoneCode) {
@@ -108,6 +133,53 @@ Page({
       })
       .catch((error) => {
         wx.showToast({ icon: 'none', title: error.message || '手机号授权失败' })
+      })
+      .finally(() => {
+        this.setData({ loading: false })
+      })
+  },
+
+  requestSmsCode() {
+    const smsPhone = this.data.smsPhone.trim()
+    if (!smsPhone) {
+      wx.showToast({ icon: 'none', title: '请输入手机号' })
+      return
+    }
+
+    this.setData({ loading: true })
+    requestSmsPhone(smsPhone)
+      .then(() => {
+        this.setData({ smsCodeSent: true })
+        wx.showToast({ title: '验证码已发送' })
+      })
+      .catch((error) => {
+        wx.showToast({ icon: 'none', title: error.message || '验证码发送失败' })
+      })
+      .finally(() => {
+        this.setData({ loading: false })
+      })
+  },
+
+  verifySmsCode() {
+    const smsCode = this.data.smsCode.trim()
+    const smsPhone = this.data.smsPhone.trim()
+    if (!smsPhone || !smsCode) {
+      wx.showToast({ icon: 'none', title: '请填写手机号和验证码' })
+      return
+    }
+
+    this.setData({ loading: true })
+    verifySmsPhone({ phone: smsPhone, smsCode })
+      .then((result) => {
+        this.setData({
+          phone: result.phone,
+          phoneVerificationToken: result.phoneVerificationToken,
+          phoneVerified: true,
+        })
+        wx.showToast({ title: '手机号已验证' })
+      })
+      .catch((error) => {
+        wx.showToast({ icon: 'none', title: error.message || '手机号验证失败' })
       })
       .finally(() => {
         this.setData({ loading: false })
@@ -136,7 +208,7 @@ Page({
       return
     }
     if (!phoneVerified || !phoneVerificationToken) {
-      wx.showToast({ icon: 'none', title: '请先授权手机号' })
+      wx.showToast({ icon: 'none', title: '请先完成手机号认证' })
       return
     }
 

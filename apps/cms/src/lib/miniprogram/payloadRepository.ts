@@ -6,6 +6,7 @@ import type {
   MiniProgramRepository,
   OrderRecord,
   PaymentEventRecord,
+  SmsVerificationChallengeRecord,
   StudentRecord,
 } from './types.ts'
 
@@ -109,6 +110,18 @@ function toPaymentEvent(doc: Record<string, unknown>): PaymentEventRecord {
   }
 }
 
+function toSmsVerificationChallenge(doc: Record<string, unknown>): SmsVerificationChallengeRecord {
+  return {
+    attemptCount: Number(doc.attemptCount || 0),
+    codeHash: String(doc.codeHash || ''),
+    consumedAt: optionalString(doc.consumedAt),
+    expiresAt: String(doc.expiresAt || ''),
+    id: String(doc.id),
+    phone: String(doc.phone || ''),
+    requestedAt: String(doc.requestedAt || ''),
+  }
+}
+
 function toInstructorStudentSummary(doc: Record<string, unknown>): InstructorStudentSummary {
   return {
     classId: idOf(doc.class),
@@ -192,6 +205,21 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
         }),
       )
     },
+    async createSmsVerificationChallenge(input) {
+      return toSmsVerificationChallenge(
+        await payload.create({
+          collection: 'sms-verification-challenges',
+          data: {
+            attemptCount: input.attemptCount,
+            codeHash: input.codeHash,
+            consumedAt: input.consumedAt,
+            expiresAt: input.expiresAt,
+            phone: input.phone,
+            requestedAt: input.requestedAt,
+          },
+        }),
+      )
+    },
     async createStudent(input) {
       return toStudent(
         await payload.create({
@@ -242,6 +270,18 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
       const doc = await first(payload, 'payment-events', { eventKey: { equals: eventKey } }, 1)
 
       return doc ? toPaymentEvent(doc) : undefined
+    },
+    async findLatestSmsVerificationChallengeByPhone(phone) {
+      const result = await payload.find({
+        collection: 'sms-verification-challenges',
+        depth: 0,
+        limit: 1,
+        sort: '-requestedAt',
+        where: { phone: { equals: phone } },
+      })
+      const doc = result.docs[0]
+
+      return doc ? toSmsVerificationChallenge(doc) : undefined
     },
     async findInstructorClassIdsByPhone(phone) {
       const result = await payload.find({
@@ -323,6 +363,22 @@ export function createPayloadRepository(payload: PayloadLike): MiniProgramReposi
             paidAt: input.paidAt,
             status: input.status,
             wechatTransactionId: input.wechatTransactionId,
+          },
+          id,
+        }),
+      )
+    },
+    async updateSmsVerificationChallenge(id, input) {
+      return toSmsVerificationChallenge(
+        await payload.update({
+          collection: 'sms-verification-challenges',
+          data: {
+            attemptCount: input.attemptCount,
+            codeHash: input.codeHash,
+            consumedAt: input.consumedAt,
+            expiresAt: input.expiresAt,
+            phone: input.phone,
+            requestedAt: input.requestedAt,
           },
           id,
         }),

@@ -47,3 +47,24 @@ export const Students: CollectionConfig = {
     { name: 'submittedAt', type: 'date', label: '资料提交时间' },
   ],
 }
+
+export const SmsVerificationChallenges: CollectionConfig = {
+  slug: 'sms-verification-challenges',
+  admin: {
+    defaultColumns: ['phone', 'requestedAt', 'expiresAt', 'attemptCount', 'consumedAt'],
+    group: '学生与认证',
+    useAsTitle: 'phone',
+  },
+  labels: {
+    singular: '短信验证码',
+    plural: '短信验证码',
+  },
+  fields: [
+    { name: 'phone', type: 'text', label: '手机号', required: true },
+    { name: 'codeHash', type: 'text', label: '验证码哈希', required: true },
+    { name: 'requestedAt', type: 'date', label: '请求时间', required: true },
+    { name: 'expiresAt', type: 'date', label: '过期时间', required: true },
+    { name: 'consumedAt', type: 'date', label: '使用时间' },
+    { name: 'attemptCount', type: 'number', label: '尝试次数', required: true, defaultValue: 0 },
+  ],
+}

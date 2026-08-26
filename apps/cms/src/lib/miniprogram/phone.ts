@@ -1,8 +1,8 @@
-import { createHmac, timingSafeEqual } from 'node:crypto'
+import { createHmac, randomInt, timingSafeEqual } from 'node:crypto'
 
 import { MiniProgramError, requireValue } from './errors.ts'
 import { verifySessionToken } from './session.ts'
-import type { WechatPhoneGateway } from './types.ts'
+import type { MiniProgramRepository, SmsGateway, WechatPhoneGateway } from './types.ts'
 
 type PhoneVerificationPayload = {
   exp: number
@@ -11,6 +11,34 @@ type PhoneVerificationPayload = {
 
 function sign(payload: string, secret: string) {
   return createHmac('sha256', secret).update(payload).digest('base64url')
+}
+
+function createSmsCodeHash(input: { code: string; phone: string; secret: string }) {
+  return createHmac('sha256', input.secret).update(`${input.phone}:${input.code}`).digest('base64url')
+}
+
+function verifySmsCodeHash(input: { code: string; hash: string; phone: string; secret: string }) {
+  const expected = createSmsCodeHash(input)
+  const expectedBuffer = Buffer.from(expected)
+  const hashBuffer = Buffer.from(input.hash)
+
+  return (
+    expectedBuffer.length === hashBuffer.length &&
+    timingSafeEqual(expectedBuffer, hashBuffer)
+  )
+}
+
+function normalizeMainlandPhone(value: string | undefined) {
+  const phone = requireValue(value, '手机号')
+  if (!/^1\d{10}$/.test(phone)) {
+    throw new MiniProgramError('请输入 11 位中国大陆手机号')
+  }
+
+  return phone
+}
+
+function generateSixDigitCode() {
+  return String(randomInt(100000, 1000000))
 }
 
 export function createPhoneVerificationToken(input: {
@@ -95,6 +123,94 @@ export async function verifyPhoneNumberWithWechatCode(input: {
   }
 }
 
+export async function requestSmsPhoneVerification(input: {
+  generateCode?: () => string
+  input: {
+    phone: string
+    sessionToken: string
+  }
+  now: Date
+  repository: MiniProgramRepository
+  secret: string
+  smsGateway: SmsGateway
+}) {
+  verifySessionToken({
+    now: input.now,
+    secret: input.secret,
+    token: input.input.sessionToken,
+  })
+  const phone = normalizeMainlandPhone(input.input.phone)
+  const code = (input.generateCode || generateSixDigitCode)()
+  const expiresAt = new Date(input.now.getTime() + 10 * 60 * 1000).toISOString()
+
+  await input.repository.createSmsVerificationChallenge({
+    attemptCount: 0,
+    codeHash: createSmsCodeHash({ code, phone, secret: input.secret }),
+    expiresAt,
+    phone,
+    requestedAt: input.now.toISOString(),
+  })
+  await input.smsGateway.sendCode({ code, phone })
+
+  return {
+    expiresAt,
+    phone,
+  }
+}
+
+export async function verifyPhoneNumberWithSmsCode(input: {
+  input: {
+    phone: string
+    sessionToken: string
+    smsCode: string
+  }
+  now: Date
+  repository: MiniProgramRepository
+  secret: string
+}) {
+  verifySessionToken({
+    now: input.now,
+    secret: input.secret,
+    token: input.input.sessionToken,
+  })
+  const phone = normalizeMainlandPhone(input.input.phone)
+  const smsCode = requireValue(input.input.smsCode, '短信验证码')
+  const challenge = await input.repository.findLatestSmsVerificationChallengeByPhone(phone)
+  if (!challenge) {
+    throw new MiniProgramError('请先获取短信验证码')
+  }
+  if (challenge.consumedAt) {
+    throw new MiniProgramError('短信验证码已使用，请重新获取')
+  }
+  if (Date.parse(challenge.expiresAt) <= input.now.getTime()) {
+    throw new MiniProgramError('短信验证码已过期，请重新获取')
+  }
+  if (challenge.attemptCount >= 5) {
+    throw new MiniProgramError('短信验证码错误次数过多，请重新获取')
+  }
+
+  const attemptCount = challenge.attemptCount + 1
+  if (!verifySmsCodeHash({ code: smsCode, hash: challenge.codeHash, phone, secret: input.secret })) {
+    await input.repository.updateSmsVerificationChallenge(challenge.id, { attemptCount })
+    throw new MiniProgramError('短信验证码不正确')
+  }
+
+  await input.repository.updateSmsVerificationChallenge(challenge.id, {
+    attemptCount,
+    consumedAt: input.now.toISOString(),
+  })
+
+  return {
+    phone,
+    phoneVerificationToken: createPhoneVerificationToken({
+      expiresInSeconds: 60 * 10,
+      now: input.now,
+      phone,
+      secret: input.secret,
+    }),
+  }
+}
+
 async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
   const response = await fetch(url, init)
   if (!response.ok) {
@@ -167,4 +283,16 @@ export function createWechatPhoneGateway(env: NodeJS.ProcessEnv): WechatPhoneGat
       }
     },
   }
+}
+
+export function createSmsGateway(env: NodeJS.ProcessEnv): SmsGateway {
+  if (env.MINIPROGRAM_MOCK_SMS === 'true') {
+    return {
+      async sendCode() {
+        return undefined
+      },
+    }
+  }
+
+  throw new MiniProgramError('短信服务尚未配置', 503)
 }

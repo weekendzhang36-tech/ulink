@@ -28,10 +28,9 @@
   text-align: right;
 }
 
-.phone-action {
+.phone-status {
   align-items: center;
   display: flex;
-  gap: 16rpx;
   justify-content: flex-end;
   max-width: 460rpx;
 }
@@ -55,16 +54,87 @@
   background: #e8f1ff;
   border-radius: 999rpx;
   color: #007aff;
+  font-size: 28rpx;
+  font-weight: 700;
+  line-height: 76rpx;
+  margin: 0;
+  padding: 0 28rpx;
+  width: 100%;
+}
+
+.phone-button::after,
+.method-button::after,
+.sms-code-button::after {
+  border: 0;
+}
+
+.phone-methods {
+  background: #f2f2f7;
+  border-radius: 18rpx;
+  display: grid;
+  gap: 8rpx;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 24rpx 0 0;
+  padding: 8rpx;
+}
+
+.method-button {
+  background: transparent;
+  border-radius: 14rpx;
+  color: #6e6e73;
+  font-size: 28rpx;
+  font-weight: 700;
+  line-height: 64rpx;
+  margin: 0;
+  padding: 0;
+}
+
+.method-button.is-active {
+  background: #ffffff;
+  color: #007aff;
+}
+
+.phone-panel {
+  margin: 20rpx 0 8rpx;
+}
+
+.sms-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.sms-row {
+  align-items: center;
+  background: #f8f8fa;
+  border-radius: 18rpx;
+  display: grid;
+  gap: 12rpx;
+  grid-template-columns: minmax(0, 1fr) 180rpx;
+  min-height: 84rpx;
+  padding: 0 12rpx 0 24rpx;
+}
+
+.sms-row input {
+  color: #1d1d1f;
+  font-size: 28rpx;
+  min-width: 0;
+}
+
+.sms-code-button {
+  background: #e8f1ff;
+  border-radius: 999rpx;
+  color: #007aff;
   font-size: 24rpx;
   font-weight: 700;
   line-height: 56rpx;
   margin: 0;
-  min-width: 144rpx;
-  padding: 0 22rpx;
+  padding: 0;
 }
 
-.phone-button::after {
-  border: 0;
+.sms-code-button.verify {
+  background: #007aff;
+  color: #ffffff;
 }
 
 .agreement {

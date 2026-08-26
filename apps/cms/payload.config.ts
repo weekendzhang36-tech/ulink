@@ -10,7 +10,7 @@ import { Classes, Colleges, Majors, Schools } from './src/collections/Campus'
 import { ContentCategories, Contents } from './src/collections/Content'
 import { GrowthPlans, Memberships, Orders, PaymentEvents } from './src/collections/GrowthPlans'
 import { ServiceLinks } from './src/collections/ServiceLinks'
-import { Students } from './src/collections/Students'
+import { SmsVerificationChallenges, Students } from './src/collections/Students'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -38,6 +38,7 @@ export default buildConfig({
     Majors,
     Classes,
     Students,
+    SmsVerificationChallenges,
     ContentCategories,
     Contents,
     GrowthPlans,

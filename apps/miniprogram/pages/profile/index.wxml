@@ -12,11 +12,33 @@
     </view>
     <view class="form-row">
       <text>手机号</text>
-      <view class="phone-action">
-        <text class="phone-value {{phoneVerified ? 'is-verified' : ''}}">{{phone || '未授权'}}</text>
-        <button class="phone-button" size="mini" open-type="getPhoneNumber" bindgetphonenumber="getWechatPhone">
-          {{phoneVerified ? '重新授权' : '微信授权'}}
+      <view class="phone-status">
+        <text class="phone-value {{phoneVerified ? 'is-verified' : ''}}">{{phone || '未认证'}}</text>
+      </view>
+    </view>
+    <view class="phone-methods">
+      <button class="method-button {{phoneAuthMethod === 'wechat' ? 'is-active' : ''}}" data-method="wechat" bindtap="changePhoneAuthMethod">
+        微信授权
+      </button>
+      <button class="method-button {{phoneAuthMethod === 'sms' ? 'is-active' : ''}}" data-method="sms" bindtap="changePhoneAuthMethod">
+        短信验证
+      </button>
+    </view>
+    <view wx:if="{{phoneAuthMethod === 'wechat'}}" class="phone-panel">
+      <button class="phone-button" open-type="getPhoneNumber" bindgetphonenumber="getWechatPhone">
+        {{phoneVerified ? '重新授权手机号' : '授权微信手机号'}}
+      </button>
+    </view>
+    <view wx:else class="phone-panel sms-panel">
+      <view class="sms-row">
+        <input data-key="smsPhone" value="{{smsPhone}}" type="number" maxlength="11" placeholder="请输入手机号" bindinput="changeText" />
+        <button class="sms-code-button" loading="{{loading}}" bindtap="requestSmsCode">
+          {{smsCodeSent ? '重新获取' : '获取验证码'}}
         </button>
+      </view>
+      <view class="sms-row">
+        <input data-key="smsCode" value="{{smsCode}}" type="number" maxlength="6" placeholder="请输入短信验证码" bindinput="changeText" />
+        <button class="sms-code-button verify" loading="{{loading}}" bindtap="verifySmsCode">确认验证</button>
       </view>
     </view>
     <view class="form-row">

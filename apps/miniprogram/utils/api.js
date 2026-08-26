@@ -181,6 +181,41 @@ function verifyWechatPhone(phoneCode) {
   )
 }
 
+function requestSmsPhone(phone) {
+  return withDemoFallback(
+    request({
+      data: {
+        phone,
+        sessionToken: getSessionToken(),
+      },
+      method: 'POST',
+      path: '/phone/sms/request',
+    }),
+    () => ({
+      expiresAt: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
+      phone,
+    }),
+  )
+}
+
+function verifySmsPhone({ phone, smsCode }) {
+  return withDemoFallback(
+    request({
+      data: {
+        phone,
+        sessionToken: getSessionToken(),
+        smsCode,
+      },
+      method: 'POST',
+      path: '/phone/sms/verify',
+    }),
+    () => ({
+      phone,
+      phoneVerificationToken: 'demo-phone-verification-token',
+    }),
+  )
+}
+
 function submitProfile(profile) {
   const sessionToken = getSessionToken()
 
@@ -248,7 +283,9 @@ module.exports = {
   getStudentState,
   loginWithWechatCode,
   mockConfirmPayment,
+  requestSmsPhone,
   reviewInstructorStudents,
   submitProfile,
+  verifySmsPhone,
   verifyWechatPhone,
 }
