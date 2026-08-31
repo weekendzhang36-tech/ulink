@@ -78,7 +78,10 @@ export const Contents: CollectionConfig = {
     {
       name: 'body',
       type: 'richText',
-      label: '正文',
+      label: '正文（富文本）',
+      admin: {
+        description: '像写文档一样编辑正文，可使用标题、段落、列表、引用、图片和链接；不要粘贴自定义 HTML 或脚本。',
+      },
     },
     {
       name: 'tags',

@@ -18,11 +18,11 @@
 
   <view class="card lock-card" wx:if="{{article.isLocked}}">
     <view class="lock-title">会员专属内容</view>
-    <view class="body-text">{{article.lockMessage || article.body}}</view>
+    <rich-text class="rich-body" nodes="{{article.bodyHtml}}"></rich-text>
   </view>
 
   <view class="card" wx:else>
-    <view class="body-text">{{article.body}}</view>
+    <rich-text class="rich-body" nodes="{{article.bodyHtml}}"></rich-text>
   </view>
 
   <button

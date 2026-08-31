@@ -11,11 +11,16 @@
   width: 100%;
 }
 
+.rich-body,
 .body-text {
   color: #333333;
   font-size: 30rpx;
   line-height: 1.65;
   white-space: pre-wrap;
+}
+
+.rich-body {
+  display: block;
 }
 
 .lock-card {

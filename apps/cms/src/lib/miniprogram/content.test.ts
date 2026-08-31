@@ -159,6 +159,89 @@ test('returns readable text for Payload richText content detail', async () => {
   assert.equal(detail?.body, '第一段：介绍活动背景。\n\n第二段：说明适合人群。')
 })
 
+test('returns sanitized mini program rich text html for Payload richText content detail', async () => {
+  const detail = await getPublishedContentDetail({
+    id: 'content_rich_detail_001',
+    payload: payloadFor([
+      {
+        _status: 'published',
+        body: {
+          root: {
+            children: [
+              {
+                children: [{ text: '沙龙流程' }],
+                tag: 'h2',
+                type: 'heading',
+              },
+              {
+                children: [
+                  { format: 1, text: '报名后' },
+                  { text: '会收到活动提醒，请查看' },
+                  {
+                    children: [{ text: '详情页' }],
+                    fields: { url: 'https://example.com/detail?from=<cms>' },
+                    type: 'link',
+                  },
+                  { text: '<script>alert(1)</script>' },
+                ],
+                type: 'paragraph',
+              },
+              {
+                children: [
+                  { children: [{ text: '银行网点岗位分享' }], type: 'listitem' },
+                  { children: [{ text: '客户沟通模拟' }], type: 'listitem' },
+                ],
+                listType: 'bullet',
+                type: 'list',
+              },
+              {
+                children: [{ text: '适合想先听真实经历的同学。' }],
+                type: 'quote',
+              },
+              {
+                relationTo: 'media',
+                type: 'upload',
+                value: {
+                  alt: '金融沙龙现场',
+                  url: 'https://cos.example.com/salon.jpg',
+                },
+              },
+              {
+                type: 'horizontalrule',
+              },
+            ],
+          },
+        },
+        category: {
+          isActive: true,
+          module: 'finance_foundation',
+          title: '金融底色',
+        },
+        contentType: 'article',
+        id: 'content_rich_detail_001',
+        publishedAt: '2026-08-22T08:00:00.000Z',
+        summary: '摘要',
+        title: '青年金融沙龙',
+      },
+    ]),
+  })
+
+  assert.match(detail?.bodyHtml || '', /<h2>沙龙流程<\/h2>/)
+  assert.match(detail?.bodyHtml || '', /<strong>报名后<\/strong>/)
+  assert.match(
+    detail?.bodyHtml || '',
+    /<a href="https:\/\/example\.com\/detail\?from=&lt;cms&gt;">详情页<\/a>/,
+  )
+  assert.match(detail?.bodyHtml || '', /&lt;script&gt;alert\(1\)&lt;\/script&gt;/)
+  assert.match(detail?.bodyHtml || '', /<ul><li>银行网点岗位分享<\/li><li>客户沟通模拟<\/li><\/ul>/)
+  assert.match(detail?.bodyHtml || '', /<blockquote>适合想先听真实经历的同学。<\/blockquote>/)
+  assert.match(
+    detail?.bodyHtml || '',
+    /<img src="https:\/\/cos\.example\.com\/salon\.jpg" alt="金融沙龙现场" \/>/,
+  )
+  assert.match(detail?.bodyHtml || '', /<hr \/>/)
+})
+
 test('returns configured cover image urls for content list and detail', async () => {
   const payload = payloadFor([
     {

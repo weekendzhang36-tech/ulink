@@ -1,4 +1,5 @@
 const mockData = require('./mock-data')
+const { formatContentArticle } = require('./content-rich-text')
 const { buildInstructorVerificationQuery } = require('./instructor-verification-filters')
 
 function isDemoMode() {
@@ -107,10 +108,7 @@ function getGrowthPlan() {
 function getArticleById(id) {
   return withDemoFallback(request({ auth: true, path: `/content/${id}` }), () =>
     mockData.articles.find((article) => article.id === id) || mockData.articles[0],
-  ).then((article) => ({
-    ...article,
-    body: typeof article.body === 'string' ? article.body : article.summary,
-  }))
+  ).then(formatContentArticle)
 }
 
 function reserveContent(id) {
@@ -125,7 +123,7 @@ function reserveContent(id) {
 
       return {
         alreadyReserved: false,
-        content: article,
+        content: formatContentArticle(article),
         reservation: {
           id: `demo-reservation-${id}`,
           reservedAt: new Date().toISOString(),

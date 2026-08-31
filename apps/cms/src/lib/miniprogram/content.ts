@@ -126,6 +126,120 @@ function isReservableContentType(contentType: unknown) {
   return contentType === 'event' || contentType === 'opportunity'
 }
 
+function escapeHtml(value: unknown) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
+function safeUrl(value: unknown) {
+  const url = optionalString(value)
+  if (!url) return undefined
+
+  return /^https?:\/\//i.test(url) ? escapeHtml(url) : undefined
+}
+
+function textNodeHtml(node: Record<string, unknown>) {
+  let html = escapeHtml(node.text)
+  const format = Number(node.format || 0)
+
+  if (format & 16) html = `<code>${html}</code>`
+  if (format & 8) html = `<u>${html}</u>`
+  if (format & 4) html = `<s>${html}</s>`
+  if (format & 2) html = `<em>${html}</em>`
+  if (format & 1) html = `<strong>${html}</strong>`
+
+  return html
+}
+
+function linkUrl(node: Record<string, unknown>) {
+  if ('url' in node) return safeUrl(node.url)
+
+  const fields = 'fields' in node ? node.fields : undefined
+  return fields && typeof fields === 'object' && 'url' in fields
+    ? safeUrl((fields as { url: unknown }).url)
+    : undefined
+}
+
+function childrenHtml(children: unknown): string {
+  if (!Array.isArray(children)) return ''
+
+  return children.map((child) => lexicalNodeHtml(child)).join('')
+}
+
+function listItemsHtml(children: unknown) {
+  if (!Array.isArray(children)) return ''
+
+  return children
+    .map((item) => {
+      if (!item || typeof item !== 'object') return ''
+      const html = childrenHtml((item as { children?: unknown }).children)
+
+      return html ? `<li>${html}</li>` : ''
+    })
+    .join('')
+}
+
+function uploadImageHtml(node: Record<string, unknown>) {
+  const value = 'value' in node ? node.value : undefined
+  const src = safeUrl(mediaUrl(value) || ('url' in node ? node.url : undefined))
+  if (!src) return ''
+
+  const alt =
+    value && typeof value === 'object' && 'alt' in value
+      ? escapeHtml((value as { alt: unknown }).alt)
+      : ''
+
+  return `<img src="${src}" alt="${alt}" />`
+}
+
+function lexicalNodeHtml(node: unknown): string {
+  if (!node || typeof node !== 'object') return ''
+
+  const record = node as Record<string, unknown>
+  if (typeof record.text === 'string') return textNodeHtml(record)
+
+  if (record.type === 'linebreak') return '<br />'
+
+  if (record.type === 'link') {
+    const html = childrenHtml(record.children)
+    const href = linkUrl(record)
+
+    return href && html ? `<a href="${href}">${html}</a>` : html
+  }
+
+  if (record.type === 'heading') {
+    const tag = ['h1', 'h2', 'h3'].includes(String(record.tag)) ? String(record.tag) : 'h2'
+    const html = childrenHtml(record.children)
+
+    return html ? `<${tag}>${html}</${tag}>` : ''
+  }
+
+  if (record.type === 'list') {
+    const tag = record.listType === 'number' ? 'ol' : 'ul'
+    const html = listItemsHtml(record.children)
+
+    return html ? `<${tag}>${html}</${tag}>` : ''
+  }
+
+  if (record.type === 'quote') {
+    const html = childrenHtml(record.children)
+
+    return html ? `<blockquote>${html}</blockquote>` : ''
+  }
+
+  if (record.type === 'upload') return uploadImageHtml(record)
+  if (record.type === 'horizontalrule') return '<hr />'
+
+  const html = childrenHtml(record.children)
+  if (record.type === 'paragraph') return html ? `<p>${html}</p>` : ''
+
+  return html
+}
+
 function formatReservation(reservation: ContentReservationRecord) {
   return {
     id: reservation.id,
@@ -157,29 +271,57 @@ async function findStudentFromSession({
   return student
 }
 
-function textFromRichText(value: unknown): string | null {
-  if (typeof value === 'string') return value
+function richTextRootChildren(value: unknown): unknown[] | null {
   if (!value || typeof value !== 'object') return null
 
   const root = 'root' in value ? (value as { root: unknown }).root : value
   if (!root || typeof root !== 'object' || !('children' in root)) return null
   const children = (root as { children: unknown }).children
-  if (!Array.isArray(children)) return null
+
+  return Array.isArray(children) ? children : null
+}
+
+function textFromLexicalNode(node: unknown): string {
+  if (!node || typeof node !== 'object') return ''
+
+  const record = node as Record<string, unknown>
+  if (typeof record.text === 'string') return record.text
+
+  const children = record.children
+  if (!Array.isArray(children)) return ''
+
+  return children.map((child) => textFromLexicalNode(child)).join('')
+}
+
+function textFromRichText(value: unknown): string | null {
+  if (typeof value === 'string') return value
+
+  const children = richTextRootChildren(value)
+  if (!children) return null
 
   const paragraphs = children
-    .map((block) => {
-      if (!block || typeof block !== 'object' || !('children' in block)) return ''
-      const blockChildren = (block as { children: unknown }).children
-      if (!Array.isArray(blockChildren)) return ''
-
-      return blockChildren
-        .map((node) => (node && typeof node === 'object' && 'text' in node ? String(node.text) : ''))
-        .join('')
-        .trim()
-    })
+    .map((block) => textFromLexicalNode(block).trim())
     .filter(Boolean)
 
   return paragraphs.length > 0 ? paragraphs.join('\n\n') : null
+}
+
+function htmlFromRichText(value: unknown): string | undefined {
+  if (typeof value === 'string') {
+    const paragraphs = value
+      .split(/\n{2,}/)
+      .map((paragraph) => paragraph.trim())
+      .filter(Boolean)
+
+    return paragraphs.length ? paragraphs.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join('') : undefined
+  }
+
+  const children = richTextRootChildren(value)
+  if (!children) return undefined
+
+  const html = children.map((child) => lexicalNodeHtml(child)).join('')
+
+  return html || undefined
 }
 
 export function toContentSummary(doc: Record<string, unknown>) {
@@ -209,9 +351,12 @@ export function toContentSummary(doc: Record<string, unknown>) {
 }
 
 export function toContentDetail(doc: Record<string, unknown>, reservation?: ContentReservationRecord) {
+  const body = textFromRichText(doc.body) || String(doc.summary || '')
+
   return {
     ...toContentSummary(doc),
-    body: textFromRichText(doc.body) || String(doc.summary || ''),
+    body,
+    bodyHtml: htmlFromRichText(doc.body) || htmlFromRichText(body),
     isLocked: false,
     publishedAt: doc.publishedAt,
     reservation: reservation ? formatReservation(reservation) : undefined,
@@ -226,6 +371,7 @@ function lockMemberOnlyDetail(detail: ReturnType<typeof toContentDetail>) {
     actionLabel: '开通成长计划',
     actionUrl: undefined,
     body: memberOnlyLockMessage,
+    bodyHtml: htmlFromRichText(memberOnlyLockMessage),
     isLocked: true,
     lockMessage: memberOnlyLockMessage,
   }
