@@ -10,6 +10,7 @@ coverage/
 .payload/
 payload-types.ts
 *.tsbuildinfo
+.local/
 project.private.config.json
 .env
 .env.*
